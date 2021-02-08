@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="AppContext\" />
+    <Folder Include="Entities\Base\" />
+    <Folder Include="Entities\Enums\" />
+    <Folder Include="Migrations\" />
+    <Folder Include="Initialization\" />
+    <Folder Include="Repositories\Base\" />
+  </ItemGroup>
+
+</Project>
