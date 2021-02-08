@@ -11,7 +11,7 @@ namespace EducationApp.DataAccessLayer.Entities
         public DateTime Date { get; set; }
         public int PaymentId { get; set; }
 
-        public User User { get; set; }
+        public UserEntity User { get; set; }
         public PaymentEntity Payment { get; set; }
     }
 }

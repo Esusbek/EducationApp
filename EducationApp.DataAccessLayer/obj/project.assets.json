@@ -1970,6 +1970,16 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "EducationApp.BusinessLogicLayer/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.1",
+        "compile": {
+          "bin/placeholder/EducationApp.BusinessLogicLayer.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/EducationApp.BusinessLogicLayer.dll": {}
+        }
       }
     }
   },
@@ -6811,10 +6821,16 @@
         "system.xml.xmlserializer.4.3.0.nupkg.sha512",
         "system.xml.xmlserializer.nuspec"
       ]
+    },
+    "EducationApp.BusinessLogicLayer/1.0.0": {
+      "type": "project",
+      "path": "../EducationApp.BusinessLogicLayer/EducationApp.BusinessLogicLayer.csproj",
+      "msbuildProject": "../EducationApp.BusinessLogicLayer/EducationApp.BusinessLogicLayer.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "EducationApp.BusinessLogicLayer >= 1.0.0",
       "Microsoft.AspNetCore.Identity >= 2.2.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 5.0.2",
       "Microsoft.EntityFrameworkCore >= 5.0.2",
@@ -6855,7 +6871,11 @@
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Anuitex-99\\source\\repos\\EducationApp\\EducationApp.BusinessLogicLayer\\EducationApp.BusinessLogicLayer.csproj": {
+              "projectPath": "C:\\Users\\Anuitex-99\\source\\repos\\EducationApp\\EducationApp.BusinessLogicLayer\\EducationApp.BusinessLogicLayer.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

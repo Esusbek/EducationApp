@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
-    public class User : IdentityUser
+    public class UserEntity: IdentityUser
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
