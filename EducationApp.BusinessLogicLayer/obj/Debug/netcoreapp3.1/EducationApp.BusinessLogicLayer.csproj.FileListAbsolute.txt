@@ -1,0 +1,13 @@
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.deps.json
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.pdb
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\obj\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.csprojAssemblyReference.cache
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\obj\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.AssemblyInfoInputs.cache
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\obj\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.AssemblyInfo.cs
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\obj\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.csproj.CoreCompileInputs.cache
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\obj\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\obj\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.pdb
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\AppSettings.json
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\EducationApp.DataAccessLayer.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\EducationApp.DataAccessLayer.pdb
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\obj\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.csproj.CopyComplete

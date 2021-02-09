@@ -5,14 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Interfaces\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Models\Authors\" />
-    <Folder Include="Models\Base\" />
-    <Folder Include="Models\Enums\" />
-    <Folder Include="Models\Orders\" />
-    <Folder Include="Models\Payments\" />
-    <Folder Include="Models\PrintingEditions\" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EducationApp.DataAccessLayer\EducationApp.DataAccessLayer.csproj" />
   </ItemGroup>
 
 </Project>

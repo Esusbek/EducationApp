@@ -58,9 +58,29 @@ namespace EducationApp.DataAccessLayer.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2021, 2, 8, 18, 1, 1, 63, DateTimeKind.Local).AddTicks(3273),
+                            CreatedAt = new DateTime(2021, 2, 9, 11, 26, 37, 408, DateTimeKind.Local).AddTicks(5284),
                             IsRemoved = false,
                             Name = "Vasily"
+                        });
+                });
+
+            modelBuilder.Entity("EducationApp.DataAccessLayer.Entities.AuthorInPrintingEditionEntity", b =>
+                {
+                    b.Property<int>("AuthorsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PrintingEditionsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AuthorsId", "PrintingEditionsId");
+
+                    b.ToTable("AuthorInPrintingEditionEntity");
+
+                    b.HasData(
+                        new
+                        {
+                            AuthorsId = 1,
+                            PrintingEditionsId = 1
                         });
                 });
 
@@ -198,7 +218,7 @@ namespace EducationApp.DataAccessLayer.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2021, 2, 8, 18, 1, 1, 59, DateTimeKind.Local).AddTicks(3994),
+                            CreatedAt = new DateTime(2021, 2, 9, 11, 26, 37, 406, DateTimeKind.Local).AddTicks(7903),
                             Currency = 5,
                             Description = "Initial test PE",
                             IsRemoved = false,
@@ -284,7 +304,7 @@ namespace EducationApp.DataAccessLayer.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "29406ee5-f07c-4d83-bb35-bb4bb707d83c",
+                            ConcurrencyStamp = "b1c46692-ec2f-4ee9-b831-abbcdcd534b1",
                             Email = "test@test.com",
                             EmailConfirmed = true,
                             FirstName = "Vitaly",
@@ -292,7 +312,7 @@ namespace EducationApp.DataAccessLayer.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "test@test.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDWsEimHJ3jXonh4E3a35NASqT1vB7gT11RpsZOTDUuUDunp5CcUoSXtKRxBNEoisQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPG9fXV2DrNZfVjIjCzi1ZCs4ei819MRg3KGCoqQAVo2fpCaGlzDoFvKFp9FEeWpZw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -330,7 +350,7 @@ namespace EducationApp.DataAccessLayer.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "707464c9-91ac-4318-a371-3f918b31eae2",
+                            ConcurrencyStamp = "6b94bf55-687d-462c-a254-ce209a41c84e",
                             Name = "Admin",
                             NormalizedName = "admin"
                         });

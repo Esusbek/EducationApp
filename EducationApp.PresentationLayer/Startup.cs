@@ -36,6 +36,8 @@ namespace EducationApp.PresentationLayer
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<Middlewares.LogMiddleware>();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EducationApp.DataAccessLayer.Entities.Enums
+namespace EducationApp.DataAccessLayer.Enums
 {
     public partial class Enums
     {

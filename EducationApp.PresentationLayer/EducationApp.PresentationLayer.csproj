@@ -4,5 +4,13 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Middlewares\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EducationApp.BusinessLogicLayer\EducationApp.BusinessLogicLayer.csproj" />
+  </ItemGroup>
+
 
 </Project>
