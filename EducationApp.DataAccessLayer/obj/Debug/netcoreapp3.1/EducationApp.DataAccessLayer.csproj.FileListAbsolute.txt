@@ -11,3 +11,6 @@ C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.DataAccessLayer\obj\D
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.DataAccessLayer\obj\Debug\netcoreapp3.1\EducationApp.DataAccessLayer.pdb
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.DataAccessLayer\obj\Debug\netcoreapp3.1\EducationApp.DataAccessLayer.genruntimeconfig.cache
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.DataAccessLayer\bin\Debug\netcoreapp3.1\AppSettings.json
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.DataAccessLayer\bin\Debug\netcoreapp3.1\EducationApp.Shared.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.DataAccessLayer\bin\Debug\netcoreapp3.1\EducationApp.Shared.pdb
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.DataAccessLayer\obj\Debug\netcoreapp3.1\EducationApp.DataAccessLayer.csproj.CopyComplete

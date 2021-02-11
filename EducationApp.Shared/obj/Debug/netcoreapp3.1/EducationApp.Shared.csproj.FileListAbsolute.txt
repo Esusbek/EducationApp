@@ -1,0 +1,9 @@
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\bin\Debug\netcoreapp3.1\EducationApp.Shared.deps.json
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\bin\Debug\netcoreapp3.1\EducationApp.Shared.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\bin\Debug\netcoreapp3.1\EducationApp.Shared.pdb
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\netcoreapp3.1\EducationApp.Shared.csprojAssemblyReference.cache
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\netcoreapp3.1\EducationApp.Shared.AssemblyInfoInputs.cache
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\netcoreapp3.1\EducationApp.Shared.AssemblyInfo.cs
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\netcoreapp3.1\EducationApp.Shared.csproj.CoreCompileInputs.cache
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\netcoreapp3.1\EducationApp.Shared.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\netcoreapp3.1\EducationApp.Shared.pdb

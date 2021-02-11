@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
-using System.Text;
-using Microsoft.Extensions.Logging;
 
 namespace EducationApp.BusinessLogicLayer.Common
 {
@@ -26,12 +24,8 @@ namespace EducationApp.BusinessLogicLayer.Common
 
             public bool IsEnabled(LogLevel logLevel)
             {
-                if(logLevel == LogLevel.Warning)
-                { 
-                    return true; 
-                }
-                return false;
-                
+                return true;
+
             }
 
             public void Log<TState>(LogLevel logLevel, EventId eventId,

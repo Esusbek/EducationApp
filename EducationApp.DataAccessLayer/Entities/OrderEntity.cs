@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
-    public class OrderEntity: Base.BaseEntity
+    public class OrderEntity : Base.BaseEntity
     {
         public string Description { get; set; }
         public int UserId { get; set; }

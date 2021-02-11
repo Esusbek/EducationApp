@@ -1,15 +1,15 @@
+using EducationApp.BusinessLogicLayer.Services;
+using EducationApp.BusinessLogicLayer.Services.Interfaces;
+using EducationApp.DataAccessLayer.AppContext;
+using EducationApp.DataAccessLayer.Entities;
+using EducationApp.Shared.Configs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EducationApp.PresentationLayer
 {
@@ -25,6 +25,20 @@ namespace EducationApp.PresentationLayer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IUserService, UserService>();
+
+            services.AddDbContext<ApplicationContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<UserEntity, IdentityRole>(config =>
+                {
+                    config.SignIn.RequireConfirmedEmail = true;
+                    config.User.RequireUniqueEmail = true;
+                })
+                .AddEntityFrameworkStores<ApplicationContext>()
+                .AddDefaultTokenProviders();
+            services.Configure<SmtpConfig>(options => Configuration.GetSection("smtp").Bind(options));
+            services.Configure<UrlConfig>(options => Configuration.GetSection("url").Bind(options));
             services.AddControllers();
         }
 
@@ -39,14 +53,24 @@ namespace EducationApp.PresentationLayer
             app.UseMiddleware<Middlewares.LogMiddleware>();
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Action}/{action=Register}");
+                endpoints.MapControllerRoute(
+                    name: "confirm",
+                    pattern: "{controller=Action}/{action=ConfirmEmail}");
+                endpoints.MapControllerRoute(
+                   name: "confirm",
+                   pattern: "{controller=Action}/{action=Login}");
             });
         }
     }

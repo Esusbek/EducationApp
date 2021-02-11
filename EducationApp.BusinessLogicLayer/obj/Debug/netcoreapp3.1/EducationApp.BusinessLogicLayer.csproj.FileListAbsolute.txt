@@ -11,3 +11,5 @@ C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bi
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\EducationApp.DataAccessLayer.dll
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\EducationApp.DataAccessLayer.pdb
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\obj\Debug\netcoreapp3.1\EducationApp.BusinessLogicLayer.csproj.CopyComplete
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\EducationApp.Shared.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.BusinessLogicLayer\bin\Debug\netcoreapp3.1\EducationApp.Shared.pdb

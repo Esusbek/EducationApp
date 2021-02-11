@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using EducationApp.BusinessLogicLayer.Exceptions;
 using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace EducationApp.PresentationLayer.Middlewares
 {
@@ -23,10 +21,15 @@ namespace EducationApp.PresentationLayer.Middlewares
             {
                 await _next(context);
             }
+            catch (CustomApiException exception)
+            {
+                context.Response.StatusCode = (int)exception.Status;
+                await context.Response.WriteAsync(exception.Message);
+            }
             finally
             {
                 _logger.LogInformation(
-                    "Request {method} {url} => {statusCode}",
+                    "\nRequest {method} {url} => {statusCode}\n",
                     context.Request?.Method,
                     context.Request?.Path.Value,
                     context.Response?.StatusCode);
