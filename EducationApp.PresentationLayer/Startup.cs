@@ -1,8 +1,14 @@
+using AutoMapper;
+using EducationApp.BusinessLogicLayer.Common.MappingProfiles;
+using EducationApp.BusinessLogicLayer.Helpers;
+using EducationApp.BusinessLogicLayer.Helpers.Interfaces;
 using EducationApp.BusinessLogicLayer.Services;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.AppContext;
 using EducationApp.DataAccessLayer.Entities;
+using EducationApp.DataAccessLayer.Initialization;
 using EducationApp.Shared.Configs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +16,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Text;
 
 namespace EducationApp.PresentationLayer
 {
@@ -26,6 +35,8 @@ namespace EducationApp.PresentationLayer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
+            services.AddSingleton<IJwtHelper, JwtHelper>();
+
 
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -34,11 +45,45 @@ namespace EducationApp.PresentationLayer
                 {
                     config.SignIn.RequireConfirmedEmail = true;
                     config.User.RequireUniqueEmail = true;
+                    config.Password.RequireDigit = true;
+                    config.Password.RequiredLength = 6;
+                    config.Password.RequireNonAlphanumeric = false;
+                    config.Password.RequireUppercase = true;
+                    config.Password.RequireLowercase = true;
                 })
                 .AddEntityFrameworkStores<ApplicationContext>()
                 .AddDefaultTokenProviders();
+            var jwtConfig = Configuration.GetSection("jwt").Get<JwtConfig>();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("jwt").Key));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(x =>
+                {
+                    x.RequireHttpsMetadata = true;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = jwtConfig.Issuer,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig.Key)),
+                        ValidAudience = jwtConfig.Audience,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.FromMinutes(1)
+                    };
+                });
+
             services.Configure<SmtpConfig>(options => Configuration.GetSection("smtp").Bind(options));
             services.Configure<UrlConfig>(options => Configuration.GetSection("url").Bind(options));
+            services.Configure<JwtConfig>(options => Configuration.GetSection("jwt").Bind(options));
+
+            var mappingConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfiles.UserMapProfile());
+            });
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddControllers();
         }
 
@@ -48,6 +93,7 @@ namespace EducationApp.PresentationLayer
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                DataBaseInitializer.Seed(app);
             }
 
             app.UseMiddleware<Middlewares.LogMiddleware>();
@@ -63,14 +109,18 @@ namespace EducationApp.PresentationLayer
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Action}/{action=Register}");
-                endpoints.MapControllerRoute(
-                    name: "confirm",
-                    pattern: "{controller=Action}/{action=ConfirmEmail}");
-                endpoints.MapControllerRoute(
-                   name: "confirm",
+                   name: "login",
                    pattern: "{controller=Action}/{action=Login}");
+                endpoints.MapControllerRoute(
+                   name: "forgot",
+                   pattern: "{controller=Action}/{action=ForgotPassword}");
+                endpoints.MapControllerRoute(
+                   name: "reset",
+                   pattern: "{controller=Action}/{action=ResetPassword}");
+                endpoints.MapControllerRoute(
+                   name: "reset",
+                   pattern: "{controller=Action}/{action=GetUsers}");
+                endpoints.MapControllers();
             });
         }
     }

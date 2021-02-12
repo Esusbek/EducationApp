@@ -1,15 +1,21 @@
 ﻿using AutoMapper;
-using EducationApp.BusinessLogicLayer.Exceptions;
+using EducationApp.BusinessLogicLayer.Common.MappingProfiles;
+using EducationApp.Shared.Exceptions;
 using EducationApp.BusinessLogicLayer.Helpers;
+using EducationApp.BusinessLogicLayer.Helpers.Interfaces;
+using EducationApp.BusinessLogicLayer.Helpers.Models;
 using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.Shared.Configs;
 using EducationApp.Shared.Constants;
+using EducationApp.Shared.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -23,39 +29,63 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly CustomUserValidator<UserModel> _validator;
         private readonly EmailHelper _email;
         private readonly UrlConfig _urlConfig;
+        private readonly IJwtHelper _jwtHelper;
 
-        public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, IOptions<SmtpConfig> smtpConfig, IOptions<UrlConfig> urlConfig)
+        public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager,
+            IOptions<SmtpConfig> smtpConfig, IOptions<UrlConfig> urlConfig, IMapper mapper, IJwtHelper jwtHelper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            var cfg = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<UserModel, UserEntity>();
-            });
-            _mapper = cfg.CreateMapper();
+            _mapper = mapper;
+            _jwtHelper = jwtHelper;
             _validator = new CustomUserValidator<UserModel>();
             _urlConfig = urlConfig.Value;
             _email = new EmailHelper(smtpConfig.Value);
         }
-        public async Task<UserModel> LoginAsync(UserModel user, bool rememberMe)
+        public async Task<LoginResult> LoginAsync(UserModel user, bool rememberMe)
         {
-            if (user.Password != null && user.UserName != null)
+            if (user.Password == null || user.UserName == null)
             {
-                var result = await _signInManager.PasswordSignInAsync(user.UserName, user.Password, rememberMe, false);
-                if (!result.Succeeded)
-                {
-                    throw new CustomApiException(HttpStatusCode.Unauthorized, Constants.Errors.FailedLogin);
-                }
-                var dbUser = await _userManager.FindByNameAsync(user.UserName);
-                var authUser = _mapper.Map<UserModel>(dbUser);
-                return authUser;
+                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.IncorrectInput);
             }
-            throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.IncorrectInput);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, user.Password, rememberMe, false);
+            if (!result.Succeeded)
+            {
+                throw new CustomApiException(HttpStatusCode.Unauthorized, Constants.Errors.FailedLogin);
+            }
+            var dbUser = await _userManager.FindByNameAsync(user.UserName);
+            var userRoles = await _userManager.GetRolesAsync(dbUser);
+            var claims = new List<Claim>();
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Name, dbUser.UserName));
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+            var jwtResult = _jwtHelper.GenerateToken(dbUser.UserName, claims);
+            return new LoginResult {
+                AccessToken = jwtResult.AccessToken,
+                RefreshToken = jwtResult.RefreshToken.TokenString
+            };
         }
 
-        public async Task LogoutAsync()
+        public async Task LogoutAsync(string userId)
         {
             await _signInManager.SignOutAsync();
+            _jwtHelper.RemoveRefreshTokenByUserName((await _userManager.FindByIdAsync(userId)).UserName);
+        }
+
+        public LoginResult RefreshToken(string accessToken, string refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken))
+            {
+                throw new CustomApiException(HttpStatusCode.Unauthorized, Constants.Errors.Unathorized);
+            }
+            var jwtResult = _jwtHelper.Refresh(refreshToken, accessToken);
+            return new LoginResult
+            {
+                AccessToken = jwtResult.AccessToken,
+                RefreshToken = jwtResult.RefreshToken.TokenString
+            };
         }
 
         public async Task<bool> AuthorizationAsync(UserEntity user, string role)
@@ -75,16 +105,16 @@ namespace EducationApp.BusinessLogicLayer.Services
             return await _userManager.FindByIdAsync(id);
         }
 
-        public UserModel GetUsers()
+        public List<UserModel> GetUsers()
         {
 
-            _userManager.Users.ToList();
-            return null; //model
-        }
-
-        public async void AddRoleAsync(UserEntity user, string role)
-        {
-            await _userManager.AddToRoleAsync(user, role);
+            var dbUsers = _userManager.Users.ToList();
+            var users = new List<UserModel>();
+            foreach (var user in dbUsers)
+            {
+                users.Add(_mapper.Map<UserModel>(user));
+            }
+            return users;
         }
 
         public async Task RegisterAsync(UserModel user)
@@ -98,6 +128,12 @@ namespace EducationApp.BusinessLogicLayer.Services
             var result = await _userManager.CreateAsync(newUser, user.Password);
             if (!result.Succeeded)
             {
+                throw new CustomApiException(HttpStatusCode.Conflict, Constants.Errors.FailedToCreate);
+            }
+            result = await _userManager.AddToRoleAsync(newUser, GetRoleName(Enums.User.Roles.Client));
+            if (!result.Succeeded)
+            {
+                await _userManager.DeleteAsync(newUser);
                 throw new CustomApiException(HttpStatusCode.Conflict, Constants.Errors.FailedToCreate);
             }
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
@@ -116,9 +152,10 @@ namespace EducationApp.BusinessLogicLayer.Services
                 $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
         }
 
-        public async void UpdateAsync(UserModel user)
+        public async Task UpdateAsync(UserModel user)
         {
-
+            var dbUser = _mapper.Map<UserEntity>(user);
+            await _userManager.UpdateAsync(dbUser);
         }
 
         public async Task ConfirmEmailAsync(string id, string code)
@@ -138,6 +175,52 @@ namespace EducationApp.BusinessLogicLayer.Services
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.InvalidToken);
             }
 
+        }
+
+        public async Task ForgotPasswordAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            {
+                return;
+            }
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var uriBuilder = new UriBuilder();
+            uriBuilder.Scheme = _urlConfig.Scheme;
+            uriBuilder.Port = _urlConfig.Port;
+            uriBuilder.Host = _urlConfig.Host;
+            uriBuilder.Path = Constants.Urls.ResetPasswordPath;
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query["userId"] = user.Id;
+            query["code"] = code;
+            uriBuilder.Query = query.ToString();
+            var callbackUrl = uriBuilder.ToString();
+            await _email.SendEmailAsync(new System.Net.Mail.MailAddress(user.Email),
+                "Password reset request",
+                $"Произведите сброс пароля, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
+        }
+
+        public async Task ResetPasswordAsync(string userId, string code,string password)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return;
+            }
+            var result = await _userManager.ResetPasswordAsync(user, code, password);
+            if(!result.Succeeded)
+            {
+                throw new CustomApiException(HttpStatusCode.Conflict, Constants.Errors.FailedToReset);
+            }
+            return;
+        }
+        private string GetRoleName(Enums.User.Roles role)
+        {
+            if((int)role==1)
+            {
+                return "client";
+            }
+            return "admin";
         }
     }
 }

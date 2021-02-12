@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Text;
 
-namespace EducationApp.BusinessLogicLayer.Exceptions
+namespace EducationApp.Shared.Exceptions
 {
     public class CustomApiException : Exception
     {

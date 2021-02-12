@@ -1,4 +1,4 @@
-﻿using EducationApp.BusinessLogicLayer.Exceptions;
+﻿using EducationApp.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;

@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "NjXIpxemeac9VZ7zpo9+s27SxfSRPgznEQq6GXgaQ8jI71OjJNDLx1tC0FlYK1PTwxTAnfJMExhiWywGaEEMQg==",
+  "dgSpecHash": "LR8yKB0us0tbkUKnF8IAHOXQYmeo45+GfGK8VimFDhxuoKhRuzHcjeK/qTLiEFxG2JAQyVcmOGl04TNAh8zyKA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Anuitex-99\\source\\repos\\EducationApp\\EducationApp.Shared\\EducationApp.Shared.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Anuitex-99\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
+    "C:\\Users\\Anuitex-99\\.nuget\\packages\\microsoft.identitymodel.logging\\6.8.0\\microsoft.identitymodel.logging.6.8.0.nupkg.sha512",
+    "C:\\Users\\Anuitex-99\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.8.0\\microsoft.identitymodel.tokens.6.8.0.nupkg.sha512",
+    "C:\\Users\\Anuitex-99\\.nuget\\packages\\system.security.cryptography.cng\\4.5.0\\system.security.cryptography.cng.4.5.0.nupkg.sha512"
+  ],
   "logs": []
 }

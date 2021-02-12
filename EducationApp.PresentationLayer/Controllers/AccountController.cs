@@ -26,8 +26,8 @@ namespace EducationApp.PresentationLayer.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(UserModel user, bool rememberMe)
         {
-            await _userService.LoginAsync(user, rememberMe);
-            return Content("LoginSuccessful");
+            var loginResult = await _userService.LoginAsync(user, rememberMe);
+            return Ok(loginResult);
 
         }
 
@@ -39,6 +39,36 @@ namespace EducationApp.PresentationLayer.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        [HttpPost]
+        [Authorize]
+        public IActionResult RefreshToken(string accessToken, string refreshToken)
+        {
+            var loginResult = _userService.RefreshToken(accessToken, refreshToken);
+            return Ok(loginResult);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string userId, string code, string password)
+        {
+            await _userService.ResetPasswordAsync(userId, code, password);
+            return RedirectToAction("Index", "Account");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(string userName)
+        {
+            await _userService.ForgotPasswordAsync(userName);
+            return RedirectToAction("Index", "Account");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult GetUsers()
+        {
+            return Ok(_userService.GetUsers());
+        }
 
     }
 }

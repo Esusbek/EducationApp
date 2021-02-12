@@ -1,4 +1,6 @@
 ﻿using EducationApp.DataAccessLayer.Entities;
+using EducationApp.Shared.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
@@ -36,7 +38,7 @@ namespace EducationApp.DataAccessLayer.AppContext
                     .HasMany(c => c.PrintingEditions)
                     .WithMany(s => s.Authors)
                     .UsingEntity(j => j.ToTable("AuthorInPrintingEditions"));
-
+            
             base.OnModelCreating(modelBuilder);
         }
         public override void Dispose()

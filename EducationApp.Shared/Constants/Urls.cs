@@ -5,6 +5,8 @@
         public partial class Urls
         {
             public const string ConfirmEmailPath = "Account/ConfirmEmail";
+            public const string ResetPasswordPath = "Account/ResetPassword";
+
         }
     }
 }
