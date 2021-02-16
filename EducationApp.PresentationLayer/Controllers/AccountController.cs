@@ -36,7 +36,7 @@ namespace EducationApp.PresentationLayer.Controllers
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             await _userService.ConfirmEmailAsync(userId, code);
-            return RedirectToAction("Index", "Account");
+            return RedirectToAction("Login", "Account");
         }
 
         [HttpPost]

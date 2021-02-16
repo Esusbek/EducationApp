@@ -1,6 +1,7 @@
 ﻿using EducationApp.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace EducationApp.PresentationLayer.Middlewares
@@ -24,6 +25,7 @@ namespace EducationApp.PresentationLayer.Middlewares
             catch (CustomApiException exception)
             {
                 context.Response.StatusCode = (int)exception.Status;
+                _logger.LogInformation($"\n{DateTime.Now}: {(int)exception.Status} - {exception.Message}\n");
                 await context.Response.WriteAsync(exception.Message);
             }
             finally

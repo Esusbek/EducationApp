@@ -1,5 +1,6 @@
 ﻿using EducationApp.Shared.Enums;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
@@ -7,6 +8,7 @@ namespace EducationApp.DataAccessLayer.Entities
     {
         public string Title { get; set; }
         public string Description { get; set; }
+        [Column(TypeName = "decimal(18,4)")]
         public decimal Price { get; set; }
 
         public Enums.PrintingEdition.Status Status { get; set; }

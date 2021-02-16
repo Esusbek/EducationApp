@@ -15,6 +15,15 @@
           "lib/netstandard2.0/AutoMapper.dll": {}
         }
       },
+      "Censored/1.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net40+wp8+wpa81+sl5+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10+Xamarin.Mac20/Censored.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net40+wp8+wpa81+sl5+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10+Xamarin.Mac20/Censored.dll": {}
+        }
+      },
       "Microsoft.AspNetCore.Authentication/2.2.0": {
         "type": "package",
         "dependencies": {
@@ -2095,9 +2104,10 @@
       },
       "EducationApp.BusinessLogicLayer/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v3.1",
+        "framework": ".NETCoreApp,Version=v5.0",
         "dependencies": {
           "AutoMapper": "10.1.1",
+          "Censored": "1.0.2",
           "EducationApp.DataAccessLayer": "1.0.0",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.Extensions.Logging": "5.0.0"
@@ -2111,7 +2121,7 @@
       },
       "EducationApp.DataAccessLayer/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v3.1",
+        "framework": ".NETCoreApp,Version=v5.0",
         "dependencies": {
           "EducationApp.Shared": "1.0.0",
           "Microsoft.AspNetCore.Identity": "2.2.0",
@@ -2158,6 +2168,19 @@
         "lib/net461/AutoMapper.xml",
         "lib/netstandard2.0/AutoMapper.dll",
         "lib/netstandard2.0/AutoMapper.xml"
+      ]
+    },
+    "Censored/1.0.2": {
+      "sha512": "YGqPVgcYvdh7oPEG4/cBLkvr64YTd4m3OQHfR5G7L7Qlwob2wmhZd/wYvB8vI6iqYQY81V3uyiJ5GNoTbOsScQ==",
+      "type": "package",
+      "path": "censored/1.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "censored.1.0.2.nupkg.sha512",
+        "censored.nuspec",
+        "lib/portable-net40+wp8+wpa81+sl5+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10+Xamarin.Mac20/Censored.dll",
+        "lib/portable-net40+wp8+wpa81+sl5+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10+Xamarin.Mac20/Censored.xml"
       ]
     },
     "Microsoft.AspNetCore.Authentication/2.2.0": {
@@ -7203,5 +7226,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Censored 1.0.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net5.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Censored",
+      "targetGraphs": [
+        "net5.0"
+      ]
+    }
+  ]
 }

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace EducationApp.DataAccessLayer.Initialization
 {
@@ -54,7 +53,7 @@ namespace EducationApp.DataAccessLayer.Initialization
                     Name = "client"
                 }).Result;
 
-                
+
 
                 var userResult = _userManager.CreateAsync(new UserEntity
                 {
@@ -71,7 +70,7 @@ namespace EducationApp.DataAccessLayer.Initialization
                 var userRole = _userManager.AddToRoleAsync(adminUser, "admin").Result;
                 var author = _appContext.Authors.SingleOrDefault(a => a.Name == "Vasily");
                 var book = author.PrintingEditions.SingleOrDefault(pe => pe.Title == "Test PE");
-                if (book == null)
+                if (book is null)
                 {
                     author.PrintingEditions.Add(_appContext.PrintingEditions.Single(pe => pe.Title == "Test PE"));
                 }

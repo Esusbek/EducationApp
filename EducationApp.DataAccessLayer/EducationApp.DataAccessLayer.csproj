@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,12 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EducationApp.Shared\EducationApp.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="AppSettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>

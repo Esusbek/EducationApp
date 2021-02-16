@@ -4,12 +4,13 @@
     {
         public enum Currency
         {
-            USD = 0,
-            EUR = 1,
-            GBP = 2,
-            CHF = 3,
-            JPY = 4,
-            UAH = 5
+            NotAssigned = 0,
+            USD = 1,
+            EUR = 2,
+            GBP = 3,
+            CHF = 4,
+            JPY = 5,
+            UAH = 6
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EducationApp.Shared.Constants
+﻿namespace EducationApp.Shared.Constants
 {
     public partial class Constants
     {

@@ -6,14 +6,16 @@
         {
             public enum Status
             {
-                InStock = 0,
-                SoldOut = 1
+                NotAssigned = 0,
+                InStock = 1,
+                SoldOut = 2
             }
             public enum Type
             {
-                Book = 0,
-                Journal = 1,
-                Newspaper = 2
+                NotAssigned = 0,
+                Book = 1,
+                Journal = 2,
+                Newspaper = 3
             }
         }
     }

@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
-using EducationApp.BusinessLogicLayer.Common.MappingProfiles;
-using EducationApp.Shared.Exceptions;
 using EducationApp.BusinessLogicLayer.Helpers;
 using EducationApp.BusinessLogicLayer.Helpers.Interfaces;
-using EducationApp.BusinessLogicLayer.Helpers.Models;
+using EducationApp.BusinessLogicLayer.Models.Helpers;
 using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.Shared.Configs;
 using EducationApp.Shared.Constants;
 using EducationApp.Shared.Enums;
+using EducationApp.Shared.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
@@ -27,12 +26,12 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly IMapper _mapper;
         private readonly CustomUserValidator<UserModel> _validator;
-        private readonly EmailHelper _email;
+        private readonly EmailProvider _email;
         private readonly UrlConfig _urlConfig;
-        private readonly IJwtHelper _jwtHelper;
+        private readonly IJwtProvider _jwtHelper;
 
         public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager,
-            IOptions<SmtpConfig> smtpConfig, IOptions<UrlConfig> urlConfig, IMapper mapper, IJwtHelper jwtHelper)
+            IOptions<SmtpConfig> smtpConfig, IOptions<UrlConfig> urlConfig, IMapper mapper, IJwtProvider jwtHelper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -40,11 +39,11 @@ namespace EducationApp.BusinessLogicLayer.Services
             _jwtHelper = jwtHelper;
             _validator = new CustomUserValidator<UserModel>();
             _urlConfig = urlConfig.Value;
-            _email = new EmailHelper(smtpConfig.Value);
+            _email = new EmailProvider(smtpConfig.Value);
         }
         public async Task<LoginResult> LoginAsync(UserModel user, bool rememberMe)
         {
-            if (user.Password == null || user.UserName == null)
+            if (string.IsNullOrWhiteSpace(user.Password) || string.IsNullOrWhiteSpace(user.UserName))
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.IncorrectInput);
             }
@@ -62,7 +61,8 @@ namespace EducationApp.BusinessLogicLayer.Services
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
             var jwtResult = _jwtHelper.GenerateToken(dbUser.UserName, claims);
-            return new LoginResult {
+            return new LoginResult
+            {
                 AccessToken = jwtResult.AccessToken,
                 RefreshToken = jwtResult.RefreshToken.TokenString
             };
@@ -100,14 +100,27 @@ namespace EducationApp.BusinessLogicLayer.Services
             await _userManager.SetLockoutEndDateAsync(dbUser, DateTime.Today.AddDays(duration));
         }
 
-        public async Task<UserEntity> GetUserAsync(string id)
+        public async Task<UserEntity> GetUserByIdAsync(string id)
         {
-            return await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
+            if (user is null)
+            {
+                throw new CustomApiException(HttpStatusCode.NotFound, Constants.Errors.UserNotFound);
+            }
+            return user;
+        }
+        public async Task<UserEntity> GetUserByUsernameAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user is null)
+            {
+                throw new CustomApiException(HttpStatusCode.NotFound, Constants.Errors.UserNotFound);
+            }
+            return user;
         }
 
         public List<UserModel> GetUsers()
         {
-
             var dbUsers = _userManager.Users.ToList();
             var users = new List<UserModel>();
             foreach (var user in dbUsers)
@@ -137,11 +150,13 @@ namespace EducationApp.BusinessLogicLayer.Services
                 throw new CustomApiException(HttpStatusCode.Conflict, Constants.Errors.FailedToCreate);
             }
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-            var uriBuilder = new UriBuilder();
-            uriBuilder.Scheme = _urlConfig.Scheme;
-            uriBuilder.Port = _urlConfig.Port;
-            uriBuilder.Host = _urlConfig.Host;
-            uriBuilder.Path = Constants.Urls.ConfirmEmailPath;
+            var uriBuilder = new UriBuilder
+            {
+                Scheme = _urlConfig.Scheme,
+                Port = _urlConfig.Port,
+                Host = _urlConfig.Host,
+                Path = Constants.Urls.ConfirmEmailPath
+            };
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
             query["userId"] = newUser.Id;
             query["code"] = code;
@@ -160,12 +175,12 @@ namespace EducationApp.BusinessLogicLayer.Services
 
         public async Task ConfirmEmailAsync(string id, string code)
         {
-            if (id == null || code == null)
+            if (id is null || string.IsNullOrWhiteSpace(code))
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.IncorrectInput);
             }
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
+            if (user is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.Errors.UserNotFound);
             }
@@ -180,16 +195,18 @@ namespace EducationApp.BusinessLogicLayer.Services
         public async Task ForgotPasswordAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
-            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            if (user is null || !(await _userManager.IsEmailConfirmedAsync(user)))
             {
-                return;
+                throw new CustomApiException(HttpStatusCode.NotFound, Constants.Errors.UserNotFound);
             }
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var uriBuilder = new UriBuilder();
-            uriBuilder.Scheme = _urlConfig.Scheme;
-            uriBuilder.Port = _urlConfig.Port;
-            uriBuilder.Host = _urlConfig.Host;
-            uriBuilder.Path = Constants.Urls.ResetPasswordPath;
+            var uriBuilder = new UriBuilder
+            {
+                Scheme = _urlConfig.Scheme,
+                Port = _urlConfig.Port,
+                Host = _urlConfig.Host,
+                Path = Constants.Urls.ResetPasswordPath
+            };
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
             query["userId"] = user.Id;
             query["code"] = code;
@@ -200,15 +217,15 @@ namespace EducationApp.BusinessLogicLayer.Services
                 $"Произведите сброс пароля, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
         }
 
-        public async Task ResetPasswordAsync(string userId, string code,string password)
+        public async Task ResetPasswordAsync(string userId, string code, string password)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+            if (user is null)
             {
-                return;
+                throw new CustomApiException(HttpStatusCode.NotFound, Constants.Errors.UserNotFound);
             }
             var result = await _userManager.ResetPasswordAsync(user, code, password);
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 throw new CustomApiException(HttpStatusCode.Conflict, Constants.Errors.FailedToReset);
             }
@@ -216,7 +233,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         private string GetRoleName(Enums.User.Roles role)
         {
-            if((int)role==1)
+            if ((int)role == 1)
             {
                 return "client";
             }

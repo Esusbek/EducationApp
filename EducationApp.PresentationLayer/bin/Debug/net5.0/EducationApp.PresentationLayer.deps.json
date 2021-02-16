@@ -327,6 +327,17 @@
           "lib/netstandard2.0/AutoMapper.dll": {}
         }
       },
+      "Censored/1.0.2": {
+        "runtime": {
+          "lib/portable-net40+wp8+wpa81+sl5+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10+Xamarin.Mac20/Censored.dll": {
+            "assemblyVersion": "1.0.5861.9523",
+            "fileVersion": "1.0.5861.9523"
+          }
+        },
+        "compile": {
+          "lib/portable-net40+wp8+wpa81+sl5+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10+Xamarin.Mac20/Censored.dll": {}
+        }
+      },
       "Microsoft.AspNetCore.Authentication/2.2.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.Core": "2.2.0",
@@ -1639,6 +1650,7 @@
       "EducationApp.BusinessLogicLayer/1.0.0": {
         "dependencies": {
           "AutoMapper": "10.1.1",
+          "Censored": "1.0.2",
           "EducationApp.DataAccessLayer": "1.0.0",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Microsoft.Extensions.Logging": "5.0.0"
@@ -3354,6 +3366,13 @@
       "sha512": "sha512-uMgbqOdu9ZG5cIOty0C85hzzayBH2i9BthnS5FlMqKtMSHDv4ts81a2jS1VFaDBVhlBeIqJ/kQKjQY95BZde9w==",
       "path": "automapper/10.1.1",
       "hashPath": "automapper.10.1.1.nupkg.sha512"
+    },
+    "Censored/1.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YGqPVgcYvdh7oPEG4/cBLkvr64YTd4m3OQHfR5G7L7Qlwob2wmhZd/wYvB8vI6iqYQY81V3uyiJ5GNoTbOsScQ==",
+      "path": "censored/1.0.2",
+      "hashPath": "censored.1.0.2.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Authentication/2.2.0": {
       "type": "package",

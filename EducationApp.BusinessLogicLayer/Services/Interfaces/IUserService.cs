@@ -1,4 +1,4 @@
-﻿using EducationApp.BusinessLogicLayer.Helpers.Models;
+﻿using EducationApp.BusinessLogicLayer.Models.Helpers;
 using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.DataAccessLayer.Entities;
 using System.Collections.Generic;
@@ -16,9 +16,10 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public Task<bool> AuthorizationAsync(UserEntity user, string role);
         public void BanAsync(UserModel user, int duration);
         public List<UserModel> GetUsers();
-        public Task<UserEntity> GetUserAsync(string id);
+        public Task<UserEntity> GetUserByIdAsync(string id);
+        public Task<UserEntity> GetUserByUsernameAsync(string userName);
         public Task ConfirmEmailAsync(string id, string code);
-        public Task ForgotPasswordAsync(string userName); 
+        public Task ForgotPasswordAsync(string userName);
         public Task ResetPasswordAsync(string userId, string code, string password);
 
     }

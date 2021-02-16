@@ -35,7 +35,9 @@ namespace EducationApp.PresentationLayer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
-            services.AddSingleton<IJwtHelper, JwtHelper>();
+            services.AddTransient<IAuthorService, AuthorService>();
+            services.AddTransient<IPrintingEditionService, PrintingEditionService>();
+            services.AddSingleton<IJwtProvider, JwtProvider>();
 
 
             services.AddDbContext<ApplicationContext>(options =>
@@ -80,6 +82,8 @@ namespace EducationApp.PresentationLayer
             var mappingConfig = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new MappingProfiles.UserMapProfile());
+                cfg.AddProfile(new MappingProfiles.AuthorMapProfile());
+                cfg.AddProfile(new MappingProfiles.PrintingEditionMapProfile());
             });
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
@@ -108,19 +112,10 @@ namespace EducationApp.PresentationLayer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                   name: "login",
-                   pattern: "{controller=Action}/{action=Login}");
-                endpoints.MapControllerRoute(
-                   name: "forgot",
-                   pattern: "{controller=Action}/{action=ForgotPassword}");
-                endpoints.MapControllerRoute(
-                   name: "reset",
-                   pattern: "{controller=Action}/{action=ResetPassword}");
-                endpoints.MapControllerRoute(
-                   name: "reset",
-                   pattern: "{controller=Action}/{action=GetUsers}");
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                   name: "default",
+                   pattern: "{controller=Action}/{action=Login}");
             });
         }
     }

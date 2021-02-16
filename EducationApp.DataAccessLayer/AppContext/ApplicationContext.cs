@@ -1,6 +1,5 @@
 ﻿using EducationApp.DataAccessLayer.Entities;
-using EducationApp.Shared.Enums;
-using Microsoft.AspNetCore.Identity;
+using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
@@ -19,13 +18,13 @@ namespace EducationApp.DataAccessLayer.AppContext
 
         public ApplicationContext()
         {
-            _logStream = new StreamWriter("logDB.txt", true);
+            _logStream = new StreamWriter(Constants.LogDestinations.DBLogs, true);
         }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
-            _logStream = new StreamWriter("logDB.txt", true);
+            _logStream = new StreamWriter(Constants.LogDestinations.DBLogs, true);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,12 +32,11 @@ namespace EducationApp.DataAccessLayer.AppContext
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<AuthorEntity>()
                     .HasMany(c => c.PrintingEditions)
                     .WithMany(s => s.Authors)
                     .UsingEntity(j => j.ToTable("AuthorInPrintingEditions"));
-            
+
             base.OnModelCreating(modelBuilder);
         }
         public override void Dispose()

@@ -6,8 +6,9 @@
         {
             public enum Status
             {
-                Unpaid = 0,
-                Paid = 1
+                NotAssigned = 0,
+                Unpaid = 1,
+                Paid = 2
             }
         }
     }

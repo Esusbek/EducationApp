@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using EducationApp.Shared.Constants;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 
@@ -15,7 +16,7 @@ namespace EducationApp.BusinessLogicLayer.Common
         {
         }
 
-        private class Logger : Interfaces.ILogger
+        private class Logger : ILogger
         {
             public IDisposable BeginScope<TState>(TState state)
             {
@@ -31,7 +32,7 @@ namespace EducationApp.BusinessLogicLayer.Common
             public void Log<TState>(LogLevel logLevel, EventId eventId,
                     TState state, Exception exception, Func<TState, Exception, string> formatter)
             {
-                File.AppendAllText("log.txt", formatter(state, exception));
+                File.AppendAllText(Constants.LogDestinations.AppLogs, formatter(state, exception));
             }
         }
     }

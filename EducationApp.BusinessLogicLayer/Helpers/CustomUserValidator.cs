@@ -1,6 +1,9 @@
-﻿using EducationApp.BusinessLogicLayer.Models.Users;
+﻿using Censored;
+using EducationApp.BusinessLogicLayer.Models.Users;
+using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -8,37 +11,49 @@ namespace EducationApp.BusinessLogicLayer.Helpers
 {
     public class CustomUserValidator<TUser> : IUserValidator<TUser> where TUser : UserModel
     {
+        private readonly Censor _censor;
+        public CustomUserValidator()
+        {
+            var bannedWords = Constants.Validators.BannedWords.Split(',').ToList();
+            _censor = new Censor(bannedWords);
+        }
         public Task<IdentityResult> ValidateAsync(UserManager<TUser> manager, TUser user)
         {
             List<IdentityError> errors = new List<IdentityError>();
+            if (!user.PasswordConfirm.Equals(user.Password))
+            {
+                errors.Add(new IdentityError
+                {
+                    Description = Constants.ValidationErrors.PasswordDoNotMatch
+                });
+            }
+            if (_censor.HasCensoredWord(user.UserName))
+            {
+                errors.Add(new IdentityError
+                {
+                    Description = Constants.ValidationErrors.HasBannedWords
+                });
+            }
+            if (!Regex.IsMatch(user.FirstName, Constants.Validators.NameValidator) || !Regex.IsMatch(user.LastName, Constants.Validators.NameValidator))
+            {
+                errors.Add(new IdentityError
+                {
+                    Description = Constants.ValidationErrors.InvalidName
+                });
+            }
+            if (!Regex.IsMatch(user.UserName, Constants.Validators.UsernameValidator))
+            {
+                errors.Add(new IdentityError
+                {
+                    Description = Constants.ValidationErrors.InvalidUsername
+                });
+            }
 
-            if (user.UserName.Contains("admin"))
+            if (!Regex.IsMatch(user.Email, Constants.Validators.EmailValidator))
             {
                 errors.Add(new IdentityError
                 {
-                    Description = "Ник пользователя не должен содержать слово 'admin'"
-                });
-            }
-            if (!Regex.IsMatch(user.FirstName, @"^[а-яА-Яa-zA-Z]+$") || !Regex.IsMatch(user.LastName, @"^[а-яА-Яa-zA-Z]+$"))
-            {
-                errors.Add(new IdentityError
-                {
-                    Description = "Имя и фамилия должны состоять только из букв"
-                });
-            }
-            if (!Regex.IsMatch(user.UserName, @"^[a-zA-Z0-9]+$"))
-            {
-                errors.Add(new IdentityError
-                {
-                    Description = "Логин должен состоять только из букв или цифр"
-                });
-            }
-
-            if (!Regex.IsMatch(user.Email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
-            {
-                errors.Add(new IdentityError
-                {
-                    Description = "Невалидная электронная почта"
+                    Description = Constants.ValidationErrors.InvalidEmail
                 });
             }
             return Task.FromResult(errors.Count == 0 ?

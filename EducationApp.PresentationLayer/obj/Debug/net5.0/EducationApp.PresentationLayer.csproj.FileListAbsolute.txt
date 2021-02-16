@@ -68,3 +68,4 @@ C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\obj
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\EducationApp.Shared.dll
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\EducationApp.Shared.pdb
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Censored.dll
