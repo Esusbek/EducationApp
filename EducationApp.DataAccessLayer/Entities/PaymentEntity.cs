@@ -2,6 +2,6 @@
 {
     public class PaymentEntity : Base.BaseEntity
     {
-        public int TransactionId { get; set; }
+        public string TransactionId { get; set; }
     }
 }

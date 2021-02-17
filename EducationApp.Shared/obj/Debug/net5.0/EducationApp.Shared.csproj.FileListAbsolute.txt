@@ -1,0 +1,12 @@
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\bin\Debug\net5.0\EducationApp.Shared.deps.json
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\bin\Debug\net5.0\EducationApp.Shared.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\bin\Debug\net5.0\ref\EducationApp.Shared.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\bin\Debug\net5.0\EducationApp.Shared.pdb
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\net5.0\EducationApp.Shared.csprojAssemblyReference.cache
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\net5.0\EducationApp.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\net5.0\EducationApp.Shared.AssemblyInfoInputs.cache
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\net5.0\EducationApp.Shared.AssemblyInfo.cs
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\net5.0\EducationApp.Shared.csproj.CoreCompileInputs.cache
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\net5.0\EducationApp.Shared.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\net5.0\ref\EducationApp.Shared.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.Shared\obj\Debug\net5.0\EducationApp.Shared.pdb

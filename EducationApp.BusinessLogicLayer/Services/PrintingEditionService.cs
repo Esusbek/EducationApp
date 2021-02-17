@@ -63,14 +63,15 @@ namespace EducationApp.BusinessLogicLayer.Services
             _printingEditionRepository.Delete(dbPrintingEdition);
         }
         public List<PrintingEditionModel> GetPrintingEditionsFiltered(PrintingEditionFilterModel printingEditionFilter = null,
-            int page = Constants.Pages.InitialPage, bool getRemoved = false)
+            int page = Constants.Defaults.DefaultPage, bool getRemoved = false)
         {
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
             if (printingEditionFilter is not null)
             {
                 filter = pe => (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || pe.Title.Contains(printingEditionFilter.Title)) &&
                 (printingEditionFilter.LowPrice == 0 || pe.Price > printingEditionFilter.LowPrice) &&
-                (printingEditionFilter.HighPrice == 0 || pe.Price < printingEditionFilter.HighPrice);
+                (printingEditionFilter.HighPrice == 0 || pe.Price < printingEditionFilter.HighPrice) &&
+                (printingEditionFilter.Type == default || pe.Type==printingEditionFilter.Type);
             }
             var dbPrintingEditions = _printingEditionRepository.Get(filter, getRemoved: getRemoved, page: page);
             var printingEditions = new List<PrintingEditionModel>();
@@ -80,7 +81,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             return printingEditions;
         }
-        public List<PrintingEditionModel> GetPrintingEditions(int page = Constants.Pages.InitialPage)
+        public List<PrintingEditionModel> GetPrintingEditions(int page = Constants.Defaults.DefaultPage)
         {
             var dbPrintingEditions = _printingEditionRepository.Get(page: page);
             var printingEditions = new List<PrintingEditionModel>();

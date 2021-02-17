@@ -12,8 +12,8 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public void AddPrintingEditionToAuthor(AuthorModel author, PrintingEditionModel printingEdition);
         public void DeleteAuthor(AuthorModel author);
         public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null,
-            int page = Constants.Pages.InitialPage, bool getRemoved = false);
-        public List<AuthorModel> GetAuthors(int page = Constants.Pages.InitialPage);
+            int page = Constants.Defaults.DefaultPage, bool getRemoved = false);
+        public List<AuthorModel> GetAuthors(int page = Constants.Defaults.DefaultPage);
         public AuthorModel GetAuthor(int id);
         public AuthorModel GetAuthor(string name);
     }

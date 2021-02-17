@@ -8,6 +8,7 @@ using EducationApp.Shared.Configs;
 using EducationApp.Shared.Constants;
 using EducationApp.Shared.Enums;
 using EducationApp.Shared.Exceptions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
@@ -138,6 +139,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.IncorrectInput);
             }
             var newUser = _mapper.Map<UserEntity>(user);
+
             var result = await _userManager.CreateAsync(newUser, user.Password);
             if (!result.Succeeded)
             {

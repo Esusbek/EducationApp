@@ -11,6 +11,7 @@
             public const string UserNotFound = "User doesnt exist";
             public const string AuthorNotFound = "Requested author(s) don't exist";
             public const string PrintingEditionNotFound = "Requested printing edition(s) don't exist";
+            public const string PrintingEditionIsNotInCart = "Printing edition was not added to cart";
             public const string InvalidToken = "Incorrect token";
             public const string Unathorized = "Unauthorized";
         }

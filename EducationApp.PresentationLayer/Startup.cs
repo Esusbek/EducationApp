@@ -8,6 +8,7 @@ using EducationApp.DataAccessLayer.AppContext;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.DataAccessLayer.Initialization;
 using EducationApp.Shared.Configs;
+using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 using System;
 using System.Text;
 
@@ -37,6 +39,8 @@ namespace EducationApp.PresentationLayer
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAuthorService, AuthorService>();
             services.AddTransient<IPrintingEditionService, PrintingEditionService>();
+            services.AddTransient<ICartService, CartService>();
+            services.AddTransient<IOrderService, BusinessLogicLayer.Services.OrderService>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
 
 
@@ -74,6 +78,7 @@ namespace EducationApp.PresentationLayer
                         ClockSkew = TimeSpan.FromMinutes(1)
                     };
                 });
+            
 
             services.Configure<SmtpConfig>(options => Configuration.GetSection("smtp").Bind(options));
             services.Configure<UrlConfig>(options => Configuration.GetSection("url").Bind(options));
@@ -84,9 +89,12 @@ namespace EducationApp.PresentationLayer
                 cfg.AddProfile(new MappingProfiles.UserMapProfile());
                 cfg.AddProfile(new MappingProfiles.AuthorMapProfile());
                 cfg.AddProfile(new MappingProfiles.PrintingEditionMapProfile());
+                cfg.AddProfile(new MappingProfiles.OrderMapProfile());
             });
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            StripeConfiguration.ApiKey=Configuration["stripe:secretkey"];
 
             services.AddControllers();
         }

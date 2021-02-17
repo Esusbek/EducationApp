@@ -13,7 +13,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Interfaces
         public IEnumerable<PrintingEditionEntity> Get(Expression<Func<PrintingEditionEntity, bool>> filter = null,
                 Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
                 bool getRemoved = false,
-                int page = Constants.Pages.InitialPage);
+                int page = Constants.Defaults.DefaultPage);
         public void AddAuthorToPrintingEdition(PrintingEditionEntity printingEdition, AuthorEntity author);
     }
 }

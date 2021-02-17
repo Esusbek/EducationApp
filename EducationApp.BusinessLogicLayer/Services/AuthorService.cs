@@ -67,7 +67,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             _authorRepository.Delete(dbAuthor);
         }
         public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter,
-            int page = Constants.Pages.InitialPage, bool getRemoved = false)
+            int page = Constants.Defaults.DefaultPage, bool getRemoved = false)
         {
             Expression<Func<AuthorEntity, bool>> filter = null;
             if (authorFilter != null)
@@ -86,7 +86,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             return authors;
         }
-        public List<AuthorModel> GetAuthors(int page = Constants.Pages.InitialPage)
+        public List<AuthorModel> GetAuthors(int page = Constants.Defaults.DefaultPage)
         {
             var dbAuthors = _authorRepository.Get(page: page);
             if (dbAuthors is null)

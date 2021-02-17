@@ -2,3 +2,199 @@ Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentC
 Request GET / => 404
 Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
 Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request GET /Account/GetUsers => 302
+
+Request GET /Account/Login => 405
+
+Request POST /Account/Login => 200
+An unhandled exception has occurred while executing the request.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Invalid password for user.User failed to provide the correct password.
+17.02.2021 14:37:48: 401 - Неверный логин или пароль
+
+Request POST /Account/Login => 401
+
+Request POST /Account/Login => 200
+
+Request GET /Account/GetUsers => 200
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request GET /Account/GetUsers => 200
+
+Request GET /Account/GetUsers => 200
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Success => 200
+
+Request POST /Order/Success => 200
+
+Request POST /Order/Success => 200
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Success => 200
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Success => 200
+
+Request POST /Order/Success => 200
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Success => 200
+An unhandled exception has occurred while executing the request.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Success => 200
+An unhandled exception has occurred while executing the request.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Success => 302
+
+Request GET /Account/AccessDenied => 404
+
+Request POST /Order/Success => 302
+
+Request GET /Account/AccessDenied => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Success => 200
+An unhandled exception has occurred while executing the request.
+Request POST /Order/Success => 200
+An unhandled exception has occurred while executing the request.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Success => 200
+
+17.02.2021 15:44:23: 401 - Неверный логин или пароль
+
+Request POST /Account/Login => 401
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Account/Register => 200
+An unhandled exception has occurred while executing the request.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Account/Register => 200
+An unhandled exception has occurred while executing the request.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Account/Register => 200
+An unhandled exception has occurred while executing the request.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Account/Register => 200
+
+Request GET /Account/ConfirmEmail => 302
+
+Request GET /Account => 405
+
+Request POST /Account/ConfirmEmail => 405
+
+Request POST /Account/ConfirmEmail => 405
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request GET /Account/ConfirmEmail => 302
+
+Request GET /Account => 405
+
+Request GET /Account/ConfirmEmail => 302
+
+Request GET /Account => 405
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+User validation failed: DuplicateUserName.
+17.02.2021 16:06:49: 409 - Error during user creation
+
+Request POST /Account/Register => 409
+User validation failed: DuplicateUserName.
+17.02.2021 16:07:21: 409 - Error during user creation
+
+Request POST /Account/Register => 409
+
+Request POST /Account/Register => 200
+An unhandled exception has occurred while executing the request.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Account/Register => 200
+An unhandled exception has occurred while executing the request.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Account/Register => 200
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Checkout => 200
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+Request GET / => 404
+
+Request POST /Order/Cancel => 200
+
+Request POST /Account/Login => 200
+
+Request POST /Order/Cancel => 200
+
+Request POST /Order/Success => 302
+
+Request GET /Account/AccessDenied => 404
+
+Request POST /Account/Login => 200
+
+Request POST /Order/Success => 200

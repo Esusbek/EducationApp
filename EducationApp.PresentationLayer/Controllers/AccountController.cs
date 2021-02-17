@@ -64,7 +64,7 @@ namespace EducationApp.PresentationLayer.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = "admin")]
         public IActionResult GetUsers()
         {
             return Ok(_userService.GetUsers());

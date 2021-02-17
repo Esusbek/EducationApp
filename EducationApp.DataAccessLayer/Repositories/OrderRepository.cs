@@ -13,7 +13,7 @@ namespace EducationApp.DataAccessLayer.Repositories
             : base(dbContext)
         {
         }
-        public IEnumerable<OrderEntity> GetAll(int page = Constants.Pages.InitialPage)
+        public IEnumerable<OrderEntity> GetAll(int page = Constants.Defaults.DefaultPage)
         {
             return base.GetAll()
                 .Skip((page - 1) * Constants.Pages.OrderPageSize)
@@ -22,7 +22,7 @@ namespace EducationApp.DataAccessLayer.Repositories
         public IEnumerable<OrderEntity> Get(Expression<Func<OrderEntity, bool>> filter = null,
             Func<IQueryable<OrderEntity>, IOrderedQueryable<OrderEntity>> orderBy = null,
             bool getRemoved = false,
-            int page = Constants.Pages.InitialPage)
+            int page = Constants.Defaults.DefaultPage)
         {
             return base.Get(filter, orderBy, getRemoved)
                 .Skip((page - 1) * Constants.Pages.OrderPageSize)
