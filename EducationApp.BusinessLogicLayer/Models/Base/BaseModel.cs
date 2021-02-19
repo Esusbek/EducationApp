@@ -5,7 +5,7 @@ namespace EducationApp.BusinessLogicLayer.Models.Base
     public class BaseModel
     {
         public int Id { get; set; }
-        public IEnumerable<string> Errors;
+        public List<string> Errors;
         public BaseModel()
         {
             Errors = new List<string>();

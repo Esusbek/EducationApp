@@ -13,20 +13,20 @@ namespace EducationApp.DataAccessLayer.Repositories
             : base(dbContext)
         {
         }
-        public IEnumerable<OrderEntity> GetAll(int page = Constants.Defaults.DefaultPage)
+        public IEnumerable<OrderEntity> GetAll(int page = Constants.DEFAULTPAGE)
         {
             return base.GetAll()
-                .Skip((page - 1) * Constants.Pages.OrderPageSize)
-                .Take(Constants.Pages.OrderPageSize).ToList();
+                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE)
+                .Take(Constants.ORDERPAGESIZE);
         }
         public IEnumerable<OrderEntity> Get(Expression<Func<OrderEntity, bool>> filter = null,
             Func<IQueryable<OrderEntity>, IOrderedQueryable<OrderEntity>> orderBy = null,
             bool getRemoved = false,
-            int page = Constants.Defaults.DefaultPage)
+            int page = Constants.DEFAULTPAGE)
         {
             return base.Get(filter, orderBy, getRemoved)
-                .Skip((page - 1) * Constants.Pages.OrderPageSize)
-                .Take(Constants.Pages.OrderPageSize).ToList();
+                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE)
+                .Take(Constants.ORDERPAGESIZE);
         }
     }
 }

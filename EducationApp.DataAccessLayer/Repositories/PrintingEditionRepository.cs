@@ -13,20 +13,26 @@ namespace EducationApp.DataAccessLayer.Repositories
             : base(dbContext)
         {
         }
-        public IEnumerable<PrintingEditionEntity> GetAll(int page = Constants.Defaults.DefaultPage)
+        public IEnumerable<PrintingEditionEntity> GetAll(int page = Constants.DEFAULTPAGE)
         {
             return base.GetAll()
-                .Skip((page - 1) * Constants.Pages.PrintingEditionPageSize)
-                .Take(Constants.Pages.PrintingEditionPageSize).ToList();
+                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.PRINTINGEDITIONPAGESIZE)
+                .Take(Constants.PRINTINGEDITIONPAGESIZE);
         }
         public IEnumerable<PrintingEditionEntity> Get(Expression<Func<PrintingEditionEntity, bool>> filter = null,
             Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
             bool getRemoved = false,
-            int page = Constants.Defaults.DefaultPage)
+            int page = Constants.DEFAULTPAGE)
         {
             return base.Get(filter, orderBy, getRemoved)
-                .Skip((page - 1) * Constants.Pages.PrintingEditionPageSize)
-                .Take(Constants.Pages.PrintingEditionPageSize).ToList();
+                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.PRINTINGEDITIONPAGESIZE)
+                .Take(Constants.PRINTINGEDITIONPAGESIZE);
+        }
+        public IEnumerable<PrintingEditionEntity> GetNoPagination(Expression<Func<PrintingEditionEntity, bool>> filter = null,
+            Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
+            bool getRemoved = false)
+        {
+            return base.Get(filter, orderBy, getRemoved);
         }
         public void AddAuthorToPrintingEdition(PrintingEditionEntity printingEdition, AuthorEntity author)
         {

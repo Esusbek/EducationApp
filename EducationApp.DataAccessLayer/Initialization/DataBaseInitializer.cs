@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EducationApp.DataAccessLayer.Initialization
 {
@@ -16,7 +17,6 @@ namespace EducationApp.DataAccessLayer.Initialization
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
                 var _appContext = serviceScope.ServiceProvider.GetService<AppContext.ApplicationContext>();
-                _appContext.Database.EnsureCreated();
 
                 var _userManager =
                          serviceScope.ServiceProvider.GetService<UserManager<UserEntity>>();
@@ -30,12 +30,12 @@ namespace EducationApp.DataAccessLayer.Initialization
                 _appContext.Set<PrintingEditionEntity>().Add(new PrintingEditionEntity
                 {
                     IsRemoved = false,
-                    Currency = Enums.Currency.UAH,
+                    Currency = Enums.CurrencyType.UAH,
                     Price = 200.05M,
                     Description = "Initial test PE",
                     Title = "Test PE",
-                    Type = Enums.PrintingEdition.Type.Book,
-                    Status = Enums.PrintingEdition.Status.InStock
+                    Type = Enums.PrintingEditionType.Book,
+                    Status = Enums.PrintingEditionStatusType.InStock
                 });
                 _appContext.Set<AuthorEntity>().Add(new AuthorEntity
                 {
@@ -68,11 +68,11 @@ namespace EducationApp.DataAccessLayer.Initialization
                 var adminUser = _userManager.FindByNameAsync("Admin").Result;
 
                 var userRole = _userManager.AddToRoleAsync(adminUser, "admin").Result;
-                var author = _appContext.Authors.SingleOrDefault(a => a.Name == "Vasily");
-                var book = author.PrintingEditions.SingleOrDefault(pe => pe.Title == "Test PE");
+                var author = _appContext.Authors.SingleOrDefault(author => author.Name == "Vasily");
+                var book = author.PrintingEditions.SingleOrDefault(edition => edition.Title == "Test PE");
                 if (book is null)
                 {
-                    author.PrintingEditions.Add(_appContext.PrintingEditions.Single(pe => pe.Title == "Test PE"));
+                    author.PrintingEditions.Add(_appContext.PrintingEditions.Single(edition => edition.Title == "Test PE"));
                 }
                 _appContext.SaveChanges();
             }

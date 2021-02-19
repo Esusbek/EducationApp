@@ -1,7 +1,11 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Authors;
 using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+using EducationApp.DataAccessLayer.Entities;
 using EducationApp.Shared.Constants;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace EducationApp.BusinessLogicLayer.Services.Interfaces
 {
@@ -12,9 +16,13 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public void AddAuthorToPrintingEdition(PrintingEditionModel printingEdition, AuthorModel author);
         public void DeletePrintingEdition(PrintingEditionModel printingEdition);
         public List<PrintingEditionModel> GetPrintingEditionsFiltered(PrintingEditionFilterModel filter = null,
-            int page = Constants.Defaults.DefaultPage, bool getRemoved = false);
-        public List<PrintingEditionModel> GetPrintingEditions(int page = Constants.Defaults.DefaultPage);
+            Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
+            int page = Constants.DEFAULTPAGE, bool getRemoved = false);
+        public List<PrintingEditionModel> GetPrintingEditions(int page = Constants.DEFAULTPAGE);
+        public List<PrintingEditionEntity> GetPrintingEditionsRange(Expression<Func<PrintingEditionEntity, bool>> filter = null,
+            Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
+            int page = Constants.DEFAULTPAGE, bool getRemoved = false);
         public PrintingEditionModel GetPrintingEdition(int id);
-        public PrintingEditionModel GetPrintingEdition(string title);
+        public PrintingEditionModel GetPrintingEditionByTitle(string title);
     }
 }

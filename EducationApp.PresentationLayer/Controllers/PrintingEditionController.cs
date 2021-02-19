@@ -1,5 +1,5 @@
-﻿using EducationApp.BusinessLogicLayer.Models.Authors;
-using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+﻿using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EducationApp.PresentationLayer.Controllers
 {
+    [ApiController]
     public class PrintingEditionController : Controller
     {
         private readonly IPrintingEditionService _printingEditionService;
@@ -14,46 +15,50 @@ namespace EducationApp.PresentationLayer.Controllers
         {
             _printingEditionService = printingEditionService;
         }
-        public IActionResult Get(int page = Constants.Defaults.DefaultPage)
+        [HttpGet("PrintingEdition/Get")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult Get([FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_printingEditionService.GetPrintingEditions(page));
         }
-        [HttpGet]
-        public IActionResult GetAll(int page = Constants.Defaults.DefaultPage)
+        [HttpGet("PrintingEdition/GetAll")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult GetAll([FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_printingEditionService.GetPrintingEditionsFiltered(page: page, getRemoved: true));
         }
-        [HttpGet]
-        public IActionResult GetFiltered(PrintingEditionFilterModel filter, int page = Constants.Defaults.DefaultPage)
+        [HttpGet("PrintingEdition/GetFiltered")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult GetFiltered([FromBody] PrintingEditionFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_printingEditionService.GetPrintingEditionsFiltered(filter, page: page));
         }
-        [HttpPost]
+        [HttpPost("PrintingEdition/Edit")]
         [Authorize(Roles = "admin")]
-        public IActionResult Edit(PrintingEditionModel printingEdition)
+        public IActionResult Edit([FromBody] PrintingEditionModel printingEdition)
         {
             _printingEditionService.UpdatePrintingEdition(printingEdition);
             return Ok();
         }
-        [HttpPost]
+        [HttpPost("PrintingEdition/Add")]
         [Authorize(Roles = "admin")]
-        public IActionResult Add(PrintingEditionModel printingEdition)
+        public IActionResult Add([FromBody] PrintingEditionModel printingEdition)
         {
             _printingEditionService.AddPrintingEdition(printingEdition);
             return Ok();
         }
-        [HttpPost]
+        [HttpPost("PrintingEdition/Delete")]
         [Authorize(Roles = "admin")]
-        public IActionResult Delete(PrintingEditionModel printingEdition)
+        public IActionResult Delete([FromBody] PrintingEditionModel printingEdition)
         {
             _printingEditionService.DeletePrintingEdition(printingEdition);
             return Ok();
         }
-        [HttpPost]
+        [HttpPost("PrintingEdition/AddAuthor")]
         [Authorize(Roles = "admin")]
-        public IActionResult AddAuthor(PrintingEditionModel printingEdition, AuthorModel author)
+        public IActionResult AddAuthor([FromBody] AuthorAndEditionRequestModel model)
         {
-            _printingEditionService.AddAuthorToPrintingEdition(printingEdition, author);
+            _printingEditionService.AddAuthorToPrintingEdition(model.PrintingEdition, model.Author);
             return Ok();
         }
     }

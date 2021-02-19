@@ -10,7 +10,7 @@ namespace EducationApp.DataAccessLayer.Entities.Base
 
         public BaseEntity()
         {
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTime.UtcNow;
         }
     }
 }

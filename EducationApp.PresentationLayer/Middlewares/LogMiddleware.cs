@@ -12,7 +12,7 @@ namespace EducationApp.PresentationLayer.Middlewares
         private readonly ILogger _logger;
         public LogMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
         {
-            this._next = next;
+            _next = next;
             _logger = loggerFactory.CreateLogger<LogMiddleware>();
         }
 
@@ -25,16 +25,11 @@ namespace EducationApp.PresentationLayer.Middlewares
             catch (CustomApiException exception)
             {
                 context.Response.StatusCode = (int)exception.Status;
-                _logger.LogInformation($"\n{DateTime.Now}: {(int)exception.Status} - {exception.Message}\n");
                 await context.Response.WriteAsync(exception.Message);
             }
-            finally
+            catch (Exception exception)
             {
-                _logger.LogInformation(
-                    "\nRequest {method} {url} => {statusCode}\n",
-                    context.Request?.Method,
-                    context.Request?.Path.Value,
-                    context.Response?.StatusCode);
+                _logger.LogInformation($"\n{DateTime.UtcNow}: {exception.Message}\n");
             }
         }
     }

@@ -9,13 +9,15 @@ namespace EducationApp.DataAccessLayer.Repositories.Base.BaseInterface
     {
         T GetById(int id);
         IEnumerable<T> GetAll();
-        IEnumerable<T> Get(Expression<Func<T, bool>> filter,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy,
+        IEnumerable<T> Get(Expression<Func<T, bool>> filter=null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy=null,
             bool getRemoved = false);
         void Insert(T entity);
-        void Delete(int id);
+        void InsertRange(IEnumerable<T> entity);
+        int InsertAndReturnId(T entity);
+        void Delete(string id);
         void Update(T entity);
         void Delete(T entityToDelete);
-
+        void SaveChanges();
     }
 }

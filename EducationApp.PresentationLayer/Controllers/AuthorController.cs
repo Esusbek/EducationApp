@@ -1,5 +1,5 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Authors;
-using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EducationApp.PresentationLayer.Controllers
 {
+    [ApiController]
     public class AuthorController : Controller
     {
         private readonly IAuthorService _authorService;
@@ -15,47 +16,50 @@ namespace EducationApp.PresentationLayer.Controllers
         {
             _authorService = authorService;
         }
-        [HttpGet]
-        public IActionResult Get(int page = 1)
+        [HttpGet("Author/Get")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult Get([FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_authorService.GetAuthors(page));
         }
-        [HttpGet]
-        public IActionResult GetAll(int page = Constants.Defaults.DefaultPage)
+        [HttpGet("Author/GetAll")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult GetAll([FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_authorService.GetAuthorsFiltered(page: page, getRemoved: true));
         }
-        [HttpGet]
-        public IActionResult GetFiltered(AuthorFilterModel filter, int page = Constants.Defaults.DefaultPage)
+        [HttpGet("Author/GetFiltered")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult GetFiltered([FromBody] AuthorFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
-            return Ok(_authorService.GetAuthorsFiltered(filter, page));
+            return Ok(_authorService.GetAuthorsFiltered(filter, page: page));
         }
-        [HttpPost]
+        [HttpPost("Author/Edit")]
         [Authorize(Roles = "admin")]
-        public IActionResult Edit(AuthorModel author)
+        public IActionResult Edit([FromBody] AuthorModel author)
         {
             _authorService.UpdateAuthor(author);
             return Ok();
         }
-        [HttpPost]
+        [HttpPost("Author/Add")]
         [Authorize(Roles = "admin")]
-        public IActionResult Add(AuthorModel author)
+        public IActionResult Add([FromBody] AuthorModel author)
         {
             _authorService.AddAuthor(author);
             return Ok();
         }
-        [HttpPost]
+        [HttpPost("Author/Delete")]
         [Authorize(Roles = "admin")]
-        public IActionResult Delete(AuthorModel author)
+        public IActionResult Delete([FromBody] AuthorModel author)
         {
             _authorService.DeleteAuthor(author);
             return Ok();
         }
-        [HttpPost]
+        [HttpPost("Author/AddPrintingEdition")]
         [Authorize(Roles = "admin")]
-        public IActionResult AddPrintingEdition(AuthorModel author, PrintingEditionModel printingEdition)
+        public IActionResult AddPrintingEdition([FromBody] AuthorAndEditionRequestModel model)
         {
-            _authorService.AddPrintingEditionToAuthor(author, printingEdition);
+            _authorService.AddPrintingEditionToAuthor(model.Author, model.PrintingEdition);
             return Ok();
         }
     }

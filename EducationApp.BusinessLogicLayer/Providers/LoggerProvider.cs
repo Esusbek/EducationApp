@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 
-namespace EducationApp.BusinessLogicLayer.Common
+namespace EducationApp.BusinessLogicLayer.Providers
 {
     public class LoggerProvider : ILoggerProvider
     {
@@ -32,7 +32,7 @@ namespace EducationApp.BusinessLogicLayer.Common
             public void Log<TState>(LogLevel logLevel, EventId eventId,
                     TState state, Exception exception, Func<TState, Exception, string> formatter)
             {
-                File.AppendAllText(Constants.LogDestinations.AppLogs, formatter(state, exception));
+                File.AppendAllText(Constants.APPLOGSDESTINATION, formatter(state, exception));
             }
         }
     }

@@ -21,8 +21,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
         }
         public virtual IEnumerable<T> GetAll()
         {
-            return _dbContext.Set<T>()
-                .AsEnumerable();
+            return _dbSet;
         }
         public virtual IEnumerable<T> Get(Expression<Func<T, bool>> filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
@@ -31,7 +30,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             IQueryable<T> query = _dbSet;
             if (!getRemoved)
             {
-                query = query.Where(e => e.IsRemoved == false);
+                query = query.Where(entity => entity.IsRemoved == false);
             }
             if (filter != null)
             {
@@ -49,19 +48,27 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             _dbSet.Add(entity);
             _dbContext.SaveChanges();
         }
+        public virtual int InsertAndReturnId(T entity)
+        {
+            _dbSet.Add(entity);
+            _dbContext.SaveChanges();
+            return entity.Id;
+        }
+        public virtual void InsertRange(IEnumerable<T> entity)
+        {
+            _dbSet.AddRange(entity);
+            _dbContext.SaveChanges();
+        }
         public virtual void Update(T entity)
         {
             _dbSet.Attach(entity);
             _dbContext.Entry(entity).State = EntityState.Modified;
             _dbContext.SaveChanges();
         }
-        public virtual void Delete(int id)
+        public virtual void Delete(string id)
         {
             var entity = _dbSet.Find(id);
-            if (entity != null)
-            {
-                Delete(entity);
-            }
+            Delete(entity);
         }
         public virtual void Delete(T entityToDelete)
         {
@@ -71,6 +78,10 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             }
             entityToDelete.IsRemoved = true;
             Update(entityToDelete);
+        }
+        public virtual void SaveChanges()
+        {
+            _dbContext.SaveChanges();
         }
     }
 }

@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using EducationApp.BusinessLogicLayer.Models.Orders;
 using EducationApp.DataAccessLayer.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EducationApp.BusinessLogicLayer.Common.MappingProfiles
 {

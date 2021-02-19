@@ -13,20 +13,20 @@ namespace EducationApp.DataAccessLayer.Repositories
             : base(dbContext)
         {
         }
-        public IEnumerable<AuthorEntity> GetAll(int page = Constants.Defaults.DefaultPage)
+        public IEnumerable<AuthorEntity> GetAll(int page = Constants.DEFAULTPAGE)
         {
             return base.GetAll()
-                .Skip((page - 1) * Constants.Pages.AuthorPageSize)
-                .Take(Constants.Pages.AuthorPageSize).ToList();
+                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.AUTHORPAGESIZE)
+                .Take(Constants.AUTHORPAGESIZE);
         }
         public IEnumerable<AuthorEntity> Get(Expression<Func<AuthorEntity, bool>> filter = null,
             Func<IQueryable<AuthorEntity>, IOrderedQueryable<AuthorEntity>> orderBy = null,
             bool getRemoved = false,
-            int page = Constants.Defaults.DefaultPage)
+            int page = Constants.DEFAULTPAGE)
         {
             return base.Get(filter, orderBy, getRemoved)
-                .Skip((page - 1) * Constants.Pages.AuthorPageSize)
-                .Take(Constants.Pages.AuthorPageSize).ToList();
+                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.AUTHORPAGESIZE)
+                .Take(Constants.AUTHORPAGESIZE);
         }
 
         public void AddPrintingEditionToAuthor(AuthorEntity author, PrintingEditionEntity printingEdition)

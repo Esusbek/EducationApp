@@ -68,5 +68,16 @@ C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\obj
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\EducationApp.Shared.dll
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\EducationApp.Shared.pdb
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Censored.dll
 C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Stripe.net.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Api.Forex.Sharp.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\protobuf-net.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\ProfanityFilter.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Humanizer.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Microsoft.OpenApi.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\obj\Debug\net5.0\EducationApp.PresentationLayer.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Castle.Core.dll
+C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Proxies.dll

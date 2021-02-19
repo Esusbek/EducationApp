@@ -1,21 +1,22 @@
 ﻿using EducationApp.Shared.Configs;
+using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace EducationApp.BusinessLogicLayer.Helpers
+namespace EducationApp.BusinessLogicLayer.Providers
 {
-    public class EmailProvider
+    public class EmailProvider : Interfaces.IEmailProvider
     {
         private readonly MailAddress _from;
         private readonly SmtpClient _smtp;
 
-        public EmailProvider(SmtpConfig config)
+        public EmailProvider(IOptions<SmtpConfig> config)
         {
-            _from = new MailAddress(config.Adress);
-            _smtp = new SmtpClient(config.Server, config.Port)
+            _from = new MailAddress(config.Value.Adress);
+            _smtp = new SmtpClient(config.Value.Server, config.Value.Port)
             {
-                Credentials = new NetworkCredential(config.Login, config.Password),
+                Credentials = new NetworkCredential(config.Value.Login, config.Value.Password),
                 EnableSsl = true
             };
         }

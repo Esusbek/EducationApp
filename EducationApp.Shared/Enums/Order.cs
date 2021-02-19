@@ -2,14 +2,11 @@
 {
     public partial class Enums
     {
-        public partial class Order
+        public enum OrderStatusType
         {
-            public enum Status
-            {
-                NotAssigned = 0,
-                Unpaid = 1,
-                Paid = 2
-            }
+            None = 0,
+            Unpaid = 1,
+            Paid = 2
         }
     }
 }

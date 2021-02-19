@@ -2,13 +2,11 @@
 {
     public partial class Enums
     {
-        public partial class User
+        public enum UserRolesType
         {
-            public enum Roles
-            {
-                Admin = 0,
-                Client = 1
-            }
+            None = 0,
+            Admin = 1,
+            Client = 2
         }
     }
 }

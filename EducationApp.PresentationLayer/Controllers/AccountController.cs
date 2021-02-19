@@ -1,11 +1,15 @@
-﻿using EducationApp.BusinessLogicLayer.Models.Users;
+﻿using EducationApp.BusinessLogicLayer.Models.Helpers;
+using EducationApp.BusinessLogicLayer.Models.Requests;
+using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
+using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace EducationApp.PresentationLayer.Controllers
 {
+    [ApiController]
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
@@ -15,55 +19,57 @@ namespace EducationApp.PresentationLayer.Controllers
             _userService = userService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Register(UserModel user)
+        [HttpPost("Account/Register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] UserModel user)
         {
             await _userService.RegisterAsync(user);
-            return Content("Для завершения регистрации проверьте электронную почту и перейдите по ссылке, указанной в письме");
+            return Content(Constants.DEFAULTEMAILCONFIRMATIONRESPONSE);
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Login(UserModel user, bool rememberMe)
+        [HttpPost("Account/Login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] LoginRequestModel model)
         {
-            var loginResult = await _userService.LoginAsync(user, rememberMe);
+            var loginResult = await _userService.LoginAsync(model.User, model.RememberMe);
             return Ok(loginResult);
 
         }
 
-        [HttpGet]
+        [HttpGet("Account/ConfirmEmail")]
         [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequestModel model)
         {
-            await _userService.ConfirmEmailAsync(userId, code);
+            await _userService.ConfirmEmailAsync(model.UserId, model.Code);
             return RedirectToAction("Login", "Account");
         }
 
-        [HttpPost]
-        [Authorize]
-        public IActionResult RefreshToken(string accessToken, string refreshToken)
+        [HttpPost("Account/RefreshToken")]
+        [Authorize(Roles = "admin,client")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenHelperModel model)
         {
-            var loginResult = _userService.RefreshToken(accessToken, refreshToken);
+            var loginResult = await _userService.RefreshTokenAsync(model.AccessToken, model.RefreshToken);
             return Ok(loginResult);
         }
 
-        [HttpGet]
+        [HttpGet("Account/ResetPassword")]
         [AllowAnonymous]
-        public async Task<IActionResult> ResetPassword(string userId, string code, string password)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestModel model)
         {
-            await _userService.ResetPasswordAsync(userId, code, password);
-            return RedirectToAction("Index", "Account");
+            await _userService.ResetPasswordAsync(model.UserId, model.Code, model.Password);
+            return RedirectToAction("Login", "Account");
         }
 
-        [HttpGet]
+        [HttpPost("Account/ForgotPassword")]
         [AllowAnonymous]
-        public async Task<IActionResult> ForgotPassword(string userName)
+        public async Task<IActionResult> ForgotPassword([FromBody] string userName)
         {
             await _userService.ForgotPasswordAsync(userName);
-            return RedirectToAction("Index", "Account");
+            return Content(Constants.DEFAULTPASSWORDRESETRESPONSE);
         }
 
-        [HttpGet]
+        [HttpGet("Account/GetUsers")]
         [Authorize(Roles = "admin")]
         public IActionResult GetUsers()
         {

@@ -18,25 +18,30 @@ namespace EducationApp.DataAccessLayer.AppContext
 
         public ApplicationContext()
         {
-            _logStream = new StreamWriter(Constants.LogDestinations.DBLogs, true);
+            _logStream = new StreamWriter(Constants.DBLOGSDESTINATION, true);
         }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
-            _logStream = new StreamWriter(Constants.LogDestinations.DBLogs, true);
+            _logStream = new StreamWriter(Constants.DBLOGSDESTINATION, true);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.LogTo(_logStream.WriteLine, Microsoft.Extensions.Logging.LogLevel.Warning);
+
+            optionsBuilder.UseLazyLoadingProxies()
+                .LogTo(_logStream.WriteLine, Microsoft.Extensions.Logging.LogLevel.Warning);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AuthorEntity>()
-                    .HasMany(c => c.PrintingEditions)
-                    .WithMany(s => s.Authors)
-                    .UsingEntity(j => j.ToTable("AuthorInPrintingEditions"));
 
+            modelBuilder.Entity<AuthorEntity>()
+                    .HasMany(edition => edition.PrintingEditions)
+                    .WithMany(author => author.Authors)
+                    .UsingEntity(join => join.ToTable(Constants.DEFAULTJOINTTABLENAME));
+            modelBuilder.Entity<PrintingEditionEntity>()
+                .Property(edition => edition.SubTitle)
+                .HasDefaultValue("empty");
             base.OnModelCreating(modelBuilder);
         }
         public override void Dispose()

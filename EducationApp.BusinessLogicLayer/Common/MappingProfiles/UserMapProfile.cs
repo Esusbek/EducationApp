@@ -11,7 +11,7 @@ namespace EducationApp.BusinessLogicLayer.Common.MappingProfiles
             public UserMapProfile()
             {
                 CreateMap<UserModel, UserEntity>().
-                    ForMember(dest => dest.Id, opt => opt.Ignore());
+                    ForMember(destination => destination.Id, option => option.Ignore());
                 CreateMap<UserEntity, UserModel>();
             }
         }

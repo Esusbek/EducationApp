@@ -1,26 +1,14 @@
-using AutoMapper;
-using EducationApp.BusinessLogicLayer.Common.MappingProfiles;
-using EducationApp.BusinessLogicLayer.Helpers;
-using EducationApp.BusinessLogicLayer.Helpers.Interfaces;
-using EducationApp.BusinessLogicLayer.Services;
-using EducationApp.BusinessLogicLayer.Services.Interfaces;
-using EducationApp.DataAccessLayer.AppContext;
-using EducationApp.DataAccessLayer.Entities;
+using EducationApp.BusinessLogicLayer;
+using EducationApp.DataAccessLayer;
 using EducationApp.DataAccessLayer.Initialization;
 using EducationApp.Shared.Configs;
-using EducationApp.Shared.Constants;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Stripe;
-using System;
-using System.Text;
 
 namespace EducationApp.PresentationLayer
 {
@@ -33,73 +21,37 @@ namespace EducationApp.PresentationLayer
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IAuthorService, AuthorService>();
-            services.AddTransient<IPrintingEditionService, PrintingEditionService>();
-            services.AddTransient<ICartService, CartService>();
-            services.AddTransient<IOrderService, BusinessLogicLayer.Services.OrderService>();
-            services.AddSingleton<IJwtProvider, JwtProvider>();
+            services.AddServices();
+            services.AddProviders();
+            services.AddMapper();
+            services.AddIdentity();
 
+            services.AddDBContext(Configuration.GetConnectionString("DefaultConnection"));
 
-            services.AddDbContext<ApplicationContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddRepositories();
 
-            services.AddIdentity<UserEntity, IdentityRole>(config =>
-                {
-                    config.SignIn.RequireConfirmedEmail = true;
-                    config.User.RequireUniqueEmail = true;
-                    config.Password.RequireDigit = true;
-                    config.Password.RequiredLength = 6;
-                    config.Password.RequireNonAlphanumeric = false;
-                    config.Password.RequireUppercase = true;
-                    config.Password.RequireLowercase = true;
-                })
-                .AddEntityFrameworkStores<ApplicationContext>()
-                .AddDefaultTokenProviders();
             var jwtConfig = Configuration.GetSection("jwt").Get<JwtConfig>();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("jwt").Key));
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(x =>
-                {
-                    x.RequireHttpsMetadata = true;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = jwtConfig.Issuer,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig.Key)),
-                        ValidAudience = jwtConfig.Audience,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.FromMinutes(1)
-                    };
-                });
-            
+            services.AddJwt(jwtConfig);
+
 
             services.Configure<SmtpConfig>(options => Configuration.GetSection("smtp").Bind(options));
             services.Configure<UrlConfig>(options => Configuration.GetSection("url").Bind(options));
             services.Configure<JwtConfig>(options => Configuration.GetSection("jwt").Bind(options));
+            services.Configure<CurrencyConvertConfig>(options => Configuration.GetSection("currencyconvert").Bind(options));
 
-            var mappingConfig = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new MappingProfiles.UserMapProfile());
-                cfg.AddProfile(new MappingProfiles.AuthorMapProfile());
-                cfg.AddProfile(new MappingProfiles.PrintingEditionMapProfile());
-                cfg.AddProfile(new MappingProfiles.OrderMapProfile());
-            });
-            var mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
-
-            StripeConfiguration.ApiKey=Configuration["stripe:secretkey"];
+            StripeConfiguration.ApiKey = Configuration["stripe:secretkey"];
 
             services.AddControllers();
+
+            services.AddSwaggerGen(options =>
+            {
+                options.CustomSchemaIds(type => type.ToString());
+            });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -112,6 +64,11 @@ namespace EducationApp.PresentationLayer
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint(Configuration.GetSection("swagger")["path"], Configuration.GetSection("swagger")["apiname"]);
+            });
 
             app.UseRouting();
 
@@ -123,7 +80,7 @@ namespace EducationApp.PresentationLayer
                 endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                    name: "default",
-                   pattern: "{controller=Action}/{action=Login}");
+                   pattern: "{controller=Account}/{action=Login}");
             });
         }
     }

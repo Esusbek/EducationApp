@@ -16,7 +16,7 @@ namespace EducationApp.PresentationLayer
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
-                    logging.AddProvider(new BusinessLogicLayer.Common.LoggerProvider());
+                    logging.AddProvider(new BusinessLogicLayer.Providers.LoggerProvider());
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

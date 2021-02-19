@@ -2,9 +2,9 @@
 {
     public partial class Enums
     {
-        public enum Currency
+        public enum CurrencyType
         {
-            NotAssigned = 0,
+            None = 0,
             USD = 1,
             EUR = 2,
             GBP = 3,

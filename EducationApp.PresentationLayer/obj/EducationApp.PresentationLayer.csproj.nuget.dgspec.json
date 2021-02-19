@@ -48,13 +48,17 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
+            "Api.Forex.Currency.Converter": {
+              "target": "Package",
+              "version": "[1.0.5, )"
+            },
             "AutoMapper": {
               "target": "Package",
               "version": "[10.1.1, )"
             },
-            "Censored": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[1.0.2, )"
+              "version": "[5.0.3, )"
             },
             "Microsoft.AspNetCore.Mvc.Core": {
               "target": "Package",
@@ -63,6 +67,10 @@
             "Microsoft.Extensions.Logging": {
               "target": "Package",
               "version": "[5.0.0, )"
+            },
+            "Profanity.Detector": {
+              "target": "Package",
+              "version": "[0.1.8, )"
             },
             "Stripe.net": {
               "target": "Package",
@@ -80,6 +88,9 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
@@ -138,21 +149,25 @@
             },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.2, )"
+              "version": "[5.0.3, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.2, )"
+              "version": "[5.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Proxies": {
+              "target": "Package",
+              "version": "[5.0.3, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[5.0.2, )"
+              "version": "[5.0.3, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[5.0.2, )"
+              "version": "[5.0.3, )"
             },
             "Microsoft.Extensions.Configuration.Json": {
               "target": "Package",
@@ -160,7 +175,7 @@
             },
             "Microsoft.Extensions.Identity.Core": {
               "target": "Package",
-              "version": "[5.0.2, )"
+              "version": "[5.0.3, )"
             }
           },
           "imports": [
@@ -230,9 +245,19 @@
               "target": "Package",
               "version": "[5.0.3, )"
             },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[5.0.3, )"
+            },
             "Stripe.net": {
               "target": "Package",
-              "version": "[39.35.0, )"
+              "version": "[39.37.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.0.7, )"
             }
           },
           "imports": [

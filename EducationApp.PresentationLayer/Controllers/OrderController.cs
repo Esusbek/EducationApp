@@ -1,17 +1,15 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Orders;
+using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.Shared.Constants;
-using EducationApp.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace EducationApp.PresentationLayer.Controllers
 {
+    [ApiController]
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;
@@ -20,42 +18,54 @@ namespace EducationApp.PresentationLayer.Controllers
         {
             _orderService = orderService;
         }
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public IActionResult GetAll(int page = Constants.Defaults.DefaultPage)
+        [HttpGet("Order/GetAll")]
+        [Authorize(Roles = "admin")]
+        public IActionResult GetAll([FromQuery] int page = Constants.DEFAULTPAGE)
         {
             var orders = _orderService.GetAllOrders(page);
             return Ok(orders);
         }
-        [HttpGet]
-        public IActionResult Get(UserModel user,int page = Constants.Defaults.DefaultPage)
+        [HttpGet("Order/Get")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult Get([FromBody] UserModel user, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
-            var orders = _orderService.GetUserOrders(user,page);
+            var orders = _orderService.GetUserOrders(user, page);
             return Ok(orders);
         }
-        [HttpGet]
-        public IActionResult ConfirmOrder(OrderModel order, UserModel user)
+        [HttpGet("Order/GetFiltered")]
+        [Authorize(Roles = "admin")]
+        public IActionResult GetFiltered([FromBody] OrderFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
-
-            _orderService.ConfirmOrder(order, user);
-            return Ok();
+            var orders = _orderService.GetOrdersFiltered(filter, page: page);
+            return Ok(orders);
         }
-        [HttpPost]
-        public IActionResult Checkout([FromBody]OrderModel order)
+
+        [HttpPost("Order/Checkout")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult Checkout([FromBody] CheckoutRequestModel model)
         {
-            var id = _orderService.CreateCheckoutSession(order);
+            var id = _orderService.CreateCheckoutSession(model.Order, model.User);
             return Json(new { id });
         }
-        [HttpPost]
-        public IActionResult Success()
+        [HttpPost("Order/Success")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult Success([FromBody] SuccessRequestModel model)
+        {
+            _orderService.PayOrder(model.Order, model.TransactionId);
+            return Ok();
+        }
+        [HttpPost("Order/Cancel")]
+        [Authorize(Roles = "admin,client")]
+        public IActionResult Cancel()
         {
             return Ok();
         }
-        [HttpPost]
-        public IActionResult Cancel()
+        [HttpPost("Order/ConvertCurrency")]
+        [Authorize(Roles = "admin,client")]
+        public async Task<IActionResult> ConvertCurrency([FromBody] CurrencyConvertRequestModel model)
         {
-            var user = HttpContext.User;
-            return Ok();
+            var result = await _orderService.ConvertCurrencyAsync(model.FromCurrency, model.ToCurrency, model.Amount);
+            return Ok(result);
         }
     }
 }

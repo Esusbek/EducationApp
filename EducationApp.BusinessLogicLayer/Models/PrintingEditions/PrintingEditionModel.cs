@@ -8,8 +8,8 @@ namespace EducationApp.BusinessLogicLayer.Models.PrintingEditions
         public string Description { get; set; }
         public decimal Price { get; set; }
 
-        public Enums.PrintingEdition.Status Status { get; set; }
-        public Enums.Currency Currency { get; set; }
-        public Enums.PrintingEdition.Type Type { get; set; }
+        public Enums.PrintingEditionStatusType Status { get; set; }
+        public Enums.CurrencyType Currency { get; set; }
+        public Enums.PrintingEditionType Type { get; set; }
     }
 }

@@ -1,41 +1,48 @@
-﻿using EducationApp.BusinessLogicLayer.Helpers.Interfaces;
-using EducationApp.BusinessLogicLayer.Models.Helpers;
+﻿using EducationApp.BusinessLogicLayer.Models.Helpers;
+using EducationApp.BusinessLogicLayer.Providers.Interfaces;
+using EducationApp.DataAccessLayer.Entities;
 using EducationApp.Shared.Configs;
 using EducationApp.Shared.Constants;
 using EducationApp.Shared.Exceptions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace EducationApp.BusinessLogicLayer.Helpers
+namespace EducationApp.BusinessLogicLayer.Providers
 {
     public class JwtProvider : IJwtProvider
     {
-        public IImmutableDictionary<string, RefreshToken> UsersRefreshTokensReadOnlyDictionary => _usersRefreshTokens.ToImmutableDictionary();
-        private readonly ConcurrentDictionary<string, RefreshToken> _usersRefreshTokens;
         private readonly JwtConfig _config;
         private readonly SymmetricSecurityKey _key;
-
-        public JwtProvider(IOptions<JwtConfig> config)
+        private readonly UserManager<UserEntity> _userManager;
+        public JwtProvider(IOptions<JwtConfig> config, UserManager<UserEntity> userManager)
         {
             _config = config.Value;
-            _usersRefreshTokens = new ConcurrentDictionary<string, RefreshToken>();
+            _userManager = userManager;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.Key));
         }
-
-        public JwtAuthResult GenerateToken(string userName, List<Claim> claims)
+        public async Task<TokenHelperModel> GenerateTokenAsync(string userName, string userId, IList<string> userRoles)
         {
-            var timeNow = DateTime.Now;
-            var shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Aud)?.Value);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, userId)
+            };
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Name, userName));
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+            var timeNow = DateTime.UtcNow;
+            var shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Aud)?.Value);
             var jwtToken = new JwtSecurityToken(
                 _config.Issuer,
                 shouldAddAudienceClaim ? _config.Audience : string.Empty,
@@ -44,57 +51,44 @@ namespace EducationApp.BusinessLogicLayer.Helpers
                 signingCredentials: new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature));
             var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
-            var refreshToken = new RefreshToken
-            {
-                UserName = userName,
-                TokenString = GenerateRefreshTokenString(),
-                ExpireAt = timeNow.AddMinutes(_config.RefreshLifetime)
-            };
-
-            _usersRefreshTokens.AddOrUpdate(refreshToken.TokenString, refreshToken, (s, t) => refreshToken);
-
-            return new JwtAuthResult
+            var refreshToken = GenerateRefreshTokenString();
+            var user = await _userManager.FindByNameAsync(userName);
+            user.RefreshToken = refreshToken;
+            await _userManager.UpdateAsync(user);
+            return new TokenHelperModel
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
         }
 
-        public void RemoveRefreshTokenByUserName(string userName)
+        public async Task RemoveRefreshTokenAsync(UserEntity user)
         {
-            var refreshTokens = _usersRefreshTokens.Where(x => x.Value.UserName == userName).ToList();
-            foreach (var refreshToken in refreshTokens)
-            {
-                _usersRefreshTokens.TryRemove(refreshToken.Key, out _);
-            }
+            user.RefreshToken = null;
+            await _userManager.UpdateAsync(user);
         }
 
-        public JwtAuthResult Refresh(string refreshToken, string accessToken)
+        public async Task<TokenHelperModel> RefreshAsync(string refreshToken, string accessToken)
         {
             var (principal, jwtToken) = DecodeJwtToken(accessToken);
             if (jwtToken is null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256Signature))
             {
-                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.InvalidToken);
+                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDTOKENERROR);
             }
-
-            var userName = principal.Identity.Name;
-            if (!_usersRefreshTokens.TryGetValue(refreshToken, out var existingRefreshToken))
+            var user = await _userManager.GetUserAsync(principal);
+            if (user.RefreshToken is null || !user.RefreshToken.Equals(refreshToken))
             {
-                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.InvalidToken);
+                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDTOKENERROR);
             }
-            if (existingRefreshToken.UserName != userName || existingRefreshToken.ExpireAt < DateTime.Now)
-            {
-                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.InvalidToken);
-            }
-
-            return GenerateToken(userName, principal.Claims.ToList());
+            var roles = await _userManager.GetRolesAsync(user);
+            return await GenerateTokenAsync(user.UserName, user.Id, roles);
         }
 
-        public (ClaimsPrincipal, JwtSecurityToken) DecodeJwtToken(string token)
+        private (ClaimsPrincipal, JwtSecurityToken) DecodeJwtToken(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
             {
-                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.Errors.InvalidToken);
+                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDTOKENERROR);
             }
             var principal = new JwtSecurityTokenHandler()
                 .ValidateToken(token,

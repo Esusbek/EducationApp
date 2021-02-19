@@ -1,74 +1,85 @@
 ﻿using AutoMapper;
 using EducationApp.BusinessLogicLayer.Models.Orders;
 using EducationApp.BusinessLogicLayer.Models.Users;
+using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
-using EducationApp.DataAccessLayer.AppContext;
 using EducationApp.DataAccessLayer.Entities;
-using EducationApp.DataAccessLayer.Repositories;
+using EducationApp.DataAccessLayer.Repositories.Interfaces;
+using EducationApp.Shared.Configs;
 using EducationApp.Shared.Constants;
 using EducationApp.Shared.Enums;
-using Stripe;
+using EducationApp.Shared.Exceptions;
+using Microsoft.Extensions.Options;
 using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace EducationApp.BusinessLogicLayer.Services
 {
-    public class OrderService: IOrderService
+    public class OrderService : IOrderService
     {
-        private readonly OrderRepository _orderRepository;
-        private readonly OrderItemRepository _itemRepository;
-        private readonly PaymentRepository _paymentRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderItemRepository _itemRepository;
+        private readonly IPaymentRepository _paymentRepository;
         private readonly IPrintingEditionService _printingEditionService;
+        private readonly ICurrencyConvertionProvider _currencyConverter;
         private readonly IMapper _mapper;
-        public OrderService(ApplicationContext context, IMapper mapper, IPrintingEditionService printingEditionService)
+        private readonly UrlConfig _urlConfig;
+        public OrderService(IMapper mapper, IPrintingEditionService printingEditionService,
+            IOptions<UrlConfig> urlConfig, ICurrencyConvertionProvider currencyConverter,
+            IOrderRepository orderRepository,IOrderItemRepository orderItemRepository, IPaymentRepository paymentRepository)
         {
-            _orderRepository = new OrderRepository(context);
-            _itemRepository = new OrderItemRepository(context);
-            _paymentRepository = new PaymentRepository(context);
+            _urlConfig = urlConfig.Value;
+            _orderRepository = orderRepository;
+            _itemRepository = orderItemRepository;
+            _paymentRepository = paymentRepository;
             _printingEditionService = printingEditionService;
+            _currencyConverter = currencyConverter;
             _mapper = mapper;
         }
-        
-        public void ConfirmOrder(OrderModel currentOrder, UserModel user)
-        {
-            currentOrder.Status = Enums.Order.Status.Unpaid;
-            currentOrder.Date = DateTime.Now;
-            currentOrder.UserId = user.Id.ToString();
-            var dbOrder = _mapper.Map<OrderEntity>(currentOrder);
-            _orderRepository.Insert(dbOrder);
-            dbOrder = _orderRepository.Get(o => o.Date == dbOrder.Date && o.UserId == dbOrder.UserId).FirstOrDefault();
-            foreach (var item in currentOrder.CurrentItems)
-            {
-                var dbItem = _mapper.Map<OrderItemEntity>(item);
-                dbItem.Order = dbOrder;
-                _itemRepository.Insert(dbItem);
-            }
-        }
+
 
         public void PayOrder(OrderModel order, string transactionId)
         {
-            var payment = new PaymentEntity
-            {
-                TransactionId = transactionId
-            };
-            _paymentRepository.Insert(payment);
-            var paymentId = _paymentRepository.Get(p => p.TransactionId == transactionId).FirstOrDefault().Id;
+            var dbPayment = _paymentRepository.Get(payment=>payment.Id==order.PaymentId).FirstOrDefault();
+            dbPayment.TransactionId = transactionId;
+            _paymentRepository.Update(dbPayment);
             var dbOrder = _orderRepository.GetById(order.Id);
-            dbOrder.PaymentId = paymentId;
-            dbOrder.Status = Enums.Order.Status.Paid;
+            dbOrder.Status = Enums.OrderStatusType.Paid;
             _orderRepository.Update(dbOrder);
         }
 
-        public string CreateCheckoutSession(OrderModel order)
+        public string CreateCheckoutSession(OrderModel order, UserModel user)
         {
+            order.Status = Enums.OrderStatusType.Unpaid;
+            order.Date = DateTime.UtcNow;
+            order.UserId = user.Id.ToString();
+            var dbOrder = _mapper.Map<OrderEntity>(order);
+            var payment = new PaymentEntity
+            {
+                TransactionId = default
+            };
+            var paymentId = _paymentRepository.InsertAndReturnId(payment);
+            dbOrder.PaymentId = paymentId;
+            var dbOrderId = _orderRepository.InsertAndReturnId(dbOrder);
             var items = new List<SessionLineItemOptions>();
+            var dbItems = new List<OrderItemEntity>();
+            var editionIds = new List<int>();
             foreach (var item in order.CurrentItems)
             {
-                var printingEdition = _printingEditionService.GetPrintingEdition(item.PrintingEditionId);
+                editionIds.Add(item.PrintingEditionId);
+            }
+            var printingEditions = _printingEditionService.GetPrintingEditionsRange(edition => editionIds.Contains(edition.Id));
+            foreach (var item in order.CurrentItems)
+            {
+                var dbItem = _mapper.Map<OrderItemEntity>(item);
+                dbItem.OrderId = dbOrderId;
+                dbItems.Add(dbItem);
+                var printingEdition = printingEditions.Where(edition => edition.Id == dbItem.PrintingEditionId).FirstOrDefault();
                 var lineItem = new SessionLineItemOptions
                 {
                     PriceData = new SessionLineItemPriceDataOptions
@@ -85,50 +96,105 @@ namespace EducationApp.BusinessLogicLayer.Services
                 };
                 items.Add(lineItem);
             }
+            _itemRepository.InsertRange(dbItems);
+            var successUrl = new UriBuilder
+            {
+                Scheme = _urlConfig.Scheme,
+                Port = _urlConfig.Port,
+                Host = _urlConfig.Host,
+                Path = Constants.STRIPESUCCESSPATH
+            }.ToString();
+            var cancelUrl = new UriBuilder
+            {
+                Scheme = _urlConfig.Scheme,
+                Port = _urlConfig.Port,
+                Host = _urlConfig.Host,
+                Path = Constants.STRIPECANCELPATH
+            }.ToString();
             var options = new SessionCreateOptions
             {
                 PaymentMethodTypes = new List<string>
                 {
-                    Constants.Defaults.DefaultPaymentMethod
+                    Constants.DEFAULTPAYMENTMETHOD
                 },
                 LineItems = items,
-                Mode = Constants.Defaults.DefaultPaymentMode,
-                SuccessUrl = Constants.Urls.StripeSuccessUrl,
-                CancelUrl = Constants.Urls.StripeCancelUrl
+                Mode = Constants.DEFAULTPAYMENTMODE,
+                SuccessUrl = successUrl,
+                CancelUrl = cancelUrl
             };
             var service = new SessionService();
             Session session = service.Create(options);
             return session.Id;
         }
 
-        public List<OrderModel> GetAllOrders(int page=Constants.Defaults.DefaultPage)
+        public List<OrderModel> GetAllOrders(int page = Constants.DEFAULTPAGE)
         {
             var dbOrders = _orderRepository.GetAll(page).ToList();
             var orders = new List<OrderModel>();
+            var orderIds = new List<int>();
+            foreach (var order in dbOrders)
+            {
+                orderIds.Add(order.Id);
+            }
+            var allItems = _itemRepository.Get(item => orderIds.Contains(item.OrderId)).ToList();
             foreach (var order in dbOrders)
             {
                 var mappedOrder = _mapper.Map<OrderModel>(order);
-                var currentItems = _itemRepository.Get(oi => oi.OrderId == order.Id).ToList();
+                var currentItems = allItems.Where(item=>item.OrderId==order.Id).ToList();
                 var mappedItems = MapItems(currentItems);
                 mappedOrder.CurrentItems = mappedItems;
                 orders.Add(mappedOrder);
             }
             return orders;
         }
-        public List<OrderModel> GetUserOrders(UserModel user, int page = Constants.Defaults.DefaultPage)
+        public List<OrderModel> GetUserOrders(UserModel user, int page = Constants.DEFAULTPAGE)
         {
-            var dbOrders = _orderRepository.Get(o => o.UserId == user.Id.ToString(), page: page).ToList();
+            var dbOrders = _orderRepository.Get(order => order.UserId == user.Id.ToString(), page: page).ToList();
+            var orders = new List<OrderModel>();
+            var orderIds = new List<int>();
+            foreach (var order in dbOrders)
+            {
+                orderIds.Add(order.Id);
+            }
+            var allItems = _itemRepository.Get(item => orderIds.Contains(item.OrderId)).ToList();
+            foreach (var order in dbOrders)
+            {
+                var mappedOrder = _mapper.Map<OrderModel>(order);
+                var currentItems = allItems.Where(item => item.OrderId == order.Id).ToList();
+                var mappedItems = MapItems(currentItems);
+                mappedOrder.CurrentItems = mappedItems;
+                orders.Add(mappedOrder);
+            }
+            return orders;
+        }
+
+        public List<OrderModel> GetOrdersFiltered(OrderFilterModel orderFilter = null,
+            Func<IQueryable<OrderEntity>, IOrderedQueryable<OrderEntity>> orderBy = null,
+            int page = Constants.DEFAULTPAGE, bool getRemoved = false)
+        {
+            Expression<Func<OrderEntity, bool>> filter = null;
+            if (orderFilter is not null)
+            {
+                filter = order => (string.IsNullOrWhiteSpace(orderFilter.Description) || order.Description.Contains(orderFilter.Description)) &&
+                (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId.Contains(orderFilter.UserId)) &&
+                (orderFilter.DateStart == default || DateTime.Compare(order.Date, orderFilter.DateStart) > 0) &&
+                (orderFilter.DateEnd == default || DateTime.Compare(order.Date, orderFilter.DateEnd) < 0) &&
+                (orderFilter.Status == default || order.Status == orderFilter.Status); 
+            }
+            var dbOrders = _orderRepository.Get(filter, orderBy, getRemoved, page);
             var orders = new List<OrderModel>();
             foreach (var order in dbOrders)
             {
-                var mappedOrder = _mapper.Map<OrderModel>(order);
-                var currentItems = _itemRepository.Get(oi => oi.OrderId == order.Id).ToList();
-                var mappedItems = MapItems(currentItems);
-                mappedOrder.CurrentItems = mappedItems;
-                orders.Add(mappedOrder);
+                orders.Add(_mapper.Map<OrderModel>(order));
             }
             return orders;
         }
+
+        public async Task<decimal> ConvertCurrencyAsync(string fromCurrency, string toCurrency, decimal amount)
+        {
+            return await _currencyConverter.ConvertAsync(fromCurrency, toCurrency, amount);
+        }
+
         private List<OrderItemModel> MapItems(List<OrderItemEntity> items)
         {
             var result = new List<OrderItemModel>();
