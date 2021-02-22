@@ -20,6 +20,7 @@ namespace EducationApp.PresentationLayer
         }
 
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "AllowSpecificOrigins";
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -43,6 +44,18 @@ namespace EducationApp.PresentationLayer
 
             StripeConfiguration.ApiKey = Configuration["stripe:secretkey"];
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:53135",
+                                        "http://localhost:4200")
+                                        .AllowAnyHeader()
+                                        .AllowAnyMethod();
+                });
+            });
+
             services.AddControllers();
 
             services.AddSwaggerGen(options =>
@@ -59,7 +72,7 @@ namespace EducationApp.PresentationLayer
                 app.UseDeveloperExceptionPage();
                 DataBaseInitializer.Seed(app);
             }
-
+           
             app.UseMiddleware<Middlewares.LogMiddleware>();
 
             app.UseHttpsRedirection();
@@ -71,6 +84,7 @@ namespace EducationApp.PresentationLayer
             });
 
             app.UseRouting();
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthentication();
             app.UseAuthorization();

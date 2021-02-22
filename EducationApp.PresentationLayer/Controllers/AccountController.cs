@@ -4,6 +4,7 @@ using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
