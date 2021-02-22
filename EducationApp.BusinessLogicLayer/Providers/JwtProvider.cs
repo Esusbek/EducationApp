@@ -100,7 +100,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
                         IssuerSigningKey = _key,
                         ValidAudience = _config.Audience,
                         ValidateAudience = true,
-                        ValidateLifetime = true,
+                        ValidateLifetime = false,
                         ClockSkew = TimeSpan.FromMinutes(_config.ClockSkew)
                     },
                     out var validatedToken);
