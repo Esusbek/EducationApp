@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import {LoginCredentials, LoginResult} from './account.models';
+import {LoginCredentials, LoginResult} from '../models/account.models';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
+import {JwtHelperService} from '@auth0/angular-jwt';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -31,12 +32,15 @@ export class AccountService {
         'Some error happened; please try again later.');
 }
 
-  constructor(private http: HttpClient) { }
-  login(credentials: LoginCredentials, rememberMe: boolean): Observable<LoginResult> {
-    console.log('service', {user: credentials, rememberMe});
+  constructor(private http: HttpClient, public jwtHelper: JwtHelperService) { }
+  public login(credentials: LoginCredentials, rememberMe: boolean): Observable<LoginResult> {
     return this.http.post<LoginResult>(this.LoginURL, {user: credentials, rememberMe}, httpOptions)
                     .pipe(
                         catchError(error => this.handleError(error))
                     )
+  }
+  public isAuthenticated(): boolean {
+    const token = localStorage.getItem('accessToken');
+    return !this.jwtHelper.isTokenExpired(token);
   }
 }
