@@ -1,7 +1,19 @@
-<div fxLayout="row" fxLayoutAlign="space-between center">
-    <div>Book Publishing Company</div>
-    <div fxLayout="row" fxLayoutGap="20px">
-      <a routerLink="/login">Login</a>
-      <a routerLink="/register">Registration</a>
-    </div>
+<div class="header">
+  <div class="image"><img src="../../../assets/img/book-icon.png" alt="icon" /></div>
+  <div class="title"><a [routerLink]="['/']" routerLinkActive="router-link-active">Book Publishing Company</a></div>
+  <div class="filler"></div>
+  <div class="links" *ngIf="!isLoggedIn()">
+    <a routerLink="/login">Login</a>
   </div>
+  <div class="menu" *ngIf="isLoggedIn()">
+    <div class="header-parent"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
+    <div class="content">
+      <ul>
+        <a [routerLink]="['/']" routerLinkActive="router-link-active"><li>My profile</li></a>
+        <a [routerLink]="['/']" routerLinkActive="router-link-active"><li>My orders</li></a>
+        <a [routerLink]="['/']" routerLinkActive="router-link-active"><li>Log out</li></a>
+      </ul>
+    </div>
+    
+  </div>
+</div>

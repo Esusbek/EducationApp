@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="image"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
+    <div class="signin-header">
+        <span>Sign-In</span>
+    </div>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="credentials" formGroupName="user">
+            <label for="username">Login:</label>
+            <input id="username" type="text" formControlName="userName">
+            <label for="password">Password:</label>
+            <a [routerLink]="['/forgotpassword']" routerLinkActive="router-link-active">Forgot password?</a>
+            <input id="password" type="password" formControlName="password">
+        </div>
+        <div class="signin">
+            <input id="rememberMe" type="checkbox" formControlName="rememberMe">
+            <label for="rememberMe">RememberMe:</label>
+            <button type="submit" [disabled]="!loginForm.valid">Login</button>
+        </div>
+    </form>
+    <div class="signup">
+        <p>New to Book Publishing Company?</p>
+        <a [routerLink]="['/register']" routerLinkActive="router-link-active" class="btn">Sign up</a>
+    </div>
+</div>

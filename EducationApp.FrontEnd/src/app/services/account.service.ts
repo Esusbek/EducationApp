@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import {LoginCredentials, LoginResult} from '../models/account.models';
+import {LoginCredentials, LoginResult, RegisterModel, EmailActivationModel} from '../models/account.models';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
@@ -18,7 +18,11 @@ const httpOptions = {
 })
 export class AccountService {
 
-  private LoginURL: string = 'https://localhost:44319/Account/Login';
+  private apiURL: string = 'https://localhost:44319/Account/';
+  private LoginURL: string = 'Login';
+  private RegisterURL: string = 'Register';
+  private ActivationURL: string = 'ConfirmEmail'
+  private ForgotPasswordURL: string = 'ForgotPassword'
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
@@ -33,8 +37,15 @@ export class AccountService {
 }
 
   constructor(private http: HttpClient, public jwtHelper: JwtHelperService) { }
-  public login(credentials: LoginCredentials, rememberMe: boolean): Observable<LoginResult> {
-    return this.http.post<LoginResult>(this.LoginURL, {user: credentials, rememberMe}, httpOptions)
+  public login(user: LoginCredentials, rememberMe: boolean): Observable<LoginResult> {
+    return this.http.post<LoginResult>(`${this.apiURL}${this.LoginURL}`, {user, rememberMe}, httpOptions)
+                    .pipe(
+                        catchError(error => this.handleError(error))
+                    )
+  }
+  public register(user: RegisterModel): Observable<string> {
+    //debugger;
+    return this.http.post<string>(`${this.apiURL}${this.RegisterURL}`, user, httpOptions)
                     .pipe(
                         catchError(error => this.handleError(error))
                     )
@@ -42,5 +53,19 @@ export class AccountService {
   public isAuthenticated(): boolean {
     const token = localStorage.getItem('accessToken');
     return !this.jwtHelper.isTokenExpired(token);
+  }
+  public activateEmail(activationModel: EmailActivationModel): Observable<string>{
+    //debugger;
+    return this.http.post<string>(`${this.apiURL}${this.ActivationURL}`, activationModel, httpOptions)
+                    .pipe(
+                        catchError(error => this.handleError(error))
+                    )
+  }
+  public forgotPassword(username: string): Observable<string>{
+    //debugger;
+    return this.http.post<string>(`${this.apiURL}${this.ForgotPasswordURL}`, {username}, httpOptions)
+                    .pipe(
+                        catchError(error => this.handleError(error))
+                    )
   }
 }

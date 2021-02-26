@@ -13,18 +13,23 @@ import {JwtModule} from '@auth0/angular-jwt';
 
 import {AppRoutingModule} from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginModule } from './components/login.component/login.module';
+import { LoginModule } from './components/login/login.module';
 import { AccountReducer } from './store/reducers';
 import { AccountEffects } from './store/effects';
 import { LayoutModule} from './layout/layout.module';
-import {RegisterModule} from './components/register.component/register.module';
+import {RegisterModule} from './components/register/register.module';
+import {EmailconfirmModule} from './components/emailconfirm/emailconfirm.module';
+import {EmailactivatedModule} from './components/emailactivated/emailactivated.module';
+import {ForgotpasswordModule} from './components/forgotpassword/forgotpassword.module';
 import {AuthGuard} from './guards/auth-guard.guard';
 import { environment } from '../environments/environment';
+import { ResetpasswordComponent } from './components/resetpassword/resetpassword.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ResetpasswordComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,7 +55,10 @@ import { environment } from '../environments/environment';
     FlexLayoutModule,
     LayoutModule,
     LoginModule, 
-    RegisterModule
+    RegisterModule,
+    EmailconfirmModule,
+    EmailactivatedModule,
+    ForgotpasswordModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {createAction, props} from '@ngrx/store';
-import {LoginCredentials, LoginResult} from '../../models/account.models';
+import {LoginCredentials, LoginResult, RegisterModel, EmailActivationModel, ResetPasswordModel} from '../../models/account.models';
 
 export const login = createAction(
     '[Login Page] login',
@@ -13,4 +13,27 @@ export const loginSuccess = createAction(
 export const loginFailed = createAction(
     '[Login Page] loginFailure',
     props<{error: HttpErrorResponse}>()
+);
+export const register= createAction(
+    '[Register Page] register',
+    props<{user: RegisterModel}>()
+);
+export const registerFailed = createAction(
+    '[Register Page] registerFailure',
+    props<{error: HttpErrorResponse}>()
+);
+export const registerSuccess = createAction(
+    '[Register Page] registerSuccess'
+);
+export const activateEmail = createAction(
+    '[Activation Page] Email activation',
+    props<{payload: EmailActivationModel}>()
+);
+export const forgotPassword = createAction(
+    '[Password Reset Page] Reset Password',
+    props<{payload: string}>()
+);
+export const resetPassword = createAction(
+    '[Password Reset Page] Reset Password',
+    props<{payload: ResetPasswordModel}>()
 );

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RegisterComponent } from './register.component';
 import {RegisterRoutingModule} from './register-routing.module';
 import { AuthGuard } from 'src/app/guards/auth-guard.guard';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -10,7 +11,8 @@ import { AuthGuard } from 'src/app/guards/auth-guard.guard';
   declarations: [RegisterComponent],
   imports: [
     CommonModule,
-    RegisterRoutingModule
+    RegisterRoutingModule,
+    ReactiveFormsModule
   ],
   providers: [AuthGuard]
 })

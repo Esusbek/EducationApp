@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="image"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
+    <div class="signup-header">
+        <span>Create account</span>
+    </div>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <label for="username">Your Username:</label>
+        <input id="username" type="text" placeholder="Username" formControlName="userName">
+        <label for="firstname">Your First Name:</label>
+        <input id="firstname" type="text" placeholder="FirstName" formControlName="firstName">
+        <label for="lastname">Your Last Name:</label>
+        <input id="lastname" type="text" placeholder="LastName" formControlName="lastName">
+        <label for="email">Your Email:</label>
+        <input id="email" type="email" placeholder="Email" formControlName="email">
+        <label for="password">Password:</label>
+        <input id="password" type="password" placeholder="Password" formControlName="password">
+        <label for="passwordconfirm">Repeat password:</label>
+        <input id="passwordconfirm" type="password" placeholder="Repeat password" formControlName="passwordConfirm">
+        <div class="button">
+            <button type="submit" [disabled]="!registerForm.valid">Sign Up</button>
+        </div>
+    </form>
+    <div class="redirect">
+        <p>Already have an account? </p>
+            <span>Click here to </span><a [routerLink]="['/login']" routerLinkActive="router-link-active">Log in</a>  
+    </div>
+</div>

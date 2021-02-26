@@ -10,9 +10,19 @@ export class LoginCredentials {
 
 export class RegisterModel {
     userName: string;
-    firstname: string;
-    lastname: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
     passwordConfirm: string;
+}
+
+export class EmailActivationModel {
+    code: string;
+    userId: string;
+}
+export class ResetPasswordModel {
+    code: string;
+    userId: string;
+    password: string;
 }
