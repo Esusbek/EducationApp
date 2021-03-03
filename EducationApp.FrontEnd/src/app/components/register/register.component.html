@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" *ngIf="!isRegistered$">
     <div class="image"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
     <div class="signup-header">
         <span>Create account</span>
@@ -15,7 +15,7 @@
         <label for="password">Password:</label>
         <input id="password" type="password" placeholder="Password" formControlName="password">
         <label for="passwordconfirm">Repeat password:</label>
-        <input id="passwordconfirm" type="password" placeholder="Repeat password" formControlName="passwordConfirm">
+        <input id="passwordconfirm" type="password" placeholder="Repeat password" formControlName="confirmPassword">
         <div class="button">
             <button type="submit" [disabled]="!registerForm.valid">Sign Up</button>
         </div>
@@ -24,4 +24,11 @@
         <p>Already have an account? </p>
             <span>Click here to </span><a [routerLink]="['/login']" routerLinkActive="router-link-active">Log in</a>  
     </div>
+</div>
+<div class="container-finished" *ngIf="isRegistered$">
+    <h2>Confirm your email address</h2>
+    <p>We have sent an email with a confirmation link to your email address. In order to complete the sign-up process,
+        please click the confirmation link.</p>
+    <p>If you did not receive a confirmation email, please check your spam folder. Also, please verify that you entered
+        a valid email address in our sign-up form</p>
 </div>

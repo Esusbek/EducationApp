@@ -78,30 +78,45 @@ namespace EducationApp.BusinessLogicLayer.Services
             return await _userManager.IsInRoleAsync(user, role);
         }
 
-        public async void BanAsync(UserModel user, int duration)
+        public async Task BanAsync(UserModel user, int duration)
         {
             var dbUser = _mapper.Map<UserEntity>(user);
-            dbUser.Id = user.Id.ToString();
+            dbUser.Id = user.Id;
             await _userManager.SetLockoutEnabledAsync(dbUser, true);
             await _userManager.SetLockoutEndDateAsync(dbUser, DateTime.Today.AddDays(duration));
         }
-
-        public async Task<UserEntity> GetUserByIdAsync(string id)
+        public async Task UnbanAsync(UserModel user)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user is null)
+            var dbUser = _mapper.Map<UserEntity>(user);
+            dbUser.Id = user.Id;
+            await _userManager.SetLockoutEnabledAsync(dbUser, false);
+            await _userManager.SetLockoutEndDateAsync(dbUser, DateTime.MinValue);
+        }
+        public async Task ChangePasswordAsync(UserModel user, string currentPassword, string newPassword)
+        {
+            var dbUser = _mapper.Map<UserEntity>(user);
+            dbUser.Id = user.Id;
+            await _userManager.ChangePasswordAsync(dbUser, currentPassword, newPassword);
+        }
+
+        public async Task<UserModel> GetUserByIdAsync(string id)
+        {
+            var dbUser = await _userManager.FindByIdAsync(id);
+            if (dbUser is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
             }
+            var user = _mapper.Map<UserModel>(dbUser);
             return user;
         }
-        public async Task<UserEntity> GetUserByUsernameAsync(string userName)
+        public async Task<UserModel> GetUserByUsernameAsync(string userName)
         {
-            var user = await _userManager.FindByNameAsync(userName);
-            if (user is null)
+            var dbUser = await _userManager.FindByNameAsync(userName);
+            if (dbUser is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
             }
+            var user = _mapper.Map<UserModel>(dbUser);
             return user;
         }
 
@@ -120,7 +135,16 @@ namespace EducationApp.BusinessLogicLayer.Services
         {
             _validator.Validate(user);
             var newUser = _mapper.Map<UserEntity>(user);
-
+            var dbUser = await _userManager.FindByNameAsync(user.UserName);
+            if(dbUser is not null)
+            {
+                throw new CustomApiException(HttpStatusCode.Conflict, Constants.USERNAMETAKENERROR);
+            }
+            dbUser = await _userManager.FindByEmailAsync(user.Email);
+            if (dbUser is not null)
+            {
+                throw new CustomApiException(HttpStatusCode.Conflict, Constants.EMAILTAKENERROR);
+            }
             var result = await _userManager.CreateAsync(newUser, user.Password);
             if (!result.Succeeded)
             {
@@ -153,7 +177,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         public async Task UpdateAsync(UserModel user)
         {
             var dbUser = _mapper.Map<UserEntity>(user);
-            dbUser.Id = user.Id.ToString();
+            dbUser.Id = user.Id;
             await _userManager.UpdateAsync(dbUser);
         }
 

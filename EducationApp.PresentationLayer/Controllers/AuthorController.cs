@@ -2,6 +2,7 @@
 using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.Shared.Constants;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,46 +18,46 @@ namespace EducationApp.PresentationLayer.Controllers
             _authorService = authorService;
         }
         [HttpGet("Author/Get")]
-        [Authorize(Roles = "admin,client")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public IActionResult Get([FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_authorService.GetAuthors(page));
         }
         [HttpGet("Author/GetAll")]
-        [Authorize(Roles = "admin,client")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public IActionResult GetAll([FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_authorService.GetAuthorsFiltered(page: page, getRemoved: true));
         }
         [HttpGet("Author/GetFiltered")]
-        [Authorize(Roles = "admin,client")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public IActionResult GetFiltered([FromBody] AuthorFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_authorService.GetAuthorsFiltered(filter, page: page));
         }
         [HttpPost("Author/Edit")]
-        [Authorize(Roles = "admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         public IActionResult Edit([FromBody] AuthorModel author)
         {
             _authorService.UpdateAuthor(author);
             return Ok();
         }
         [HttpPost("Author/Add")]
-        [Authorize(Roles = "admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         public IActionResult Add([FromBody] AuthorModel author)
         {
             _authorService.AddAuthor(author);
             return Ok();
         }
         [HttpPost("Author/Delete")]
-        [Authorize(Roles = "admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         public IActionResult Delete([FromBody] AuthorModel author)
         {
             _authorService.DeleteAuthor(author);
             return Ok();
         }
         [HttpPost("Author/AddPrintingEdition")]
-        [Authorize(Roles = "admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         public IActionResult AddPrintingEdition([FromBody] AuthorAndEditionRequestModel model)
         {
             _authorService.AddPrintingEditionToAuthor(model.Author, model.PrintingEdition);

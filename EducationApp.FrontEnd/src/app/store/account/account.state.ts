@@ -1,9 +1,7 @@
-export interface AuthState {
-    accessToken: string;
-    refreshToken: string;
+export interface AccountState {
+    isRegistered: boolean;
 }
 
-export const initialState: AuthState = {
-    accessToken: '',
-    refreshToken: ''
+export const initialState: AccountState = {
+    isRegistered: false
 }

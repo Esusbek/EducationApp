@@ -18,29 +18,30 @@ import { AccountReducer } from './store/reducers';
 import { AccountEffects } from './store/effects';
 import { LayoutModule} from './layout/layout.module';
 import {RegisterModule} from './components/register/register.module';
-import {EmailconfirmModule} from './components/emailconfirm/emailconfirm.module';
 import {EmailactivatedModule} from './components/emailactivated/emailactivated.module';
-import {ForgotpasswordModule} from './components/forgotpassword/forgotpassword.module';
+import { ResetPasswordModule} from './components/resetpassword/resetpassword.module';
+import { ProfileModule } from './components/profile/profile.module';
 import {AuthGuard} from './guards/auth-guard.guard';
 import { environment } from '../environments/environment';
-import { ResetpasswordComponent } from './components/resetpassword/resetpassword.component';
+import { ProfileEffects } from './store/profile/profile.effects';
+import { httpInterceptorProviders } from './interceptors/interceptors';
+import { ProfileReducer } from './store/profile/profile.reducer';
 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    ResetpasswordComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
-    StoreModule.forRoot({ tokens: AccountReducer }),
+    StoreModule.forRoot({ Account: AccountReducer, Profile: ProfileReducer}),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
     }),
-    EffectsModule.forRoot([AccountEffects]),
+    EffectsModule.forRoot([AccountEffects, ProfileEffects]),
     JwtModule.forRoot({
       config: {
         authScheme: 'Bearer',
@@ -56,11 +57,13 @@ import { ResetpasswordComponent } from './components/resetpassword/resetpassword
     LayoutModule,
     LoginModule, 
     RegisterModule,
-    EmailconfirmModule,
     EmailactivatedModule,
-    ForgotpasswordModule
+    ResetPasswordModule, 
+    ProfileModule
   ],
-  providers: [],
+  providers: [
+    httpInterceptorProviders
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

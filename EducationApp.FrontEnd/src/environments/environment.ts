@@ -3,7 +3,18 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiURL: 'https://localhost:44319/',
+  LoginURL: 'Account/Login',
+  RegisterURL: 'Account/Register',
+  ActivationURL: 'Account/ConfirmEmail',
+  ForgotPasswordURL: 'Account/ForgotPassword',
+  ResetPasswordURL: 'Account/ResetPassword',
+  getUserURL: 'Account/GetUserInfo',
+  changePasswordURL: 'Account/ChangePassword',
+  updateUserURL: 'Account/UpdateUser',
+  refreshTokenURL: 'Account/RefreshToken',
+  logoutURL: 'Account/Logout'
 };
 
 /*

@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Stripe;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace EducationApp.PresentationLayer
 {
@@ -56,6 +58,20 @@ namespace EducationApp.PresentationLayer
                 });
             });
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Events.OnRedirectToAccessDenied =
+                    options.Events.OnRedirectToLogin = context =>
+                    {
+                        if (context.Request.Method != "GET")
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            return Task.FromResult<object>(null);
+                        }
+                        context.Response.Redirect(context.RedirectUri);
+                        return Task.FromResult<object>(null);
+                    };
+            });
             services.AddControllers();
 
             services.AddSwaggerGen(options =>

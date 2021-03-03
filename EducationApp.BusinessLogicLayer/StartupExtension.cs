@@ -60,8 +60,7 @@ namespace EducationApp.BusinessLogicLayer
                 config.Password.RequireUppercase = true;
                 config.Password.RequireLowercase = true;
             })
-                .AddEntityFrameworkStores<ApplicationContext>()
-                .AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<ApplicationContext>();
         }
 
         public static void AddJwt(this IServiceCollection services, JwtConfig jwtConfig)

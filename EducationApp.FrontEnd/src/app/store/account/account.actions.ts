@@ -30,8 +30,8 @@ export const activateEmail = createAction(
     props<{payload: EmailActivationModel}>()
 );
 export const forgotPassword = createAction(
-    '[Password Reset Page] Reset Password',
-    props<{payload: string}>()
+    '[Password Reset Page] Forgot Password',
+    props<{userName: string}>()
 );
 export const resetPassword = createAction(
     '[Password Reset Page] Reset Password',

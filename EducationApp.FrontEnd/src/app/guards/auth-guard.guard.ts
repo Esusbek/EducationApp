@@ -7,6 +7,7 @@ import { AccountService } from '../services/account.service';
 export class AuthGuard implements CanActivate {
   constructor(public auth: AccountService, public router: Router) {}
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) : Observable<boolean> | boolean {
+    //debugger;
     if (!this.auth.isAuthenticated()) {
       this.router.navigate(['login']);
       return false;

@@ -18,7 +18,6 @@ export class EmailactivatedComponent implements OnInit {
       .subscribe((params) => {
         this.activationModel={code: params.get('code'), userId: params.get('userId')};
       })
-    debugger;
     this.store.dispatch(activateEmail({payload: this.activationModel}));
   }
 
