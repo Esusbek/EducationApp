@@ -4,6 +4,7 @@ import { createSelector, select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AccountState } from 'src/app/store/account/account.state';
 import { AppState } from 'src/app/store/state';
+import { passwordMatchValidator } from 'src/app/validators/password-match.directive';
 import {register} from '../../store/account/account.actions';
 
 @Component({
@@ -35,9 +36,17 @@ export class RegisterComponent implements OnInit {
       Validators.required,
       Validators.minLength(6)
     ])
-  })
+  }, {validators: passwordMatchValidator})
+
+  get userName() { return this.registerForm.get('userName')}
+  get firstName() { return this.registerForm.get('firstName')}
+  get lastName() { return this.registerForm.get('lastName')}
+  get email() { return this.registerForm.get('email')}
+  get password() { return this.registerForm.get('password')}
+  get confirmPassword() { return this.registerForm.get('confirmPassword')}
+
   constructor(private store: Store<{Account: AccountState}>) {
-      store.select('Account').subscribe(val=>this.isRegistered$=val.isRegistered);
+      store.select('Account').subscribe(value=>this.isRegistered$=value.isRegistered);
     }
 
   ngOnInit(): void {

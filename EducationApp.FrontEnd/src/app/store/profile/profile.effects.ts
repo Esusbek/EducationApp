@@ -11,13 +11,30 @@ export class ProfileEffects {
     constructor(private profileService: ProfileService, private actions$: Actions) {
     }
     getInfo$ = createEffect(() => {
-        console.log('effect worked');
         return this.actions$.pipe(
                 ofType(ProfileActions.getInfo),
                 mergeMap(() =>
                     this.profileService.getInfo().pipe(
                         map(data => ProfileActions.getInfoSuccess(data)),
                         catchError(error => of(ProfileActions.getInfoFailure(error))))
+                    ),
+        );
+    });
+    updateUser$ = createEffect(() => {
+        return this.actions$.pipe(
+                ofType(ProfileActions.editProfile),
+                mergeMap(data =>this.profileService.updateUser(data).pipe(
+                        map(data => ProfileActions.editProfileSuccess(data)),
+                        catchError(error => of(ProfileActions.editProfileFailure(error))))
+                    ),
+        );
+    });
+    changePassword$ = createEffect(() => {
+        return this.actions$.pipe(
+                ofType(ProfileActions.changePassword),
+                mergeMap(data =>this.profileService.changePassword(data).pipe(
+                        map(() => ProfileActions.changePasswordSuccess()),
+                        catchError(error => of(ProfileActions.changePasswordFailure(error))))
                     ),
         );
     });

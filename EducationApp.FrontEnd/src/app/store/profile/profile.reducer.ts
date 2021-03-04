@@ -8,6 +8,9 @@ const profileReducer = createReducer(
     initialState, 
     on(ProfileActions.getInfoSuccess, (state: ProfileState, props: UserModel) => {
         return {...state, user: {...props}};
+    }),
+    on(ProfileActions.editProfileSuccess, (state: ProfileState, props: UserModel) => {
+        return {...state, user: {...props}};
     })
 );
 

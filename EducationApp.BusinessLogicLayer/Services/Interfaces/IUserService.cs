@@ -9,7 +9,7 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
     public interface IUserService
     {
         public Task RegisterAsync(UserModel user);
-        public Task UpdateAsync(UserModel user);
+        public Task<UserModel> UpdateAsync(UserModel user);
         public Task<TokenHelperModel> LoginAsync(UserModel user, bool rememberMe);
         public Task LogoutAsync(string userId);
         public Task<TokenHelperModel> RefreshTokenAsync(string accessToken, string refreshToken);

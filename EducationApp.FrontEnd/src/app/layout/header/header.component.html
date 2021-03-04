@@ -11,7 +11,7 @@
       <ul>
         <a [routerLink]="['/profile']" routerLinkActive="router-link-active"><li>My profile</li></a>
         <a [routerLink]="['/']" routerLinkActive="router-link-active"><li>My orders</li></a>
-        <a [routerLink]="['/']" routerLinkActive="router-link-active"><li>Log out</li></a>
+        <a [routerLink]="['/login']" routerLinkActive="router-link-active" (click)="Logout()"><li>Log out</li></a>
       </ul>
     </div>
     

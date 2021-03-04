@@ -49,7 +49,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var result = await _signInManager.PasswordSignInAsync(user.UserName, user.Password, rememberMe, false);
             if (!result.Succeeded)
             {
-                throw new CustomApiException(HttpStatusCode.Unauthorized, Constants.FAILEDLOGINERROR);
+                throw new CustomApiException(HttpStatusCode.Forbidden, Constants.FAILEDLOGINERROR);
             }
             var dbUser = await _userManager.FindByNameAsync(user.UserName);
             var userRoles = await _userManager.GetRolesAsync(dbUser);
@@ -60,14 +60,18 @@ namespace EducationApp.BusinessLogicLayer.Services
         public async Task LogoutAsync(string userId)
         {
             await _signInManager.SignOutAsync();
-            await _jwtProvider.RemoveRefreshTokenAsync(await _userManager.FindByIdAsync(userId));
+            var dbUser = await _userManager.FindByIdAsync(userId);
+            if (dbUser is not null)
+            {
+                await _jwtProvider.RemoveRefreshTokenAsync(dbUser);
+            }
         }
 
         public async Task<TokenHelperModel> RefreshTokenAsync(string accessToken, string refreshToken)
         {
             if (string.IsNullOrWhiteSpace(refreshToken) || string.IsNullOrWhiteSpace(accessToken))
             {
-                throw new CustomApiException(HttpStatusCode.Unauthorized, Constants.UNATHORIZEDERROR);
+                throw new CustomApiException(HttpStatusCode.Forbidden, Constants.UNATHORIZEDERROR);
             }
             var jwtResult = await _jwtProvider.RefreshAsync(refreshToken, accessToken);
             return jwtResult;
@@ -174,11 +178,14 @@ namespace EducationApp.BusinessLogicLayer.Services
                 string.Format(Constants.DEFAULTEMAILCONFIRMATIONBODY, callbackUrl));
         }
 
-        public async Task UpdateAsync(UserModel user)
+        public async Task<UserModel> UpdateAsync(UserModel user)
         {
-            var dbUser = _mapper.Map<UserEntity>(user);
-            dbUser.Id = user.Id;
+            var dbUser = await _userManager.FindByIdAsync(user.Id);
+            dbUser.FirstName = user.FirstName;
+            dbUser.LastName = user.LastName;
             await _userManager.UpdateAsync(dbUser);
+            var updatedUser = _mapper.Map<UserModel>(dbUser);
+            return updatedUser;
         }
 
         public async Task ConfirmEmailAsync(string id, string code)

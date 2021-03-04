@@ -3,13 +3,22 @@
     <div class="signin-header">
         <span>Sign-In</span>
     </div>
+    
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        
         <div class="credentials" formGroupName="user">
             <label for="username">Login:</label>
+            <div *ngIf="userName.errors?.required && (userName.dirty || userName.touched)" class="alert alert-danger">
+                Username is required
+            </div>
             <input id="username" type="text" formControlName="userName">
             <label for="password">Password:</label>
             <a href="javascript:void(0);" (click)="onForgotPassword()">Forgot password?</a>
-            <input id="password" type="password" formControlName="password">
+            <div *ngIf="password.errors?.required && (password.dirty || password.touched)" class="alert alert-danger">
+                Password is required
+            </div>
+            <a href="javascript:void(0);" (click)="showPasswords()">Show password</a>
+            <input id="password" [type]="showPasswords$ ? 'text': 'password'" formControlName="password">
         </div>
         <div class="signin">
             <input id="rememberMe" type="checkbox" formControlName="rememberMe">
@@ -33,10 +42,13 @@
         </div>
         <form [formGroup]="forgotPasswordForm" *ngIf="!this.reseted" (ngSubmit)="onRecoverySubmit()">
             <label for="username">Username</label>
-            <input type="text" id="username" formControlName="userName" placeholder="username"/>
+            <div *ngIf="userNameRecovery.errors?.required && (userNameRecovery.dirty || userNameRecovery.touched)" class="alert alert-danger">
+                Username is required
+            </div>
+            <input type="text" id="username" formControlName="userName" placeholder="username" />
             <button type="submit" [disabled]="!forgotPasswordForm.valid">Continue</button>
         </form>
         <button (click)="onLoginReturn()">Back to login page</button>
     </div>
-    
+
 </div>

@@ -22,7 +22,8 @@ export class ResetPasswordComponent implements OnInit {
       ])
   }, {validators: passwordMatchValidator})
   constructor(private route: ActivatedRoute,private store: Store) { }
-
+  get password() { return this.resetPasswordForm.get('password')}
+  get confirmPassword() { return this.resetPasswordForm.get('confirmPassword')}
   ngOnInit(): void {
     this.route.queryParamMap
       .subscribe((params) => {

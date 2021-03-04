@@ -1,18 +1,39 @@
-<div class="container">
+<div class="container" >
     <h2>My profile</h2>
-    <div class="image"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
-    <form (ngSubmit)="onSubmit()" [formGroup]="profileForm">
+    
+    <div class="profile-images">
+        <div class="image"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
+        <div class="filler"></div>
+        <div class="image edit" *ngIf="!isEditing$ && !isChangingPassword$"><img src="../../../assets/img/pencil.png" alt="edit" (click)="editStart()"></div>
+        <div class="image" *ngIf="isChangingPassword$"><img src="../../../assets/img/back.png" alt="edit" (click)="changingPassword()"></div>
+        <div class="image" *ngIf="isEditing$"><img src="../../../assets/img/back.png" alt="edit" (click)="editEnd()"></div>
+    </div>
+    <form (ngSubmit)="onSubmit()" [formGroup]="profileForm" *ngIf="!isChangingPassword$">
         <label for="username">Your username</label>
         <input type="text" id="username" formControlName="userName">
+        <label for="email">Your Email</label>
+        <input type="email" id="email" formControlName="email">
         <label for="firstName">Your First Name</label>
         <input type="text" id="firstName" formControlName="firstName">
         <label for="lastName">Your Last Name</label>
         <input type="text" id="lastName" formControlName="lastName">
-        <label for="email">Your Email</label>
-        <input type="email" id="email" formControlName="email">
-        <div class="button">
-            <button type="submit">Sign Up</button>
+        <div class="button" *ngIf="isEditing$">
+            <button type="submit">Save changes</button>
         </div>
     </form>
-    
+    <div class="button">
+        <button (click)="changingPassword()" *ngIf="!isEditing$ && !isChangingPassword$">Change password</button>
+    </div>
+    <form (ngSubmit)="onChangePassword()" [formGroup]="changePasswordForm" *ngIf="isChangingPassword$">
+        <a href="javascript:void(0);" (click)="showPasswords()">Show passwords</a>
+        <label for="oldPassword">Current password</label>
+        <input [type]="showPasswords$ ? 'text': 'password'" id="oldPassword" formControlName="currentPassword">
+        <label for="newPassword">New password</label>
+        <input [type]="showPasswords$ ? 'text': 'password'" id="newPassword" formControlName="password">
+        <label for="newPasswordConfirm">Confirm new password</label>
+        <input [type]="showPasswords$ ? 'text': 'password'" id="newPasswordConfirm" formControlName="confirmPassword">
+        <div class="button">
+            <button type="submit" [disabled]="!changePasswordForm.valid">Change password</button>
+        </div>
+    </form>
 </div>

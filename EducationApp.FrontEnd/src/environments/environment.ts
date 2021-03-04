@@ -14,7 +14,8 @@ export const environment = {
   changePasswordURL: 'Account/ChangePassword',
   updateUserURL: 'Account/UpdateUser',
   refreshTokenURL: 'Account/RefreshToken',
-  logoutURL: 'Account/Logout'
+  logoutURL: 'Account/Logout',
+  dummyURL: 'Account/DummyRequest',
 };
 
 /*

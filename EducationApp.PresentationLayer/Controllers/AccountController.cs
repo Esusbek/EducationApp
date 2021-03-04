@@ -35,7 +35,6 @@ namespace EducationApp.PresentationLayer.Controllers
         {
             var loginResult = await _userService.LoginAsync(model.User, model.RememberMe);
             return Ok(loginResult);
-
         }
         [HttpPost("Account/Logout")]
         [AllowAnonymous]
@@ -95,8 +94,8 @@ namespace EducationApp.PresentationLayer.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public async Task<IActionResult> UpdateUser([FromBody] UserModel user)
         {
-            await _userService.UpdateAsync(user);
-            return Ok();
+            var newUser = await _userService.UpdateAsync(user);
+            return Ok(newUser);
         }
         [HttpPost("Account/BanUser")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
@@ -119,5 +118,13 @@ namespace EducationApp.PresentationLayer.Controllers
             await _userService.ChangePasswordAsync(model.User, model.CurrentPassword, model.NewPassword);
             return Ok();
         }
+        [HttpPost("Account/DummyRequest")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
+        public IActionResult DummyRequest()
+        {
+            return Ok(false);
+        }
+
+
     }
 }

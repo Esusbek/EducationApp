@@ -7,7 +7,9 @@ export class UserModel {
 }
 
 export class ChangePasswordModel {
-    id: string;
+    user: {
+        id: string;
+    }
     currentPassword: string;
     newPassword: string;
 }

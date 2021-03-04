@@ -2,7 +2,16 @@
     border-radius: 5px;
     background-color: #f2f2f2;
     padding: 30px;
+    max-width: 40%;
+    margin: 0;
   } 
+  .profile-images{
+    display: flex;
+    flex-direction: row;
+  }
+  .profile-images>.filler{
+    flex-grow: 1;
+  }
   .image{
     width:50px;
     height:50px;
@@ -28,7 +37,7 @@
     padding: 2px;
     display: inline-block;
   }
-  button[type=submit] {
+  button{
     background-color: #4CAF50;
     color: white;
     padding: 6px 20px;
@@ -36,9 +45,9 @@
     border-radius: 4px;
     cursor: pointer;
   }
-  button[type=submit]:disabled{
+  button:disabled{
     background-color: gray;
   }
   .button {
-    margin: 20px auto;
+    margin: 20px 0;
   } 

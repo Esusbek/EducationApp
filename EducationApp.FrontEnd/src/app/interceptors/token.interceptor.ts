@@ -6,6 +6,7 @@ import { EMPTY, Observable, of, Subject, throwError } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
 import { LoginResult } from "../models/account.models";
 import { AccountService } from "../services/account.service";
+import { loginSuccess } from "../store/account/account.actions";
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -13,7 +14,20 @@ export class TokenInterceptor implements HttpInterceptor {
 
     tokenRefreshedSource = new Subject();
     tokenRefreshed$ = this.tokenRefreshedSource.asObservable();
-    constructor(private auth: AccountService, private router: Router) { }
+    constructor(private auth: AccountService, private router: Router, private store: Store) { }
+
+    addAuthHeader(request) {
+        const authToken = localStorage.getItem('accessToken');
+        if (authToken) {
+            const authHeader = `Bearer ${authToken}`;
+            return request.clone({
+                setHeaders: {
+                    "Authorization": authHeader
+                }
+            });
+        }
+        return request;
+    }
 
     refreshToken(): Observable<any> {
         if (this.refreshTokenInProgress) {
@@ -25,15 +39,13 @@ export class TokenInterceptor implements HttpInterceptor {
             });
         } else {
             this.refreshTokenInProgress = true;
-            debugger;
             return this.auth.refreshToken().pipe(
                 tap((tokens) => {
-                    localStorage.setItem('accessToken', tokens.accessToken);
-                    localStorage.setItem('refreshToken', tokens.refreshToken);
+                    this.store.dispatch(loginSuccess(tokens));
                     this.refreshTokenInProgress = false;
                     this.tokenRefreshedSource.next();
                 }),
-                catchError( () => {
+                catchError(() => {
                     this.refreshTokenInProgress = false;
                     this.logout();
                     return EMPTY;
@@ -46,22 +58,29 @@ export class TokenInterceptor implements HttpInterceptor {
     }
 
     handleResponseError(error, request?, next?) {
-            if (error.status === 401) {
+        if (error.status === 401) {
             return this.refreshToken().pipe(
                 switchMap(() => {
+                    request = this.addAuthHeader(request);
                     return next.handle(request);
                 }),
-                catchError(e => {
-                    if (e.status !== 401) {
-                        return this.handleResponseError(e);
+                catchError(error => {
+                    if (error.status !== 401) {
+                        return this.handleResponseError(error);
                     } else {
+                        debugger;
                         this.logout();
                     }
                 }));
         }
+        if(error.status === 403)
+        { 
+            this.router.navigate(["/"]);
+        }
         return throwError(error);
     }
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
+        request = this.addAuthHeader(request);
         return next.handle(request).pipe(catchError(error => {
             return this.handleResponseError(error, request, next);
         }));
