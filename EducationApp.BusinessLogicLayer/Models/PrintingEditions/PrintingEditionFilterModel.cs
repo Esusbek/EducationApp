@@ -1,4 +1,5 @@
 ﻿using EducationApp.Shared.Enums;
+using System.Collections.Generic;
 
 namespace EducationApp.BusinessLogicLayer.Models.PrintingEditions
 {
@@ -7,6 +8,7 @@ namespace EducationApp.BusinessLogicLayer.Models.PrintingEditions
         public string Title { get; set; }
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
-        public Enums.PrintingEditionType Type { get; set; }
+        public List<Enums.PrintingEditionType> Type { get; set; }
+        public bool OrderAsc { get; set; }
     }
 }

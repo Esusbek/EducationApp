@@ -13,13 +13,13 @@ namespace EducationApp.DataAccessLayer.Repositories
             : base(dbContext)
         {
         }
-        public IEnumerable<AuthorEntity> GetAll(int page = Constants.DEFAULTPAGE)
+        public IQueryable<AuthorEntity> GetAll(int page = Constants.DEFAULTPAGE)
         {
             return base.GetAll()
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.AUTHORPAGESIZE)
                 .Take(Constants.AUTHORPAGESIZE);
         }
-        public IEnumerable<AuthorEntity> Get(Expression<Func<AuthorEntity, bool>> filter = null,
+        public IQueryable<AuthorEntity> Get(Expression<Func<AuthorEntity, bool>> filter = null,
             Func<IQueryable<AuthorEntity>, IOrderedQueryable<AuthorEntity>> orderBy = null,
             bool getRemoved = false,
             int page = Constants.DEFAULTPAGE)
@@ -27,6 +27,12 @@ namespace EducationApp.DataAccessLayer.Repositories
             return base.Get(filter, orderBy, getRemoved)
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.AUTHORPAGESIZE)
                 .Take(Constants.AUTHORPAGESIZE);
+        }
+        public IQueryable<AuthorEntity> GetNoPagination(Expression<Func<AuthorEntity, bool>> filter = null,
+            Func<IQueryable<AuthorEntity>, IOrderedQueryable<AuthorEntity>> orderBy = null,
+            bool getRemoved = false)
+        {
+            return base.Get(filter, orderBy, getRemoved);
         }
 
         public void AddPrintingEditionToAuthor(AuthorEntity author, PrintingEditionEntity printingEdition)

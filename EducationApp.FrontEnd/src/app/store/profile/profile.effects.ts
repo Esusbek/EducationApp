@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { Action } from "@ngrx/store";
-import { EMPTY, Observable, of } from "rxjs";
+import { of } from "rxjs";
 import { catchError, map, mergeMap } from "rxjs/operators";
 import { ProfileService } from "src/app/services/profile.service";
 import * as ProfileActions from "./profile.actions";
@@ -12,30 +11,30 @@ export class ProfileEffects {
     }
     getInfo$ = createEffect(() => {
         return this.actions$.pipe(
-                ofType(ProfileActions.getInfo),
-                mergeMap(() =>
-                    this.profileService.getInfo().pipe(
-                        map(data => ProfileActions.getInfoSuccess(data)),
-                        catchError(error => of(ProfileActions.getInfoFailure(error))))
-                    ),
+            ofType(ProfileActions.getInfo),
+            mergeMap(() =>
+                this.profileService.getInfo().pipe(
+                    map(data => ProfileActions.getInfoSuccess(data)),
+                    catchError(error => of(ProfileActions.getInfoFailure(error))))
+            ),
         );
     });
     updateUser$ = createEffect(() => {
         return this.actions$.pipe(
-                ofType(ProfileActions.editProfile),
-                mergeMap(data =>this.profileService.updateUser(data).pipe(
-                        map(data => ProfileActions.editProfileSuccess(data)),
-                        catchError(error => of(ProfileActions.editProfileFailure(error))))
-                    ),
+            ofType(ProfileActions.editProfile),
+            mergeMap(data => this.profileService.updateUser(data).pipe(
+                map(data => ProfileActions.editProfileSuccess(data)),
+                catchError(error => of(ProfileActions.editProfileFailure(error))))
+            ),
         );
     });
     changePassword$ = createEffect(() => {
         return this.actions$.pipe(
-                ofType(ProfileActions.changePassword),
-                mergeMap(data =>this.profileService.changePassword(data).pipe(
-                        map(() => ProfileActions.changePasswordSuccess()),
-                        catchError(error => of(ProfileActions.changePasswordFailure(error))))
-                    ),
+            ofType(ProfileActions.changePassword),
+            mergeMap(data => this.profileService.changePassword(data).pipe(
+                map(() => ProfileActions.changePasswordSuccess()),
+                catchError(error => of(ProfileActions.changePasswordFailure(error))))
+            ),
         );
     });
 }

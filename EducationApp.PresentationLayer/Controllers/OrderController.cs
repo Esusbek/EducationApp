@@ -28,25 +28,26 @@ namespace EducationApp.PresentationLayer.Controllers
         }
         [HttpGet("Order/Get")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
-        public IActionResult Get([FromBody] UserModel user, [FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult Get([FromQuery] UserModel user, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
             var orders = _orderService.GetUserOrders(user, page);
             return Ok(orders);
         }
         [HttpGet("Order/GetFiltered")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public IActionResult GetFiltered([FromBody] OrderFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult GetFiltered([FromQuery] OrderFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
             var orders = _orderService.GetOrdersFiltered(filter, page: page);
             return Ok(orders);
         }
 
         [HttpPost("Order/Checkout")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
+        [AllowAnonymous]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public IActionResult Checkout([FromBody] CheckoutRequestModel model)
         {
             var id = _orderService.CreateCheckoutSession(model.Order, model.User);
-            return Json(new { id });
+            return Ok(new { id });
         }
         [HttpPost("Order/Success")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]

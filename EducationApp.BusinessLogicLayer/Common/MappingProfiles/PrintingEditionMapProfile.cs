@@ -10,8 +10,10 @@ namespace EducationApp.BusinessLogicLayer.Common.MappingProfiles
         {
             public PrintingEditionMapProfile()
             {
-                CreateMap<PrintingEditionModel, PrintingEditionEntity>();
-                CreateMap<PrintingEditionEntity, PrintingEditionModel>();
+                CreateMap<PrintingEditionModel, PrintingEditionEntity>().
+                    ForMember(destination => destination.Id, option => option.Ignore()); 
+                CreateMap<PrintingEditionEntity, PrintingEditionModel>().
+                    ForMember(destination => destination.Authors, option => option.Ignore()); ;
             }
         }
     }

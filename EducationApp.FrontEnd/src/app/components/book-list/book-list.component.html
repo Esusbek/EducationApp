@@ -1,0 +1,50 @@
+<div class="container" *ngIf="!showDetails$">
+    <div class="sidebar">
+        <form [formGroup]="filterForm" (ngSubmit)="filter()">
+            <div *ngFor="let checkbox of checkboxes; let i = index" formArrayName="checkboxes">
+                <input type="checkbox" [formControlName]="i" />{{checkbox.name}}
+            </div>
+            <label for="search">Search: </label>
+            <input id="search" type="text" placeholder="Title" formControlName="searchControl">
+            <div class="price">
+                <input id="lowPrice" type="text" (input)="updateSliderLow($event)"
+                    [(ngModel)]=filterForm.value.sliderControl[0] formControlName="lowPrice">
+                <input id="highPrice" type="text" (input)="updateSliderHigh($event)"
+                    [(ngModel)]=filterForm.value.sliderControl[1] formControlName="highPrice">
+            </div>
+            <ngx-slider [value]="minValue" [highValue]="maxValue" [options]="options" formControlName="sliderControl">
+            </ngx-slider>
+            <div class="button">
+                <button type="submit">Filter</button>
+            </div>
+        </form>
+    </div>
+    <div class="book-list">
+        <div class="book" *ngFor="let book of books$">
+            <div class="image">
+                <img src={{getImage(book.type)}} alt="icon" (click)="show(book.id)" />
+            </div>
+            <div class="book-info">
+                <h2>{{book.title}}</h2>
+                <p>{{book.authors}}</p>
+                <p class="price">{{book.price | currency: Currency[book.currency]}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="pages">
+        <img src="../../../assets/img/previous.png" [disabled]="!hasPreviousPage()" (click)="previousPage()" />
+        <span>Page {{page$}}/{{info.lastPage}}</span>
+        <img src="../../../assets/img/next.png" [disabled]="!hasNextPage()" (click)="nextPage()" />
+    </div>
+</div>
+<div class="container" *ngIf="showDetails$">
+    <div class="book-details">
+        <div class="image">
+            <img src={{getImage(currentBook$.type)}} alt="icon" (click)="show(currentBook$.id)" />
+        </div>
+        <h2>{{currentBook$.title}}</h2>
+        <p>{{currentBook$.authors}}</p>
+        <p>{{currentBook$.price | currency: Currency[currentBook$.currency]}}</p>
+        <p>{{currentBook$.description}}</p>
+    </div>
+</div>

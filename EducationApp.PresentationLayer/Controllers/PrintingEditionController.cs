@@ -5,6 +5,7 @@ using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace EducationApp.PresentationLayer.Controllers
 {
@@ -30,7 +31,7 @@ namespace EducationApp.PresentationLayer.Controllers
         }
         [HttpGet("PrintingEdition/GetFiltered")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
-        public IActionResult GetFiltered([FromBody] PrintingEditionFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult GetFiltered([FromQuery] PrintingEditionFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_printingEditionService.GetPrintingEditionsFiltered(filter, page: page));
         }
@@ -61,6 +62,20 @@ namespace EducationApp.PresentationLayer.Controllers
         {
             _printingEditionService.AddAuthorToPrintingEdition(model.PrintingEdition, model.Author);
             return Ok();
+        }
+        [HttpGet("PrintingEdition/GetInfo")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "client, admin")]
+        public IActionResult GetInfo()
+        {
+            var info = _printingEditionService.GetInfo();
+            return Ok(info);
+        }
+        [HttpGet("PrintingEdition/GetPage")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "client, admin")]
+        public IActionResult GetPage([FromQuery] PrintingEditionFilterModel filter)
+        {
+            var info = _printingEditionService.GetLastPage(filter);
+            return Ok(info);
         }
     }
 }

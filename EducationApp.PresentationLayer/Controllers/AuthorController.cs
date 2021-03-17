@@ -31,7 +31,7 @@ namespace EducationApp.PresentationLayer.Controllers
         }
         [HttpGet("Author/GetFiltered")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
-        public IActionResult GetFiltered([FromBody] AuthorFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult GetFiltered([FromQuery] AuthorFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_authorService.GetAuthorsFiltered(filter, page: page));
         }

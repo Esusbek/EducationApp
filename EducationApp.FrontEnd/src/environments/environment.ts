@@ -4,18 +4,7 @@
 
 export const environment = {
   production: false,
-  apiURL: 'https://localhost:44319/',
-  LoginURL: 'Account/Login',
-  RegisterURL: 'Account/Register',
-  ActivationURL: 'Account/ConfirmEmail',
-  ForgotPasswordURL: 'Account/ForgotPassword',
-  ResetPasswordURL: 'Account/ResetPassword',
-  getUserURL: 'Account/GetUserInfo',
-  changePasswordURL: 'Account/ChangePassword',
-  updateUserURL: 'Account/UpdateUser',
-  refreshTokenURL: 'Account/RefreshToken',
-  logoutURL: 'Account/Logout',
-  dummyURL: 'Account/DummyRequest',
+  apiURL: 'https://localhost:44319/'
 };
 
 /*

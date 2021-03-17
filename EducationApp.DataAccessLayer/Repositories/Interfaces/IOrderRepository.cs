@@ -9,8 +9,8 @@ namespace EducationApp.DataAccessLayer.Repositories.Interfaces
 {
     public interface IOrderRepository : Base.BaseInterface.IBaseRepository<OrderEntity>
     {
-        public IEnumerable<OrderEntity> GetAll(int page = Constants.DEFAULTPAGE);
-        public IEnumerable<OrderEntity> Get(Expression<Func<OrderEntity, bool>> filter = null,
+        public IQueryable<OrderEntity> GetAll(int page = Constants.DEFAULTPAGE);
+        public IQueryable<OrderEntity> Get(Expression<Func<OrderEntity, bool>> filter = null,
             Func<IQueryable<OrderEntity>, IOrderedQueryable<OrderEntity>> orderBy = null,
             bool getRemoved = false,
             int page = Constants.DEFAULTPAGE);

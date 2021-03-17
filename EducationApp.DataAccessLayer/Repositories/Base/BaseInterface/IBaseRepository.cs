@@ -8,8 +8,8 @@ namespace EducationApp.DataAccessLayer.Repositories.Base.BaseInterface
     public interface IBaseRepository<T> where T : Entities.Base.BaseEntity
     {
         T GetById(int id);
-        IEnumerable<T> GetAll();
-        IEnumerable<T> Get(Expression<Func<T, bool>> filter=null,
+        IQueryable<T> GetAll();
+        IQueryable<T> Get(Expression<Func<T, bool>> filter=null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy=null,
             bool getRemoved = false);
         void Insert(T entity);

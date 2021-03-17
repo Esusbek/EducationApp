@@ -100,7 +100,11 @@ namespace EducationApp.BusinessLogicLayer.Services
         {
             var dbUser = _mapper.Map<UserEntity>(user);
             dbUser.Id = user.Id;
-            await _userManager.ChangePasswordAsync(dbUser, currentPassword, newPassword);
+            var result = await _userManager.ChangePasswordAsync(dbUser, currentPassword, newPassword);
+            if (!result.Succeeded)
+            {
+                throw new CustomApiException(HttpStatusCode.Conflict, Constants.PASSWORDCHANGEFAILEDERROR);
+            }
         }
 
         public async Task<UserModel> GetUserByIdAsync(string id)

@@ -1,3 +1,6 @@
-import {AccountReducer} from './account/account.reducer';
+import { AccountReducer } from './account/account.reducer';
+import { PrintingEditionReducer } from './printing-edition/printing-edition.reducer';
+import { ProfileReducer } from './profile/profile.reducer';
 
-export {AccountReducer};
+export { AccountReducer, ProfileReducer, PrintingEditionReducer };
+

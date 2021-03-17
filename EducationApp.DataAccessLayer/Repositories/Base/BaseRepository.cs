@@ -19,11 +19,11 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
         {
             return _dbSet.Find(id);
         }
-        public virtual IEnumerable<T> GetAll()
+        public virtual IQueryable<T> GetAll()
         {
             return _dbSet;
         }
-        public virtual IEnumerable<T> Get(Expression<Func<T, bool>> filter = null,
+        public virtual IQueryable<T> Get(Expression<Func<T, bool>> filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             bool getRemoved = false)
         {
@@ -39,9 +39,9 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
 
             if (orderBy != null)
             {
-                return orderBy(query).ToList();
+                return orderBy(query);
             }
-            return query.ToList();
+            return query;
         }
         public virtual void Insert(T entity)
         {
