@@ -1,50 +1,83 @@
 <div class="container" *ngIf="!showDetails$">
-    <div class="sidebar">
-        <form [formGroup]="filterForm" (ngSubmit)="filter()">
-            <div *ngFor="let checkbox of checkboxes; let i = index" formArrayName="checkboxes">
-                <input type="checkbox" [formControlName]="i" />{{checkbox.name}}
-            </div>
-            <label for="search">Search: </label>
-            <input id="search" type="text" placeholder="Title" formControlName="searchControl">
-            <div class="price">
-                <input id="lowPrice" type="text" (input)="updateSliderLow($event)"
-                    [(ngModel)]=filterForm.value.sliderControl[0] formControlName="lowPrice">
-                <input id="highPrice" type="text" (input)="updateSliderHigh($event)"
-                    [(ngModel)]=filterForm.value.sliderControl[1] formControlName="highPrice">
-            </div>
-            <ngx-slider [value]="minValue" [highValue]="maxValue" [options]="options" formControlName="sliderControl">
-            </ngx-slider>
+    <div class="main-content">
+        <div class="sidebar">
+            <form [formGroup]="filterForm" (ngSubmit)="filter()">
+                <div *ngFor="let checkbox of checkboxes; let i = index" formArrayName="checkboxes">
+                    <input type="checkbox" [formControlName]="i" />{{checkbox.name}}
+                </div>
+                <label for="search">Search: </label>
+                <input id="search" type="text" placeholder="Title" formControlName="searchControl">
+                <div class="price">
+                    <input id="lowPrice" type="text" (input)="updateSliderLow($event)"
+                        [(ngModel)]=filterForm.value.sliderControl[0] formControlName="lowPrice">
+                    <input id="highPrice" type="text" (input)="updateSliderHigh($event)"
+                        [(ngModel)]=filterForm.value.sliderControl[1] formControlName="highPrice">
+                </div>
+                <ngx-slider [value]="minValue" [highValue]="maxValue" [options]="options"
+                    formControlName="sliderControl">
+                </ngx-slider>
+                <div class="button">
+                    <button type="submit">Filter</button>
+                </div>
+            </form>
             <div class="button">
-                <button type="submit">Filter</button>
+                <button (click)="resetFilter()">Reset filter</button>
             </div>
-        </form>
-    </div>
-    <div class="book-list">
-        <div class="book" *ngFor="let book of books$">
-            <div class="image">
-                <img src={{getImage(book.type)}} alt="icon" (click)="show(book.id)" />
+            <div class="order">
+                <form [formGroup]="orderForm">
+                    <label>
+                        <input type="radio" name="order" value="true" (change)="filter()" formControlName="order">
+                        <span>Order from low to high price</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="order" value="false" (change)="filter()" formControlName="order">
+                        <span>Order from high to low price</span>
+                    </label>
+                </form>
             </div>
-            <div class="book-info">
-                <h2>{{book.title}}</h2>
-                <p>{{book.authors}}</p>
-                <p class="price">{{book.price | currency: Currency[book.currency]}}</p>
+        </div>
+        <div class="book-list">
+            <div class="book" *ngFor="let book of books$">
+                <div class="image">
+                    <img src={{getImage(book.type)}} alt="icon" (click)="show(book.id)" />
+                </div>
+                <div class="book-info">
+                    <h2>{{book.title}}</h2>
+                    <p>{{book.authors}}</p>
+                    <p class="price">{{book.price | currency: Currency[book.currency]}}</p>
+                </div>
             </div>
         </div>
     </div>
     <div class="pages">
-        <img src="../../../assets/img/previous.png" [disabled]="!hasPreviousPage()" (click)="previousPage()" />
+        <div class="filler"></div>
+        <button class="previous" [disabled]="!hasPreviousPage()" (click)="previousPage()"></button>
         <span>Page {{page$}}/{{info.lastPage}}</span>
-        <img src="../../../assets/img/next.png" [disabled]="!hasNextPage()" (click)="nextPage()" />
+        <button class="next" [disabled]="!hasNextPage()" (click)="nextPage()"></button>
     </div>
 </div>
 <div class="container" *ngIf="showDetails$">
     <div class="book-details">
-        <div class="image">
-            <img src={{getImage(currentBook$.type)}} alt="icon" (click)="show(currentBook$.id)" />
+        <div class="main-info">
+            <div class="image">
+                <img src={{getImage(currentBook$.type)}} alt="icon" (click)="show(currentBook$.id)" />
+            </div>
+            <div class="book-details-info">
+                <h2>{{currentBook$.title}}</h2>
+                <p>By {{currentBook$.authors}}</p>
+            </div>
+            <div class="order">
+                <div class="order-info">
+                    <select [(ngModel)]=selectedQuantity>
+                        <option *ngFor="let number of quantity">{{number}}</option>
+                    </select>
+                    <div class="total">
+                        <p>{{currentBook$.price*selectedQuantity | currency: Currency[currentBook$.currency]}}</p>
+                    </div>
+                </div>
+                <button (click)="addToCart()">Add to cart</button>
+            </div>
         </div>
-        <h2>{{currentBook$.title}}</h2>
-        <p>{{currentBook$.authors}}</p>
-        <p>{{currentBook$.price | currency: Currency[currentBook$.currency]}}</p>
         <p>{{currentBook$.description}}</p>
     </div>
 </div>

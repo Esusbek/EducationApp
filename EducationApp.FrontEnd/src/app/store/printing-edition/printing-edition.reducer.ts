@@ -6,18 +6,9 @@ import { initialState, PrintingEditionState } from './printing-edition.state';
 
 const printingEditionReducer = createReducer(
     initialState,
-    on(PrintingEditionActions.getBooksSuccess, (state: PrintingEditionState, props: { books: Array<PrintingEditionModel> }) => {
-        //state.books = [];
+    on(PrintingEditionActions.getBooksSuccess, (state: PrintingEditionState, props: { books: Array<PrintingEditionModel>, info: PrintingEditionInfoModel }) => {
         return { ...state, ...props };
     }),
-    on(PrintingEditionActions.getEditionInfoSuccess, (state: PrintingEditionState, props: PrintingEditionInfoModel) => {
-        //state.books = [];
-        return { ...state, info: { ...props } };
-    }),
-    on(PrintingEditionActions.getLastPageSuccess, (state: PrintingEditionState, { page }) => {
-        //state.books = [];
-        return { ...state, info: { ...state.info, page: page } };
-    })
 );
 
 export function PrintingEditionReducer(state: PrintingEditionState | undefined, action: Action) {

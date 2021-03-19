@@ -1,12 +1,14 @@
-<div class="container" >
+<div class="container">
     <h2>My profile</h2>
-    
+
     <div class="profile-images">
-        <div class="image"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
+        <div class="image"><img src="assets/img/person-icon.png" alt="icon" /></div>
         <div class="filler"></div>
-        <div class="image edit" *ngIf="!isEditing$ && !isChangingPassword$"><img src="../../../assets/img/pencil.png" alt="edit" (click)="editStart()"></div>
-        <div class="image" *ngIf="isChangingPassword$"><img src="../../../assets/img/back.png" alt="edit" (click)="changingPassword()"></div>
-        <div class="image" *ngIf="isEditing$"><img src="../../../assets/img/back.png" alt="edit" (click)="editEnd()"></div>
+        <div class="image edit" *ngIf="!isEditing$ && !isChangingPassword$"><img src="assets/img/pencil.png" alt="edit"
+                (click)="editStart()"></div>
+        <div class="image" *ngIf="isChangingPassword$"><img src="assets/img/back.png" alt="edit"
+                (click)="changingPassword()"></div>
+        <div class="image" *ngIf="isEditing$"><img src="assets/img/back.png" alt="edit" (click)="editEnd()"></div>
     </div>
     <form (ngSubmit)="onSubmit()" [formGroup]="profileForm" *ngIf="!isChangingPassword$">
         <label for="username">Your username</label>

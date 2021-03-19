@@ -1,12 +1,11 @@
-import { HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { EMPTY, Observable, of, Subject, throwError } from "rxjs";
-import { catchError, map, switchMap, tap } from "rxjs/operators";
-import { LoginResult } from "../models/account.models";
-import { AccountService } from "../services/account.service";
-import { loginSuccess } from "../store/account/account.actions";
+import { EMPTY, Observable, Subject, throwError } from "rxjs";
+import { catchError, switchMap, tap } from "rxjs/operators";
+import { AccountService } from "src/app/services/account.service";
+import { refreshTokens } from "src/app/store/account/account.actions";
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -41,7 +40,7 @@ export class TokenInterceptor implements HttpInterceptor {
             this.refreshTokenInProgress = true;
             return this.auth.refreshToken().pipe(
                 tap((tokens) => {
-                    this.store.dispatch(loginSuccess(tokens));
+                    this.store.dispatch(refreshTokens(tokens));
                     this.refreshTokenInProgress = false;
                     this.tokenRefreshedSource.next();
                 }),
@@ -73,8 +72,7 @@ export class TokenInterceptor implements HttpInterceptor {
                     }
                 }));
         }
-        if(error.status === 403)
-        { 
+        if (error.status === 403) {
             this.router.navigate(["/"]);
         }
         return throwError(error);

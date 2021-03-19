@@ -1,19 +1,28 @@
 <div class="header">
-  <div class="image"><img src="../../../assets/img/book-icon.png" alt="icon" /></div>
-  <div class="title"><a [routerLink]="['/']" routerLinkActive="router-link-active">Book Publishing Company</a></div>
+  <div class="image"><img src="assets/img/book-icon.png" alt="icon" /></div>
+  <div class="title"><a [routerLink]="['/book-list']" routerLinkActive="router-link-active">Book Publishing Company</a>
+  </div>
+  <div class="catalog" *ngIf="isLoggedIn()"><a [routerLink]="['/book-list']"
+      routerLinkActive="router-link-active">Catalog</a></div>
   <div class="filler"></div>
   <div class="links" *ngIf="!isLoggedIn()">
     <a routerLink="/login">Login</a>
   </div>
   <div class="menu" *ngIf="isLoggedIn()">
-    <div class="header-parent"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
+    <div class="header-parent"><img src="assets/img/person-icon.png" alt="icon" /></div>
     <div class="content">
       <ul>
-        <a [routerLink]="['/profile']" routerLinkActive="router-link-active"><li>My profile</li></a>
-        <a [routerLink]="['/']" routerLinkActive="router-link-active"><li>My orders</li></a>
-        <a [routerLink]="['/login']" routerLinkActive="router-link-active" (click)="Logout()"><li>Log out</li></a>
+        <a [routerLink]="['/profile']" routerLinkActive="router-link-active">
+          <li>My profile</li>
+        </a>
+        <a [routerLink]="['/']" routerLinkActive="router-link-active">
+          <li>My orders</li>
+        </a>
+        <a [routerLink]="['/login']" routerLinkActive="router-link-active" (click)="Logout()">
+          <li>Log out</li>
+        </a>
       </ul>
     </div>
-    
+    <div class="image" *ngIf="itemsInCart()"><img src="assets/img/cart.png" alt="cart" /></div>
   </div>
 </div>

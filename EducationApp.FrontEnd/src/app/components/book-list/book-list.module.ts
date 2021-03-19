@@ -1,7 +1,7 @@
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BookListRoutingModule } from './book-list-routing.module';
 import { BookListComponent } from './book-list.component';
 
@@ -11,6 +11,7 @@ import { BookListComponent } from './book-list.component';
         BookListRoutingModule,
         ReactiveFormsModule,
         NgxSliderModule,
+        FormsModule,
     ],
     declarations: [BookListComponent]
 })

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { createSelector, select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { register } from 'src/app/store/account/account.actions';
 import { AccountState } from 'src/app/store/account/account.state';
-import { AppState } from 'src/app/store/state';
 import { passwordMatchValidator } from 'src/app/validators/password-match.directive';
-import {register} from '../../store/account/account.actions';
 
 @Component({
   selector: 'app-register',
@@ -28,30 +26,30 @@ export class RegisterComponent implements OnInit {
       Validators.required,
       Validators.email
     ]),
-    password: new FormControl('',[
+    password: new FormControl('', [
       Validators.required,
       Validators.minLength(6)
     ]),
-    confirmPassword: new FormControl('',[
+    confirmPassword: new FormControl('', [
       Validators.required,
       Validators.minLength(6)
     ])
-  }, {validators: passwordMatchValidator})
+  }, { validators: passwordMatchValidator })
 
-  get userName() { return this.registerForm.get('userName')}
-  get firstName() { return this.registerForm.get('firstName')}
-  get lastName() { return this.registerForm.get('lastName')}
-  get email() { return this.registerForm.get('email')}
-  get password() { return this.registerForm.get('password')}
-  get confirmPassword() { return this.registerForm.get('confirmPassword')}
+  get userName() { return this.registerForm.get('userName') }
+  get firstName() { return this.registerForm.get('firstName') }
+  get lastName() { return this.registerForm.get('lastName') }
+  get email() { return this.registerForm.get('email') }
+  get password() { return this.registerForm.get('password') }
+  get confirmPassword() { return this.registerForm.get('confirmPassword') }
 
-  constructor(private store: Store<{Account: AccountState}>) {
-      store.select('Account').subscribe(value=>this.isRegistered$=value.isRegistered);
-    }
+  constructor(private store: Store<{ Account: AccountState }>) {
+    store.select('Account').subscribe(value => this.isRegistered$ = value.isRegistered);
+  }
 
   ngOnInit(): void {
   }
   onSubmit() {
-    this.store.dispatch(register({user: this.registerForm.value}));
+    this.store.dispatch(register({ user: this.registerForm.value }));
   }
 }

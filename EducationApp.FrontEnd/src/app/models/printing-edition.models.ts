@@ -6,6 +6,7 @@ export class PrintingEditionModel {
     description: string;
     price: number;
     status: boolean;
+    currency: number;
     authors: AuthorModel[];
 }
 

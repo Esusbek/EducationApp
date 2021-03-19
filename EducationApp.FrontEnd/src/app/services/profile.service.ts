@@ -1,13 +1,11 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
-import decode from 'jwt-decode';
-import { environment } from '../../environments/environment';
-import { HttpOptions, Urls } from '../shared/consts'
-import { ChangePasswordModel, TokenPayload, UserModel } from '../models/profile.models';
-import { AccountService } from './account.service';
-import { getUserId } from '../shared/methods';
+import { ChangePasswordModel, UserModel } from 'src/app/models/profile.models';
+import { HttpOptions, Urls } from 'src/app/shared/consts';
+import { getUserId } from 'src/app/shared/methods';
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -24,10 +22,10 @@ export class ProfileService {
     return throwError(
       'Some error happened; please try again later.');
   }
-  
+
   constructor(private http: HttpClient) {
   }
-  
+
 
   public getInfo(): Observable<UserModel> {
     const id = getUserId();
@@ -45,7 +43,7 @@ export class ProfileService {
   }
   public updateUser(model: UserModel): Observable<UserModel> {
     debugger;
-    
+
     return this.http.post<UserModel>(`${environment.apiURL}${Urls.updateUserURL}`, model, HttpOptions)
       .pipe(
         catchError(error => this.handleError(error))

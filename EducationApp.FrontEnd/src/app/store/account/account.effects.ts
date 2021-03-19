@@ -1,12 +1,12 @@
 
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { AccountService } from 'src/app/services/account.service';
 import * as AccountActions from './account.actions';
-import { AccountService } from '../../services/account.service';
-import { Router } from '@angular/router';
 
 @Injectable()
 export class AccountEffects {
@@ -26,6 +26,16 @@ export class AccountEffects {
             )
         )
     );
+    LoginSuccess$: Observable<Action> = createEffect(() =>
+        this.action$.pipe(
+            ofType(AccountActions.loginSuccess),
+            tap((action) => {
+                localStorage.setItem('accessToken', action.accessToken);
+                localStorage.setItem('refreshToken', action.refreshToken);
+                this.router.navigate(['/book-list'])
+            })
+        )
+        , { dispatch: false });
     Register$: Observable<Action> = createEffect(() =>
         this.action$.pipe(
             ofType(AccountActions.register),

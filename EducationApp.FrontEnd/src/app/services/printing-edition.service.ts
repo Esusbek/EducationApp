@@ -2,9 +2,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { PrintingEditionFilterModel, PrintingEditionInfoModel, PrintingEditionModel } from 'src/app/models/printing-edition.models';
+import { Urls } from 'src/app/shared/consts';
 import { environment } from 'src/environments/environment';
-import { PrintingEditionFilterModel, PrintingEditionInfoModel, PrintingEditionModel } from '../models/printing-edition.models';
-import { Urls } from '../shared/consts';
 
 
 @Injectable({
@@ -24,38 +24,23 @@ export class PrintingEditionService {
 
     constructor(private http: HttpClient) {
     }
-    public getBooks(page: string): Observable<Array<PrintingEditionModel>> {
+    public getBooks(page: number)
+        : Observable<{ books: Array<PrintingEditionModel>, info: PrintingEditionInfoModel }> {
         //debugger;
-        return this.http.get<Array<PrintingEditionModel>>(`${environment.apiURL}${Urls.getBookURL}`, { params: { page: page || "1" } })
+        return this.http.get<{ books: Array<PrintingEditionModel>, info: PrintingEditionInfoModel }>(`${environment.apiURL}${Urls.getBookURL}`, { params: { page: String(page) || "1" } })
             .pipe(
                 catchError(error => this.handleError(error))
-            ) as Observable<Array<PrintingEditionModel>>;
-    }
-    public getInfo(): Observable<PrintingEditionInfoModel> {
-        return this.http.get<PrintingEditionInfoModel>(`${environment.apiURL}${Urls.getEditionInfoURL}`)
-            .pipe(
-                catchError(error => this.handleError(error))
-            ) as Observable<PrintingEditionInfoModel>;
-    }
-    public getLastPage(filter: PrintingEditionFilterModel): Observable<number> {
-        return this.http.get<PrintingEditionInfoModel>(`${environment.apiURL}${Urls.getLastPageURL}`, {
-            params: {
-                title: filter.title,
-                lowPrice: String(filter.lowPrice),
-                highPrice: String(filter.highPrice),
-                type: filter.type.map(String)
-            }
-        })
-            .pipe(
-                catchError(error => this.handleError(error))
-            ) as Observable<number>;
+            ) as Observable<{ books: Array<PrintingEditionModel>, info: PrintingEditionInfoModel }>;
     }
 
-    public getFiltered(filter: PrintingEditionFilterModel, page: string): Observable<Array<PrintingEditionModel>> {
-        return this.http.get<Array<PrintingEditionModel>>(`${environment.apiURL}${Urls.getBookURL}`, {
+    public getFiltered(filter: PrintingEditionFilterModel, orderAsc: string, page: number)
+        : Observable<{ books: Array<PrintingEditionModel>, info: PrintingEditionInfoModel }> {
+
+        return this.http.get<{ books: Array<PrintingEditionModel>, info: PrintingEditionInfoModel }>(`${environment.apiURL}${Urls.getBookURL}`, {
             params: {
-                page: page || "1",
+                page: String(page) || "1",
                 title: filter.title,
+                orderAsc: orderAsc,
                 lowPrice: String(filter.lowPrice),
                 highPrice: String(filter.highPrice),
                 type: filter.type.map(String)
@@ -63,7 +48,7 @@ export class PrintingEditionService {
         })
             .pipe(
                 catchError(error => this.handleError(error))
-            ) as Observable<Array<PrintingEditionModel>>;
+            ) as Observable<{ books: Array<PrintingEditionModel>, info: PrintingEditionInfoModel }>;
     }
 
 }

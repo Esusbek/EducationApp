@@ -14,36 +14,18 @@ export class PrintingEditionEffects {
             ofType(PrintingEditionActions.getBooks),
             mergeMap(data =>
                 this.bookService.getBooks(data.page).pipe(
-                    map(data => PrintingEditionActions.getBooksSuccess({ books: data })),
+                    map(data => PrintingEditionActions.getBooksSuccess({ books: data.books, info: data.info })),
                     catchError(error => of(PrintingEditionActions.getBooksFailure(error))))
             ),
         );
     });
-    getInfo$ = createEffect(() => {
-        return this.actions$.pipe(
-            ofType(PrintingEditionActions.getEditionInfo),
-            mergeMap(() =>
-                this.bookService.getInfo().pipe(
-                    map(data => PrintingEditionActions.getEditionInfoSuccess(data)),
-                    catchError(error => of(PrintingEditionActions.getEditionInfoFailure(error))))
-            ),
-        );
-    });
-    getLastPage$ = createEffect(() => {
-        return this.actions$.pipe(
-            ofType(PrintingEditionActions.getLastPage),
-            mergeMap(payload => this.bookService.getLastPage(payload.filter).pipe(
-                map(data => PrintingEditionActions.getLastPageSuccess({ page: data })),
-                catchError(error => of(PrintingEditionActions.getLastPageFailure(error))))
-            ),
-        );
-    });
+
     getFilteredBooks$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(PrintingEditionActions.getFiltered),
             mergeMap(data =>
-                this.bookService.getFiltered(data.filter, data.page).pipe(
-                    map(data => PrintingEditionActions.getBooksSuccess({ books: data })),
+                this.bookService.getFiltered(data.filter, data.orderAsc, data.page).pipe(
+                    map(data => PrintingEditionActions.getBooksSuccess({ books: data.books, info: data.info })),
                     catchError(error => of(PrintingEditionActions.getFilteredFailure(error))))
             ),
         );

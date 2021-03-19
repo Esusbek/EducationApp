@@ -4,10 +4,10 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { EmailActivationModel, LoginCredentials, LoginResult, RegisterModel, ResetPasswordModel } from '../models/account.models';
-import { HttpOptions, Urls } from '../shared/consts';
-import { getUserId } from '../shared/methods';
+import { EmailActivationModel, LoginCredentials, LoginResult, RegisterModel, ResetPasswordModel } from 'src/app/models/account.models';
+import { HttpOptions, Urls } from 'src/app/shared/consts';
+import { getUserId } from 'src/app/shared/methods';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +31,7 @@ export class AccountService {
   }
   public isAuthenticated(): boolean {
     const token = localStorage.getItem('accessToken');
-    return !this.jwtHelper.isTokenExpired(token);
+    return !!token;
   }
   public login(user: LoginCredentials, rememberMe: boolean): Observable<LoginResult> {
     return this.http.post<LoginResult>(`${environment.apiURL}${Urls.LoginURL}`, { user, rememberMe }, HttpOptions)

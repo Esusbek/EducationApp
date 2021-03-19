@@ -1,11 +1,11 @@
 <div class="container" *ngIf="!forgotPassword">
-    <div class="image"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
+    <div class="image"><img src="assets/img/person-icon.png" alt="icon" /></div>
     <div class="signin-header">
         <span>Sign-In</span>
     </div>
-    
+
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        
+
         <div class="credentials" formGroupName="user">
             <label for="username">Login:</label>
             <div *ngIf="userName.errors?.required && (userName.dirty || userName.touched)" class="alert alert-danger">
@@ -32,7 +32,7 @@
     </div>
 </div>
 <div class="container" *ngIf="forgotPassword">
-    <div class="image"><img src="../../../assets/img/person-icon.png" alt="icon" /></div>
+    <div class="image"><img src="assets/img/person-icon.png" alt="icon" /></div>
     <div class="content">
         <h2>Password assistance</h2>
         <p *ngIf="!this.reseted">Enter the username you registered with</p>
@@ -42,7 +42,8 @@
         </div>
         <form [formGroup]="forgotPasswordForm" *ngIf="!this.reseted" (ngSubmit)="onRecoverySubmit()">
             <label for="username">Username</label>
-            <div *ngIf="userNameRecovery.errors?.required && (userNameRecovery.dirty || userNameRecovery.touched)" class="alert alert-danger">
+            <div *ngIf="userNameRecovery.errors?.required && (userNameRecovery.dirty || userNameRecovery.touched)"
+                class="alert alert-danger">
                 Username is required
             </div>
             <input type="text" id="username" formControlName="userName" placeholder="username" />

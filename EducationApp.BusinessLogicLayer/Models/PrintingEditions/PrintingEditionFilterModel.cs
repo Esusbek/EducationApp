@@ -9,6 +9,5 @@ namespace EducationApp.BusinessLogicLayer.Models.PrintingEditions
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
         public List<Enums.PrintingEditionType> Type { get; set; }
-        public bool OrderAsc { get; set; }
     }
 }

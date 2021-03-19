@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import {activateEmail} from '../../store/account/account.actions';
-import {EmailActivationModel} from '../../models/account.models';
+import { EmailActivationModel } from 'src/app/models/account.models';
+import { activateEmail } from 'src/app/store/account/account.actions';
 
 @Component({
   selector: 'app-emailactivated',
@@ -11,14 +11,14 @@ import {EmailActivationModel} from '../../models/account.models';
 })
 export class EmailactivatedComponent implements OnInit {
   private activationModel: EmailActivationModel;
-  constructor(private route: ActivatedRoute,private store: Store) { }
+  constructor(private route: ActivatedRoute, private store: Store) { }
 
   ngOnInit(): void {
     this.route.queryParamMap
       .subscribe((params) => {
-        this.activationModel={code: params.get('code'), userId: params.get('userId')};
+        this.activationModel = { code: params.get('code'), userId: params.get('userId') };
       })
-    this.store.dispatch(activateEmail({payload: this.activationModel}));
+    this.store.dispatch(activateEmail({ payload: this.activationModel }));
   }
 
 }

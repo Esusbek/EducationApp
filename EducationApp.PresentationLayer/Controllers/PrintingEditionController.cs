@@ -24,16 +24,16 @@ namespace EducationApp.PresentationLayer.Controllers
             return Ok(_printingEditionService.GetPrintingEditions(page));
         }
         [HttpGet("PrintingEdition/GetAll")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         public IActionResult GetAll([FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return Ok(_printingEditionService.GetPrintingEditionsFiltered(page: page, getRemoved: true));
         }
         [HttpGet("PrintingEdition/GetFiltered")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
-        public IActionResult GetFiltered([FromQuery] PrintingEditionFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult GetFiltered([FromQuery] PrintingEditionFilterModel filter, [FromQuery] bool orderAsc, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
-            return Ok(_printingEditionService.GetPrintingEditionsFiltered(filter, page: page));
+            return Ok(_printingEditionService.GetPrintingEditionsFiltered(filter, orderAsc, page));
         }
         [HttpPost("PrintingEdition/Edit")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
@@ -62,20 +62,6 @@ namespace EducationApp.PresentationLayer.Controllers
         {
             _printingEditionService.AddAuthorToPrintingEdition(model.PrintingEdition, model.Author);
             return Ok();
-        }
-        [HttpGet("PrintingEdition/GetInfo")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "client, admin")]
-        public IActionResult GetInfo()
-        {
-            var info = _printingEditionService.GetInfo();
-            return Ok(info);
-        }
-        [HttpGet("PrintingEdition/GetPage")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "client, admin")]
-        public IActionResult GetPage([FromQuery] PrintingEditionFilterModel filter)
-        {
-            var info = _printingEditionService.GetLastPage(filter);
-            return Ok(info);
         }
     }
 }

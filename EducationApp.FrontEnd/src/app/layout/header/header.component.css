@@ -11,12 +11,15 @@
 .title,.image,.links{
   margin:auto 0;
 }
-.title>a{
+.title>a, .catalog>a{
   text-decoration: none;
   color: black;
 }
-.title>a:visited{
+.title>a:visited.catalog>a{
   color: black;
+}
+.catalog{
+  margin: auto 20px;
 }
 .filler{
   flex-grow: 2;
