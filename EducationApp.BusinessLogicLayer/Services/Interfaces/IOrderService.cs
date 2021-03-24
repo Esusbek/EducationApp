@@ -11,10 +11,10 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
 {
     public interface IOrderService
     {
-        public void PayOrder(OrderModel order, string transactionId);
-        public string CreateCheckoutSession(OrderModel order, UserModel user);
+        public void PayOrder(string paymentIntentId);
+        public SessionModel CreateCheckoutSession(OrderModel order);
         public List<OrderModel> GetAllOrders(int page = Constants.DEFAULTPAGE);
-        public List<OrderModel> GetUserOrders(UserModel user, int page = Constants.DEFAULTPAGE);
+        public OrderResponseModel GetUserOrders(UserModel user, int page = Constants.DEFAULTPAGE);
         public List<OrderModel> GetOrdersFiltered(OrderFilterModel orderFilter = null,
             Func<IQueryable<OrderEntity>, IOrderedQueryable<OrderEntity>> orderBy = null,
             int page = Constants.DEFAULTPAGE, bool getRemoved = false);

@@ -1,11 +1,11 @@
 import { Options } from "@angular-slider/ngx-slider";
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Router } from "@angular/router";
 import { Store } from '@ngrx/store';
 import { Subscription } from "rxjs";
 import { PrintingEditionInfoModel, PrintingEditionModel } from 'src/app/models/printing-edition.models';
 import { Currency, PrintingEditionType } from 'src/app/shared/enums';
-import { addToCart } from "src/app/store/cart/cart.actions";
 import { getBooks, getFiltered } from 'src/app/store/printing-edition/printing-edition.actions';
 import { PrintingEditionState } from "src/app/store/printing-edition/printing-edition.state";
 
@@ -15,10 +15,8 @@ import { PrintingEditionState } from "src/app/store/printing-edition/printing-ed
   styleUrls: ['./book-list.component.css']
 })
 export class BookListComponent implements OnInit {
-  private page$: number;
-  public books$: Array<PrintingEditionModel>;
-  public currentBook$: PrintingEditionModel;
-  public showDetails$: boolean;
+  public page: number;
+  public books: Array<PrintingEditionModel>;
   public Currency = Currency;
   private info$: PrintingEditionInfoModel;
   get info(): PrintingEditionInfoModel {
@@ -31,8 +29,8 @@ export class BookListComponent implements OnInit {
     }
   }
   private subscription: Subscription;
-  public floor$: number;
-  private checkboxes = [];
+  public floor: number;
+  public checkboxes = [];
   public filterForm: FormGroup;
   public minValue: number;
   public maxValue: number;
@@ -40,17 +38,13 @@ export class BookListComponent implements OnInit {
   public orderForm = new FormGroup({
     order: new FormControl("false")
   })
-  public quantity: Array<number>;
-  public maxQuantity: number;
-  public selectedQuantity: number;
 
 
-  constructor(private store: Store<{ Books: PrintingEditionState }>, private formBuilder: FormBuilder) {
+  constructor(private store: Store<{ Books: PrintingEditionState }>, private formBuilder: FormBuilder, private router: Router) {
     store.select('Books').subscribe(value => {
-      this.books$ = value.books;
+      this.books = value.books;
       this.info = value.info;
     });
-    this.showDetails$ = false;
     this.options = {
       floor: 0,
       ceil: 100,
@@ -75,14 +69,10 @@ export class BookListComponent implements OnInit {
       lowPrice: new FormControl(this.info.minPrice),
       highPrice: new FormControl(this.info.maxPrice)
     })
-
-    this.maxQuantity = 10;
-    this.selectedQuantity = 1;
-    this.quantity = Array(this.maxQuantity).fill(1).map((x, i) => i + 1);
   }
 
   ngOnInit(): void {
-    this.page$ = 1;
+    this.page = 1;
     const checkboxControl = (this.filterForm.controls.checkboxes as FormArray);
     this.subscription = checkboxControl.valueChanges.subscribe(() => {
       checkboxControl.setValue(
@@ -90,7 +80,7 @@ export class BookListComponent implements OnInit {
         { emitEvent: false }
       );
     });
-    this.store.dispatch(getBooks({ page: this.page$ }))
+    this.store.dispatch(getBooks({ page: this.page }))
     this.updateInfo();
   }
   getImage(type: number): string {
@@ -109,9 +99,7 @@ export class BookListComponent implements OnInit {
     this.maxValue = this.info.maxPrice;
   }
   show(id: number): void {
-    this.currentBook$ = this.books$.find(book => book.id === id);
-    this.showDetails$ = true;
-
+    this.router.navigate(['/edition'], { queryParams: { id: String(id) } });
   }
   filter(): void {
     const checkboxControl = (this.filterForm.controls.checkboxes as FormArray);
@@ -120,7 +108,7 @@ export class BookListComponent implements OnInit {
       title: this.filterForm.value.searchControl || "",
       type: checkboxControl.value.filter(value => !!value)
     }
-    this.store.dispatch(getFiltered({ filter: formValue, orderAsc: this.orderForm.value.order, page: this.page$ }));
+    this.store.dispatch(getFiltered({ filter: formValue, orderAsc: this.orderForm.value.order, page: this.page }));
   }
   updateSliderLow(event) {
     this.minValue = event.target.value;
@@ -129,27 +117,21 @@ export class BookListComponent implements OnInit {
     this.maxValue = event.target.value;
   }
   hasPreviousPage() {
-    return +this.page$ > 1;
+    return +this.page > 1;
   }
   hasNextPage() {
-    return +this.page$ < this.info.lastPage;
+    return +this.page < this.info.lastPage;
   }
   nextPage() {
-    this.page$ = this.page$ + 1;
+    this.page = this.page + 1;
     this.filter();
   }
   previousPage() {
-    this.page$ = this.page$ - 1;
+    this.page = this.page - 1;
     this.filter();
   }
   resetFilter() {
     this.ngOnInit();
-  }
-  addToCart() {
-    this.store.dispatch(addToCart({
-      amount: this.selectedQuantity, subTotal: this.currentBook$.price * this.selectedQuantity,
-      printingEditionId: this.currentBook$.id, price: this.currentBook$.price, currency: this.currentBook$.currency
-    }))
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();

@@ -1,4 +1,4 @@
-<div class="container" *ngIf="!isRegistered$">
+<div class="container" *ngIf="!isRegistered">
     <div class="image"><img src="assets/img/person-icon.png" alt="icon" /></div>
     <div class="signup-header">
         <span>Create account</span>
@@ -56,7 +56,7 @@
         <span>Click here to </span><a [routerLink]="['/login']" routerLinkActive="router-link-active">Log in</a>
     </div>
 </div>
-<div class="container-finished" *ngIf="isRegistered$">
+<div class="container-finished" *ngIf="isRegistered">
     <h2>Confirm your email address</h2>
     <p>We have sent an email with a confirmation link to your email address. In order to complete the sign-up process,
         please click the confirmation link.</p>

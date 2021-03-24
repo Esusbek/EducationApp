@@ -1,0 +1,35 @@
+<div class="container">
+    <h2>Checkout</h2>
+    <table>
+        <tr>
+            <th colspan="4">Order id</th>
+            <th colspan="2">Order date</th>
+            <th colspan="1">Order item types</th>
+            <th colspan="2">Order item names</th>
+            <th colspan="2">Order status</th>
+        </tr>
+        <tr *ngFor="let order of orders">
+            <td colspan="4">{{order.id}}</td>
+            <td colspan="2">{{order.date}}</td>
+            <td colspan="1">
+                <p *ngFor="let item of order.currentItems">
+                    {{PrintingEditionType[item.printingEdition.type]}}
+                </p>
+            </td>
+            <td colspan="2">
+                <p *ngFor="let item of order.currentItems">
+                    {{item.printingEdition.title}}
+                </p>
+            </td>
+            <td colspan="2">
+                {{OrderStatusType[order.status]}}
+            </td>
+        </tr>
+    </table>
+    <div class="pages">
+        <div class="filler"></div>
+        <button class="previous" [disabled]="!hasPreviousPage()" (click)="previousPage()"></button>
+        <span>Page {{page}}/{{lastPage}}</span>
+        <button class="next" [disabled]="!hasNextPage()" (click)="nextPage()"></button>
+    </div>
+</div>

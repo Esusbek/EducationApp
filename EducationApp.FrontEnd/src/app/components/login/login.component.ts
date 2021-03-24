@@ -10,7 +10,7 @@ import { forgotPassword, login } from 'src/app/store/account/account.actions';
 })
 export class LoginComponent implements OnInit {
   public forgotPassword: boolean;
-  public showPasswords$: boolean;
+  public showPasswords: boolean;
   loginForm = new FormGroup({
     user: new FormGroup({
       userName: new FormControl('', [
@@ -27,14 +27,14 @@ export class LoginComponent implements OnInit {
       Validators.required
     ])
   })
-  reseted: boolean;
+  public reseted: boolean;
   get userName() { return this.loginForm.get('user').get('userName') }
   get password() { return this.loginForm.get('user').get('password') }
   get userNameRecovery() { return this.forgotPasswordForm.get('userName') }
   constructor(private store: Store) {
     this.forgotPassword = false;
     this.reseted = false;
-    this.showPasswords$ = false;
+    this.showPasswords = false;
   }
 
   ngOnInit(): void {
@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
     this.store.dispatch(forgotPassword({ ...this.forgotPasswordForm.value }))
     this.reseted = true;
   }
-  showPasswords() {
-    this.showPasswords$ = !this.showPasswords$;
+  showPassword() {
+    this.showPasswords = !this.showPasswords;
   }
 }

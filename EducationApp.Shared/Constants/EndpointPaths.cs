@@ -4,7 +4,7 @@
     {
         public const string CONFIRMEMAILPATH = "emailactivated";
         public const string RESETPASSWORDPATH = "resetpassword";
-        public const string STRIPESUCCESSPATH = "Order/Success";
-        public const string STRIPECANCELPATH = "Order/Cancel";
+        public const string STRIPESUCCESSPATH = "order-success";
+        public const string STRIPECANCELPATH = "order-fail";
     }
 }

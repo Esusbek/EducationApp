@@ -13,7 +13,8 @@ namespace EducationApp.BusinessLogicLayer.Common.MappingProfiles
                 CreateMap<OrderModel, OrderEntity>();
                 CreateMap<OrderEntity, OrderModel>();
 
-                CreateMap<OrderItemModel, OrderItemEntity>();
+                CreateMap<OrderItemModel, OrderItemEntity>().
+                    ForMember(destination => destination.PrintingEdition, option => option.Ignore()); ;
                 CreateMap<OrderItemEntity, OrderItemModel>();
 
                 CreateMap<PaymentModel, PaymentEntity>();

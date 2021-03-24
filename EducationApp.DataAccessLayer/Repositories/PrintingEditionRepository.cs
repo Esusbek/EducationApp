@@ -33,7 +33,6 @@ namespace EducationApp.DataAccessLayer.Repositories
             Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
             bool getRemoved = false)
         {
-            var test = base.Get(filter, orderBy, getRemoved).ToList();
             return base.Get(filter, orderBy, getRemoved);
         }
         public void AddAuthorToPrintingEdition(PrintingEditionEntity printingEdition, AuthorEntity author)

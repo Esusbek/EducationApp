@@ -43,21 +43,22 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
 
 
-        public void PayOrder(OrderModel order, string transactionId)
+        public void PayOrder(string paymentIntentId)
         {
-            var dbPayment = _paymentRepository.Get(payment=>payment.Id==order.PaymentId).FirstOrDefault();
-            dbPayment.TransactionId = transactionId;
-            _paymentRepository.Update(dbPayment);
-            var dbOrder = _orderRepository.GetById(order.Id);
+            if(paymentIntentId is null)
+            {
+                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDINTENTIDERROR);
+            }    
+            var dbPayment = _paymentRepository.Get(payment=>payment.TransactionId == paymentIntentId).FirstOrDefault();
+            var dbOrder = _orderRepository.Get(order=>order.PaymentId == dbPayment.Id).FirstOrDefault();
             dbOrder.Status = Enums.OrderStatusType.Paid;
             _orderRepository.Update(dbOrder);
         }
 
-        public string CreateCheckoutSession(OrderModel order, UserModel user)
+        public SessionModel CreateCheckoutSession(OrderModel order)
         {
             order.Status = Enums.OrderStatusType.Unpaid;
             order.Date = DateTime.UtcNow;
-            order.UserId = user.Id.ToString();
             var dbOrder = _mapper.Map<OrderEntity>(order);
             var payment = new PaymentEntity
             {
@@ -84,8 +85,8 @@ namespace EducationApp.BusinessLogicLayer.Services
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        UnitAmountDecimal = item.Price,
-                        Currency = item.Currency.ToString("g"),
+                        UnitAmountDecimal = item.Price*100,
+                        Currency = item.Currency.ToString(),
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
                             Name = printingEdition.Title,
@@ -124,9 +125,20 @@ namespace EducationApp.BusinessLogicLayer.Services
             };
             var service = new SessionService();
             Session session = service.Create(options);
-            return session.Id;
+            var dbPayment = _paymentRepository.Get(payment => payment.Id == paymentId).FirstOrDefault();
+            dbPayment.TransactionId = session.PaymentIntentId;
+            _paymentRepository.Update(dbPayment);
+            return new SessionModel { 
+                Id = session.Id,
+                PaymentIntentId = session.PaymentIntentId
+            };
         }
-
+        public int GetLastPage()
+        {
+            var dbOrders = _orderRepository.GetNoPagination().ToList();
+            var lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
+            return lastPage;
+        }
         public List<OrderModel> GetAllOrders(int page = Constants.DEFAULTPAGE)
         {
             var dbOrders = _orderRepository.GetAll(page).ToList();
@@ -147,7 +159,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             return orders;
         }
-        public List<OrderModel> GetUserOrders(UserModel user, int page = Constants.DEFAULTPAGE)
+        public OrderResponseModel GetUserOrders(UserModel user, int page = Constants.DEFAULTPAGE)
         {
             var dbOrders = _orderRepository.Get(order => order.UserId == user.Id.ToString(), page: page).ToList();
             var orders = new List<OrderModel>();
@@ -165,7 +177,11 @@ namespace EducationApp.BusinessLogicLayer.Services
                 mappedOrder.CurrentItems = mappedItems;
                 orders.Add(mappedOrder);
             }
-            return orders;
+            return new OrderResponseModel {
+                Orders = orders,
+                LastPage = GetLastPage()
+            };
+
         }
 
         public List<OrderModel> GetOrdersFiltered(OrderFilterModel orderFilter = null,

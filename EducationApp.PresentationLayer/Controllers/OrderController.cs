@@ -42,18 +42,17 @@ namespace EducationApp.PresentationLayer.Controllers
         }
 
         [HttpPost("Order/Checkout")]
-        [AllowAnonymous]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
-        public IActionResult Checkout([FromBody] CheckoutRequestModel model)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
+        public IActionResult Checkout([FromBody] OrderModel model)
         {
-            var id = _orderService.CreateCheckoutSession(model.Order, model.User);
-            return Ok(new { id });
+            var session = _orderService.CreateCheckoutSession(model);
+            return Ok(session);
         }
         [HttpPost("Order/Success")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public IActionResult Success([FromBody] SuccessRequestModel model)
         {
-            _orderService.PayOrder(model.Order, model.TransactionId);
+            _orderService.PayOrder(model.PaymentIntentId);
             return Ok();
         }
         [HttpPost("Order/Cancel")]

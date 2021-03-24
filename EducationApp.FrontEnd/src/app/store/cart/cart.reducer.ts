@@ -1,5 +1,5 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import { OrderItemModel } from 'src/app/models/cart.models';
+import { OrderItemModel, OrderModel } from 'src/app/models/cart.models';
 import * as CartActions from './cart.actions';
 import { CartState, initialState } from './cart.state';
 
@@ -19,6 +19,9 @@ const cartReducer = createReducer(
             return { ...state, currentItems: newArray }
         }
         return { ...state, currentItems: [...state.currentItems, props] };
+    }),
+    on(CartActions.getOrdersSuccess, (state: CartState, props: { orders: Array<OrderModel>, lastPage: number }) => {
+        return { ...state, orders: props.orders, lastPage: props.lastPage };
     }),
 );
 

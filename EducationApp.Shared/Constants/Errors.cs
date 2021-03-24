@@ -17,5 +17,6 @@
         public const string UNATHORIZEDERROR = "Unauthorized";
         public const string AUTHORALREADYEXISTSERROR = "Author that you are trying to add already exists";
         public const string PASSWORDCHANGEFAILEDERROR = "Password change failed";
+        public const string INVALIDINTENTIDERROR = "Invalid intent id";
     }
 }

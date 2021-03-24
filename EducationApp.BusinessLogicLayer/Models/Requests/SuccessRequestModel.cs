@@ -2,7 +2,6 @@
 {
     public class SuccessRequestModel
     {
-        public Orders.OrderModel Order { get; set; }
-        public string TransactionId { get; set; }
+        public string PaymentIntentId { get; set; }
     }
 }

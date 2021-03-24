@@ -1,9 +1,13 @@
-import { OrderItemModel } from "src/app/models/cart.models";
+import { OrderItemModel, OrderModel } from "src/app/models/cart.models";
 
 export interface CartState {
-    currentItems: Array<OrderItemModel>
+    currentItems: Array<OrderItemModel>;
+    orders: Array<OrderModel>;
+    lastPage: number;
 }
 
 export const initialState: CartState = {
-    currentItems: []
+    currentItems: [],
+    orders: [],
+    lastPage: 1
 }

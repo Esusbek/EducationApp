@@ -14,3 +14,9 @@ export enum PrintingEditionType {
     Journal = 2,
     Newspaper = 3
 }
+
+export enum OrderStatusType {
+    None = 0,
+    Unpaid = 1,
+    Paid = 2
+}

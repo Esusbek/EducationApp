@@ -11,7 +11,7 @@ import { passwordMatchValidator } from 'src/app/validators/password-match.direct
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  public isRegistered$: boolean;
+  public isRegistered: boolean;
   registerForm = new FormGroup({
     userName: new FormControl('', [
       Validators.required
@@ -44,7 +44,7 @@ export class RegisterComponent implements OnInit {
   get confirmPassword() { return this.registerForm.get('confirmPassword') }
 
   constructor(private store: Store<{ Account: AccountState }>) {
-    store.select('Account').subscribe(value => this.isRegistered$ = value.isRegistered);
+    store.select('Account').subscribe(value => this.isRegistered = value.isRegistered);
   }
 
   ngOnInit(): void {

@@ -12,7 +12,7 @@ export class TokenInterceptor implements HttpInterceptor {
     refreshTokenInProgress = false;
 
     tokenRefreshedSource = new Subject();
-    tokenRefreshed$ = this.tokenRefreshedSource.asObservable();
+    tokenRefreshed = this.tokenRefreshedSource.asObservable();
     constructor(private auth: AccountService, private router: Router, private store: Store) { }
 
     addAuthHeader(request) {
@@ -31,7 +31,7 @@ export class TokenInterceptor implements HttpInterceptor {
     refreshToken(): Observable<any> {
         if (this.refreshTokenInProgress) {
             return new Observable(observer => {
-                this.tokenRefreshed$.subscribe(() => {
+                this.tokenRefreshed.subscribe(() => {
                     observer.next();
                     observer.complete();
                 });

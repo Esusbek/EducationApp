@@ -28,6 +28,9 @@ namespace EducationApp.DataAccessLayer.Repositories
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE)
                 .Take(Constants.ORDERPAGESIZE);
         }
-        
+        public IQueryable<OrderEntity> GetNoPagination()
+        {
+            return base.Get();
+        }
     }
 }

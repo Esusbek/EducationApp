@@ -1,4 +1,5 @@
-﻿using EducationApp.Shared.Enums;
+﻿using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+using EducationApp.Shared.Enums;
 
 namespace EducationApp.BusinessLogicLayer.Models.Orders
 {
@@ -9,7 +10,7 @@ namespace EducationApp.BusinessLogicLayer.Models.Orders
         public int PrintingEditionId { get; set; }
         public decimal SubTotal { get; set; }
         public decimal Price { get; set; }
-
+        public PrintingEditionModel PrintingEdition { get; set; }
         public Enums.CurrencyType Currency { get; set; }
     }
 }

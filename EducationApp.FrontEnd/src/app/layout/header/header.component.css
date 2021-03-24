@@ -35,6 +35,8 @@
 }
 .menu{
   position: relative;
+  display: flex;
+  flex-direction: row;
 }
 .header-parent{
   width:50px;
@@ -93,6 +95,19 @@
   height: 30px;
   padding-left: 10px;
   border-top: 1px solid #ccc;
+}
+.cart {
+  display: flex;
+  flex-direction: row;
+}
+.count {
+  background: #47e0e2;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  margin-left: -20px;
+  margin-top: 30px;
 }
 @media (max-width:520px){
   .header{

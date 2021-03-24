@@ -84,7 +84,7 @@ input{
     flex: 1;
 }
 .previous, .next {
-    background-image: url(../../../assets/img/previous.png);
+    background-image: url(src/assets/img/previous.png);
     width:20px;
     height:20px;
     border: none;
@@ -93,37 +93,7 @@ input{
     opacity: 0.5;
 }
 .next {
-    background-image: url(../../../assets/img/next.png);
-}
-
-.book-details {
-    display: flex;
-    flex-direction: column;
-}
-.main-info{
-    display: flex;
-    flex-direction: row;
-}
-.book-details-info {
-    flex-grow: 1;
-    padding: 20px;
-}
-.order {
-    display: flex;
-    flex-direction: column;
-    min-width: 200px;
-}
-.order-info {
-    display: flex;
-    flex-direction: row;
-}
-.total{
-    color: green;
-    text-align: right;
-    width: 100%;
-}
-.order-info>select{
-    height: 30px;
+    background-image: url(src/assets/img/next.png);
 }
 
 @media (max-width:767px){

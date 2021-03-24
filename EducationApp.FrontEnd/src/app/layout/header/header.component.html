@@ -15,7 +15,7 @@
         <a [routerLink]="['/profile']" routerLinkActive="router-link-active">
           <li>My profile</li>
         </a>
-        <a [routerLink]="['/']" routerLinkActive="router-link-active">
+        <a [routerLink]="['/order-list']" routerLinkActive="router-link-active">
           <li>My orders</li>
         </a>
         <a [routerLink]="['/login']" routerLinkActive="router-link-active" (click)="Logout()">
@@ -23,6 +23,10 @@
         </a>
       </ul>
     </div>
-    <div class="image" *ngIf="itemsInCart()"><img src="assets/img/cart.png" alt="cart" /></div>
+  </div>
+  <div class="cart" *ngIf="isLoggedIn()">
+    <div class="image" *ngIf="itemsInCart()"><img src="assets/img/cart.png" alt="cart" (click)="open()" />
+    </div>
+    <div class="count" *ngIf="itemsInCart()">{{cart.currentItems.length}}</div>
   </div>
 </div>

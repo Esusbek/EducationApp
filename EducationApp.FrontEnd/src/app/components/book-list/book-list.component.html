@@ -1,4 +1,4 @@
-<div class="container" *ngIf="!showDetails$">
+<div class="container">
     <div class="main-content">
         <div class="sidebar">
             <form [formGroup]="filterForm" (ngSubmit)="filter()">
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="book-list">
-            <div class="book" *ngFor="let book of books$">
+            <div class="book" *ngFor="let book of books">
                 <div class="image">
                     <img src={{getImage(book.type)}} alt="icon" (click)="show(book.id)" />
                 </div>
@@ -52,32 +52,7 @@
     <div class="pages">
         <div class="filler"></div>
         <button class="previous" [disabled]="!hasPreviousPage()" (click)="previousPage()"></button>
-        <span>Page {{page$}}/{{info.lastPage}}</span>
+        <span>Page {{page}}/{{info.lastPage}}</span>
         <button class="next" [disabled]="!hasNextPage()" (click)="nextPage()"></button>
-    </div>
-</div>
-<div class="container" *ngIf="showDetails$">
-    <div class="book-details">
-        <div class="main-info">
-            <div class="image">
-                <img src={{getImage(currentBook$.type)}} alt="icon" (click)="show(currentBook$.id)" />
-            </div>
-            <div class="book-details-info">
-                <h2>{{currentBook$.title}}</h2>
-                <p>By {{currentBook$.authors}}</p>
-            </div>
-            <div class="order">
-                <div class="order-info">
-                    <select [(ngModel)]=selectedQuantity>
-                        <option *ngFor="let number of quantity">{{number}}</option>
-                    </select>
-                    <div class="total">
-                        <p>{{currentBook$.price*selectedQuantity | currency: Currency[currentBook$.currency]}}</p>
-                    </div>
-                </div>
-                <button (click)="addToCart()">Add to cart</button>
-            </div>
-        </div>
-        <p>{{currentBook$.description}}</p>
     </div>
 </div>

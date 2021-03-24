@@ -14,5 +14,6 @@ namespace EducationApp.DataAccessLayer.Repositories.Interfaces
             Func<IQueryable<OrderEntity>, IOrderedQueryable<OrderEntity>> orderBy = null,
             bool getRemoved = false,
             int page = Constants.DEFAULTPAGE);
+        public IQueryable<OrderEntity> GetNoPagination();
     }
 }
