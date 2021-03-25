@@ -24,9 +24,6 @@ export class OrderListComponent implements OnInit {
       this.orders = value.orders,
         this.lastPage = value.lastPage
     });
-    store.select('Books').subscribe(value => {
-      this.books = value.books;
-    });
     this.OrderStatusType = OrderStatusType;
     this.PrintingEditionType = PrintingEditionType;
   }
@@ -39,10 +36,10 @@ export class OrderListComponent implements OnInit {
     this.store.dispatch(getOrders({ page: this.page }))
   }
   hasPreviousPage() {
-    return +this.page > 1;
+    return this.page > 1;
   }
   hasNextPage() {
-    return +this.page < this.lastPage;
+    return this.page < this.lastPage;
   }
   nextPage() {
     this.page = this.page + 1;

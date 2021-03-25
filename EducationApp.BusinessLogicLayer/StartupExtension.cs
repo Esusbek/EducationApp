@@ -31,7 +31,7 @@ namespace EducationApp.BusinessLogicLayer
         {
             services.AddTransient<IJwtProvider, JwtProvider>();
             services.AddTransient<ICurrencyConvertionProvider, CurrencyConvertionProvider>();
-            services.AddTransient<IUserValidationProvider, UserValidationProvider>();
+            services.AddTransient<IValidationProvider, ValidationProvider>();
             services.AddTransient<IEmailProvider, EmailProvider>();
         }
 

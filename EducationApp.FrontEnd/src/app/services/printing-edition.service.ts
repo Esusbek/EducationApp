@@ -18,7 +18,6 @@ export class PrintingEditionService {
     }
     public getBooks(page: number)
         : Observable<{ books: Array<PrintingEditionModel>, info: PrintingEditionInfoModel }> {
-        //debugger;
         return this.http.get<{ books: Array<PrintingEditionModel>, info: PrintingEditionInfoModel }>(`${environment.apiURL}${Urls.getBookURL}`, { params: { page: String(page) || "1" } })
             .pipe(
                 catchError(error => handleError(error, this.modalService))

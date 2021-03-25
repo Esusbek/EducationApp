@@ -55,7 +55,7 @@ namespace EducationApp.PresentationLayer.Controllers
 
         [HttpPost("Account/RefreshToken")]
         [AllowAnonymous]
-        public async Task<IActionResult> RefreshToken([FromBody] TokenHelperModel model)
+        public async Task<IActionResult> RefreshToken([FromBody] TokensModel model)
         {
             var loginResult = await _userService.RefreshTokenAsync(model.AccessToken, model.RefreshToken);
             return Ok(loginResult);
@@ -108,7 +108,7 @@ namespace EducationApp.PresentationLayer.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         public async Task<IActionResult> UnbanUser([FromBody] UserModel user)
         {
-            await _userService.UnbanAsync(user);
+            await _userService.BanAsync(user);
             return Ok();
         }
         [HttpPost("Account/ChangePassword")]

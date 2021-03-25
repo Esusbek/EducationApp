@@ -5,10 +5,10 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { OrderItemModel, OrderModel, SessionModel } from 'src/app/models/cart.models';
-import { Config, HttpOptions, Urls } from 'src/app/shared/consts';
+import { HttpOptions, Urls } from 'src/app/shared/consts';
 import { getUserId, handleError } from 'src/app/shared/methods';
 import { environment } from 'src/environments/environment';
-const stripePromise = loadStripe(Config.stripeKey);
+const stripePromise = loadStripe(environment.stripeKey);
 
 @Injectable({
     providedIn: 'root',

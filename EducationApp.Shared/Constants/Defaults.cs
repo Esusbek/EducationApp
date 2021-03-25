@@ -16,5 +16,6 @@
         public const int DEFAULTDAYSPERRATEREFRESH = 1;
         public const int DEFAULTPREVIOUSPAGEOFFSET = 1;
         public const int DEFAULTMINPASSWORDLENGTH = 6;
+        public const int DEFAULTREFRESHTOKENLENGTH = 32;
     }
 }

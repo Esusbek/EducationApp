@@ -27,7 +27,3 @@ export const Urls = {
   getOrdersURL: 'Order/Get',
   payOrderURL: 'Order/Success'
 }
-
-export const Config = {
-  stripeKey: 'pk_test_51ILV1OA5FBe7RIVrbR9dsbh2Pq8HNaco6pwndtvk5KN9CLgXlnDpAiITdMI7x5iw49UvhSdLfHTySrhtvH8XtQIl002yuNqzrL'
-}

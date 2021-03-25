@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { of } from "rxjs";
-import { catchError, map, mergeMap } from "rxjs/operators";
+import { map, mergeMap } from "rxjs/operators";
 import { ProfileService } from "src/app/services/profile.service";
 import * as ProfileActions from "./profile.actions";
 
@@ -14,8 +13,7 @@ export class ProfileEffects {
             ofType(ProfileActions.getInfo),
             mergeMap(() =>
                 this.profileService.getInfo().pipe(
-                    map(data => ProfileActions.getInfoSuccess(data)),
-                    catchError(error => of(ProfileActions.getInfoFailure(error))))
+                    map(data => ProfileActions.getInfoSuccess(data)))
             ),
         );
     });
@@ -23,8 +21,7 @@ export class ProfileEffects {
         return this.actions$.pipe(
             ofType(ProfileActions.editProfile),
             mergeMap(data => this.profileService.updateUser(data).pipe(
-                map(data => ProfileActions.editProfileSuccess(data)),
-                catchError(error => of(ProfileActions.editProfileFailure(error))))
+                map(data => ProfileActions.editProfileSuccess(data)))
             ),
         );
     });
@@ -32,8 +29,7 @@ export class ProfileEffects {
         return this.actions$.pipe(
             ofType(ProfileActions.changePassword),
             mergeMap(data => this.profileService.changePassword(data).pipe(
-                map(() => ProfileActions.changePasswordSuccess()),
-                catchError(error => of(ProfileActions.changePasswordFailure(error))))
+                map(() => ProfileActions.changePasswordSuccess()))
             ),
         );
     });

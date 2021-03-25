@@ -1,6 +1,8 @@
-﻿namespace EducationApp.DataAccessLayer.Entities
+﻿using EducationApp.DataAccessLayer.Entities.Base;
+
+namespace EducationApp.DataAccessLayer.Entities
 {
-    public class PaymentEntity : Base.BaseEntity
+    public class PaymentEntity : BaseEntity
     {
         public string TransactionId { get; set; }
     }

@@ -1,11 +1,12 @@
-﻿using EducationApp.Shared.Enums;
+﻿using EducationApp.DataAccessLayer.Entities.Base;
+using EducationApp.Shared.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
-    public class PrintingEditionEntity : Base.BaseEntity
+    public class PrintingEditionEntity : BaseEntity
     {
         public string Title { get; set; }
         public string Description { get; set; }

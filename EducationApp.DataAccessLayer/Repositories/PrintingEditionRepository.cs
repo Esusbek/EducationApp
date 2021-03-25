@@ -13,35 +13,26 @@ namespace EducationApp.DataAccessLayer.Repositories
             : base(dbContext)
         {
         }
-        public IQueryable<PrintingEditionEntity> GetAll(int page = Constants.DEFAULTPAGE)
-        {
-            return base.GetAll()
-                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.PRINTINGEDITIONPAGESIZE)
-                .Take(Constants.PRINTINGEDITIONPAGESIZE);
-        }
-        public IQueryable<PrintingEditionEntity> Get(Expression<Func<PrintingEditionEntity, bool>> filter = null,
+        public List<PrintingEditionEntity> Get(Expression<Func<PrintingEditionEntity, bool>> filter = null,
             Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
             bool getRemoved = false,
             int page = Constants.DEFAULTPAGE)
         {
-            var test = base.Get(filter, orderBy, getRemoved).ToList();
             return base.Get(filter, orderBy, getRemoved)
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.PRINTINGEDITIONPAGESIZE)
-                .Take(Constants.PRINTINGEDITIONPAGESIZE);
+                .Take(Constants.PRINTINGEDITIONPAGESIZE).ToList();
         }
-        public IQueryable<PrintingEditionEntity> GetNoPagination(Expression<Func<PrintingEditionEntity, bool>> filter = null,
-            Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
+        public List<PrintingEditionEntity> GetAll(Expression<Func<PrintingEditionEntity, bool>> filter = null,
             bool getRemoved = false)
         {
-            return base.Get(filter, orderBy, getRemoved);
+            return base.Get(filter, getRemoved: getRemoved);
         }
-        public void AddAuthorToPrintingEdition(PrintingEditionEntity printingEdition, AuthorEntity author)
+        public void Update(PrintingEditionEntity printingEdition, AuthorEntity author = null)
         {
-            if (printingEdition.Authors.Contains(author))
+            if (author is not null && !printingEdition.Authors.Contains(author))
             {
-                return;
+                printingEdition.Authors.Add(author);
             }
-            printingEdition.Authors.Add(author);
             base.Update(printingEdition);
         }
     }

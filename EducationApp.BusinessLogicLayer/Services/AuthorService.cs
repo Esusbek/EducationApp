@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EducationApp.BusinessLogicLayer.Models.Authors;
 using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
@@ -18,15 +19,18 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly IAuthorRepository _authorRepository;
         private readonly IPrintingEditionRepository _printingEditionRepository;
         private readonly IMapper _mapper;
+        private readonly IValidationProvider _validator;
         public AuthorService(IMapper mapper,
-            IAuthorRepository authorRepository, IPrintingEditionRepository printingEditionRepository)
+            IAuthorRepository authorRepository, IPrintingEditionRepository printingEditionRepository, IValidationProvider validationProvider)
         {
             _authorRepository = authorRepository;
             _printingEditionRepository = printingEditionRepository;
             _mapper = mapper;
+            _validator = validationProvider;
         }
         public void AddAuthor(AuthorModel author)
         {
+            _validator.ValidateAuthor(author);
             var dbAuthor = _authorRepository.Get(author => author.Name == author.Name).FirstOrDefault();
             if (dbAuthor is not null)
             {
@@ -38,17 +42,19 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public void UpdateAuthor(AuthorModel author)
         {
+            _validator.ValidateAuthor(author);
             var dbAuthor = _authorRepository.GetById(author.Id);
             if (dbAuthor is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
             }
             var updatedAuthor = _mapper.Map<AuthorEntity>(author);
-            updatedAuthor.CreatedAt = dbAuthor.CreatedAt;
             _authorRepository.Update(updatedAuthor);
         }
         public void AddPrintingEditionToAuthor(AuthorModel author, PrintingEditionModel printingEdition)
         {
+            _validator.ValidateAuthor(author);
+            _validator.ValidatePrintingEdition(printingEdition);
             var dbAuthor = _authorRepository.GetById(author.Id);
             if (dbAuthor is null)
             {
@@ -60,7 +66,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
             }
             dbAuthor.PrintingEditions = new List<PrintingEditionEntity>();
-            _authorRepository.AddPrintingEditionToAuthor(dbAuthor, dbPrintingEdition);
+            _authorRepository.Update(dbAuthor, dbPrintingEdition);
         }
         public void DeleteAuthor(AuthorModel author)
         {
@@ -81,21 +87,13 @@ namespace EducationApp.BusinessLogicLayer.Services
                 filter = author => string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name);
             }
             var dbAuthors = _authorRepository.Get(filter, orderBy, getRemoved, page);
-            var authors = new List<AuthorModel>();
-            foreach (var author in dbAuthors)
-            {
-                authors.Add(_mapper.Map<AuthorModel>(author));
-            }
+            var authors = _mapper.Map<List<AuthorModel>>(dbAuthors);
             return authors;
         }
         public List<AuthorModel> GetAuthors(int page = Constants.DEFAULTPAGE)
         {
             var dbAuthors = _authorRepository.Get(page: page);
-            var authors = new List<AuthorModel>();
-            foreach (var author in dbAuthors)
-            {
-                authors.Add(_mapper.Map<AuthorModel>(author));
-            }
+            var authors = _mapper.Map<List<AuthorModel>>(dbAuthors);
             return authors;
         }
         public AuthorModel GetAuthor(int id)

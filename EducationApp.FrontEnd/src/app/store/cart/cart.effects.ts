@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { CartService } from 'src/app/services/cart.service';
 import * as CartActions from './cart.actions';
 
@@ -18,8 +18,7 @@ export class CartEffects {
             mergeMap(action => {
                 return this.cartService.checkout(action.items)
                     .pipe(
-                        map(response => CartActions.checkoutSuccess(response)),
-                        catchError(error => of(CartActions.checkoutFailure({ error })))
+                        map(response => CartActions.checkoutSuccess(response))
                     )
             }
             )
@@ -39,8 +38,7 @@ export class CartEffects {
             mergeMap(action => {
                 return this.cartService.getOrders(action.page)
                     .pipe(
-                        map(response => CartActions.getOrdersSuccess({ orders: response.orders, lastPage: response.lastPage })),
-                        catchError(error => of(CartActions.getOrdersFailure({ error })))
+                        map(response => CartActions.getOrdersSuccess({ orders: response.orders, lastPage: response.lastPage }))
                     )
             }
             )
@@ -52,8 +50,7 @@ export class CartEffects {
             mergeMap(() => {
                 return this.cartService.payOrder()
                     .pipe(
-                        map(() => CartActions.payOrderSuccess()),
-                        catchError(error => of(CartActions.payOrderFailure({ error })))
+                        map(() => CartActions.payOrderSuccess())
                     )
             }
             )

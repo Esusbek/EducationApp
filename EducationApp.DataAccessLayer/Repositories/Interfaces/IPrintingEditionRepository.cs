@@ -9,14 +9,12 @@ namespace EducationApp.DataAccessLayer.Repositories.Interfaces
 {
     public interface IPrintingEditionRepository : Base.BaseInterface.IBaseRepository<PrintingEditionEntity>
     {
-        public IQueryable<PrintingEditionEntity> GetAll(int page);
-        public IQueryable<PrintingEditionEntity> Get(Expression<Func<PrintingEditionEntity, bool>> filter = null,
+        public List<PrintingEditionEntity> Get(Expression<Func<PrintingEditionEntity, bool>> filter = null,
                 Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
                 bool getRemoved = false,
                 int page = Constants.DEFAULTPAGE);
-        public IQueryable<PrintingEditionEntity> GetNoPagination(Expression<Func<PrintingEditionEntity, bool>> filter = null,
-            Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
+        public List<PrintingEditionEntity> GetAll(Expression<Func<PrintingEditionEntity, bool>> filter = null,
             bool getRemoved = false);
-        public void AddAuthorToPrintingEdition(PrintingEditionEntity printingEdition, AuthorEntity author);
+        public void Update(PrintingEditionEntity printingEdition, AuthorEntity author = null);
     }
 }

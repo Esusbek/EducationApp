@@ -27,11 +27,12 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly IPaymentRepository _paymentRepository;
         private readonly IPrintingEditionService _printingEditionService;
         private readonly ICurrencyConvertionProvider _currencyConverter;
+        private readonly IValidationProvider _validator;
         private readonly IMapper _mapper;
         private readonly UrlConfig _urlConfig;
         public OrderService(IMapper mapper, IPrintingEditionService printingEditionService,
             IOptions<UrlConfig> urlConfig, ICurrencyConvertionProvider currencyConverter,
-            IOrderRepository orderRepository,IOrderItemRepository orderItemRepository, IPaymentRepository paymentRepository)
+            IOrderRepository orderRepository,IOrderItemRepository orderItemRepository, IPaymentRepository paymentRepository, IValidationProvider validationProvider)
         {
             _urlConfig = urlConfig.Value;
             _orderRepository = orderRepository;
@@ -40,12 +41,13 @@ namespace EducationApp.BusinessLogicLayer.Services
             _printingEditionService = printingEditionService;
             _currencyConverter = currencyConverter;
             _mapper = mapper;
+            _validator = validationProvider;
         }
 
 
         public void PayOrder(string paymentIntentId)
         {
-            if(paymentIntentId is null)
+            if(string.IsNullOrWhiteSpace(paymentIntentId))
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDINTENTIDERROR);
             }    
@@ -57,6 +59,7 @@ namespace EducationApp.BusinessLogicLayer.Services
 
         public SessionModel CreateCheckoutSession(OrderModel order)
         {
+            _validator.ValidateOrder(order);
             order.Status = Enums.OrderStatusType.Unpaid;
             order.Date = DateTime.UtcNow;
             var dbOrder = _mapper.Map<OrderEntity>(order);
@@ -64,28 +67,22 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 TransactionId = default
             };
-            var paymentId = _paymentRepository.InsertAndReturnId(payment);
-            dbOrder.PaymentId = paymentId;
-            var dbOrderId = _orderRepository.InsertAndReturnId(dbOrder);
+            _paymentRepository.Insert(payment);
+            dbOrder.PaymentId = payment.Id;
+            _orderRepository.Insert(dbOrder);
             var items = new List<SessionLineItemOptions>();
-            var dbItems = new List<OrderItemEntity>();
-            var editionIds = new List<int>();
-            foreach (var item in order.CurrentItems)
-            {
-                editionIds.Add(item.PrintingEditionId);
-            }
+            var editionIds = order.CurrentItems.Select(item => item.PrintingEditionId);
             var printingEditions = _printingEditionService.GetPrintingEditionsRange(edition => editionIds.Contains(edition.Id));
-            foreach (var item in order.CurrentItems)
+            var dbItems = _mapper.Map<List<OrderItemEntity>>(order.CurrentItems);
+            dbItems.ForEach(item => item.OrderId = dbOrder.Id);
+            foreach (var item in dbItems)
             {
-                var dbItem = _mapper.Map<OrderItemEntity>(item);
-                dbItem.OrderId = dbOrderId;
-                dbItems.Add(dbItem);
-                var printingEdition = printingEditions.Where(edition => edition.Id == dbItem.PrintingEditionId).FirstOrDefault();
+                var printingEdition = printingEditions.Where(edition => edition.Id == item.PrintingEditionId).FirstOrDefault();
                 var lineItem = new SessionLineItemOptions
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        UnitAmountDecimal = item.Price*100,
+                        UnitAmountDecimal = printingEdition.Price*100,
                         Currency = item.Currency.ToString(),
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
@@ -125,9 +122,9 @@ namespace EducationApp.BusinessLogicLayer.Services
             };
             var service = new SessionService();
             Session session = service.Create(options);
-            var dbPayment = _paymentRepository.Get(payment => payment.Id == paymentId).FirstOrDefault();
-            dbPayment.TransactionId = session.PaymentIntentId;
-            _paymentRepository.Update(dbPayment);
+            
+            payment.TransactionId = session.PaymentIntentId;
+            _paymentRepository.Update(payment);
             return new SessionModel { 
                 Id = session.Id,
                 PaymentIntentId = session.PaymentIntentId
@@ -135,20 +132,16 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public int GetLastPage()
         {
-            var dbOrders = _orderRepository.GetNoPagination().ToList();
+            var dbOrders = _orderRepository.GetAll().ToList();
             var lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
             return lastPage;
         }
         public List<OrderModel> GetAllOrders(int page = Constants.DEFAULTPAGE)
         {
-            var dbOrders = _orderRepository.GetAll(page).ToList();
+            var dbOrders = _orderRepository.Get(getRemoved: true,page:page);
             var orders = new List<OrderModel>();
-            var orderIds = new List<int>();
-            foreach (var order in dbOrders)
-            {
-                orderIds.Add(order.Id);
-            }
-            var allItems = _itemRepository.Get(item => orderIds.Contains(item.OrderId)).ToList();
+            var orderIds = dbOrders.Select(order => order.Id).ToList();
+            var allItems = _itemRepository.Get(item => orderIds.Contains(item.OrderId));
             foreach (var order in dbOrders)
             {
                 var mappedOrder = _mapper.Map<OrderModel>(order);
@@ -163,11 +156,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         {
             var dbOrders = _orderRepository.Get(order => order.UserId == user.Id.ToString(), page: page).ToList();
             var orders = new List<OrderModel>();
-            var orderIds = new List<int>();
-            foreach (var order in dbOrders)
-            {
-                orderIds.Add(order.Id);
-            }
+            var orderIds = dbOrders.Select(order => order.Id);
             var allItems = _itemRepository.Get(item => orderIds.Contains(item.OrderId)).ToList();
             foreach (var order in dbOrders)
             {
@@ -198,11 +187,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 (orderFilter.Status == default || order.Status == orderFilter.Status); 
             }
             var dbOrders = _orderRepository.Get(filter, orderBy, getRemoved, page);
-            var orders = new List<OrderModel>();
-            foreach (var order in dbOrders)
-            {
-                orders.Add(_mapper.Map<OrderModel>(order));
-            }
+            var orders = _mapper.Map<List<OrderModel>>(dbOrders);
             return orders;
         }
 
@@ -213,12 +198,7 @@ namespace EducationApp.BusinessLogicLayer.Services
 
         private List<OrderItemModel> MapItems(List<OrderItemEntity> items)
         {
-            var result = new List<OrderItemModel>();
-            foreach (var item in items)
-            {
-                var mappedItem = _mapper.Map<OrderItemModel>(item);
-                result.Add(mappedItem);
-            }
+            var result = _mapper.Map<List<OrderItemModel>>(items);
             return result;
         }
     }

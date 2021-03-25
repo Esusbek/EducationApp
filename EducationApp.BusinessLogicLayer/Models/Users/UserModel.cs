@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using EducationApp.BusinessLogicLayer.Models.Base;
 
 namespace EducationApp.BusinessLogicLayer.Models.Users
 {
-    public class UserModel
+    public class UserModel: BaseErrorsModel
     {
         public string Id { get; set; }
         public string UserName { get; set; }
@@ -11,10 +11,6 @@ namespace EducationApp.BusinessLogicLayer.Models.Users
         public string Email { get; set; }
         public string Password { get; set; }
         public string PasswordConfirm { get; set; }
-        public List<string> Errors;
-        public UserModel()
-        {
-            Errors = new List<string>();
-        }
+
     }
 }

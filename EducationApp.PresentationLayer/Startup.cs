@@ -86,7 +86,7 @@ namespace EducationApp.PresentationLayer
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                DataBaseInitializer.Seed(app);
+                app.Seed();
             }
            
             app.UseMiddleware<Middlewares.LogMiddleware>();

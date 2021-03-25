@@ -49,18 +49,18 @@ export class BookListComponent implements OnInit {
       floor: 0,
       ceil: 100,
       translate: (value: number): string => {
-        return "$" + value;
+        return "";
       }
     };;
     this.checkboxes = [{
-      name: PrintingEditionType[1],
-      value: 1,
+      name: PrintingEditionType[PrintingEditionType.Book],
+      value: PrintingEditionType.Book,
     }, {
-      name: PrintingEditionType[2],
-      value: 2
+      name: PrintingEditionType[PrintingEditionType.Journal],
+      value: PrintingEditionType.Journal
     }, {
-      name: PrintingEditionType[3],
-      value: 3
+      name: PrintingEditionType[PrintingEditionType.Newspaper],
+      value: PrintingEditionType.Newspaper
     }];
     this.filterForm = this.formBuilder.group({
       checkboxes: this.formBuilder.array(this.checkboxes.map(() => false)),
@@ -117,10 +117,10 @@ export class BookListComponent implements OnInit {
     this.maxValue = event.target.value;
   }
   hasPreviousPage() {
-    return +this.page > 1;
+    return this.page > 1;
   }
   hasNextPage() {
-    return +this.page < this.info.lastPage;
+    return this.page < this.info.lastPage;
   }
   nextPage() {
     this.page = this.page + 1;

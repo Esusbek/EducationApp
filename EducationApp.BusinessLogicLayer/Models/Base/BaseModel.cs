@@ -2,13 +2,9 @@
 
 namespace EducationApp.BusinessLogicLayer.Models.Base
 {
-    public class BaseModel
+    public class BaseModel: BaseErrorsModel
     {
         public int Id { get; set; }
-        public List<string> Errors;
-        public BaseModel()
-        {
-            Errors = new List<string>();
-        }
+        
     }
 }

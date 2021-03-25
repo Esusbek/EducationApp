@@ -11,8 +11,7 @@ namespace EducationApp.DataAccessLayer.Initialization
 {
     public static class DataBaseInitializer
     {
-
-        public static void Seed(IApplicationBuilder app)
+        public static void Seed(this IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {

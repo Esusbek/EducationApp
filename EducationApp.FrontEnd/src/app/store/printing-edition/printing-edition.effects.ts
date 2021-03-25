@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { of } from "rxjs";
-import { catchError, map, mergeMap } from "rxjs/operators";
+import { map, mergeMap } from "rxjs/operators";
 import { PrintingEditionService } from "src/app/services/printing-edition.service";
 import * as PrintingEditionActions from "./printing-edition.actions";
 
@@ -14,8 +13,7 @@ export class PrintingEditionEffects {
             ofType(PrintingEditionActions.getBooks),
             mergeMap(data =>
                 this.bookService.getBooks(data.page).pipe(
-                    map(data => PrintingEditionActions.getBooksSuccess({ books: data.books, info: data.info })),
-                    catchError(error => of(PrintingEditionActions.getBooksFailure(error))))
+                    map(data => PrintingEditionActions.getBooksSuccess({ books: data.books, info: data.info })))
             ),
         );
     });
@@ -25,8 +23,7 @@ export class PrintingEditionEffects {
             ofType(PrintingEditionActions.getFiltered),
             mergeMap(data =>
                 this.bookService.getFiltered(data.filter, data.orderAsc, data.page).pipe(
-                    map(data => PrintingEditionActions.getBooksSuccess({ books: data.books, info: data.info })),
-                    catchError(error => of(PrintingEditionActions.getFilteredFailure(error))))
+                    map(data => PrintingEditionActions.getBooksSuccess({ books: data.books, info: data.info })))
             ),
         );
     });

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EducationApp.BusinessLogicLayer.Models.Authors;
 using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
@@ -18,20 +19,24 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly IPrintingEditionRepository _printingEditionRepository;
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
+        private readonly IValidationProvider _validator;
         public PrintingEditionService(IMapper mapper, IPrintingEditionRepository printingEditionRepository,
-            IAuthorRepository authorRepository)
+            IAuthorRepository authorRepository, IValidationProvider validationProvider)
         {
             _printingEditionRepository = printingEditionRepository;
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _validator = validationProvider;
         }
         public void AddPrintingEdition(PrintingEditionModel printingEdition)
         {
+            _validator.ValidatePrintingEdition(printingEdition);
             var dbPrintingEdition = _mapper.Map<PrintingEditionEntity>(printingEdition);
             _printingEditionRepository.Insert(dbPrintingEdition);
         }
         public void UpdatePrintingEdition(PrintingEditionModel printingEdition)
         {
+            _validator.ValidatePrintingEdition(printingEdition);
             var dbPrintingEdition = _printingEditionRepository.GetById(printingEdition.Id);
             if (dbPrintingEdition is null)
             {
@@ -43,22 +48,28 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public void AddAuthorToPrintingEdition(PrintingEditionModel printingEdition, AuthorModel author)
         {
+            _validator.ValidatePrintingEdition(printingEdition);
             var dbPrintingEdition = _printingEditionRepository.GetById(printingEdition.Id);
             if (dbPrintingEdition is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
             }
+            _validator.ValidateAuthor(author);
             var dbAuthor = _authorRepository.GetById(author.Id);
             if (dbAuthor is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
             }
             dbPrintingEdition.Authors = new List<AuthorEntity>();
-            _printingEditionRepository.AddAuthorToPrintingEdition(dbPrintingEdition, dbAuthor);
+            _printingEditionRepository.Update(dbPrintingEdition, dbAuthor);
         }
         public void DeletePrintingEdition(PrintingEditionModel printingEdition)
         {
             var dbPrintingEdition = _printingEditionRepository.GetById(printingEdition.Id);
+            if (dbPrintingEdition is null)
+            {
+                throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
+            }
             _printingEditionRepository.Delete(dbPrintingEdition);
         }
         public PrintingEditionResponseModel GetPrintingEditionsFiltered(PrintingEditionFilterModel printingEditionFilter = null,
@@ -69,8 +80,8 @@ namespace EducationApp.BusinessLogicLayer.Services
             if (printingEditionFilter is not null)
             {
                 filter = edition => (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
-                (printingEditionFilter.LowPrice == 0 || edition.Price >= printingEditionFilter.LowPrice) &&
-                (printingEditionFilter.HighPrice == 0 || edition.Price <= printingEditionFilter.HighPrice) &&
+                (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
+                (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
                 (printingEditionFilter.Type == default || printingEditionFilter.Type.Contains(edition.Type));
             }
             if (orderAsc)
@@ -82,11 +93,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             foreach (var printingEdition in dbPrintingEditions)
             {
                 var mappedEdition = _mapper.Map<PrintingEditionModel>(printingEdition);
-                mappedEdition.Authors = new List<string>();
-                foreach (var author in printingEdition.Authors)
-                {
-                    mappedEdition.Authors.Add(author.Name);
-                }
+                mappedEdition.Authors = printingEdition.Authors.Select(author => author.Name).ToList();
                 printingEditions.Add(mappedEdition);
                 
             }
@@ -103,18 +110,18 @@ namespace EducationApp.BusinessLogicLayer.Services
             if (printingEditionFilter is not null)
             {
                 filter = edition => (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
-                (printingEditionFilter.LowPrice == 0 || edition.Price >= printingEditionFilter.LowPrice) &&
-                (printingEditionFilter.HighPrice == 0 || edition.Price <= printingEditionFilter.HighPrice) &&
+                (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
+                (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
                 (printingEditionFilter.Type == default || printingEditionFilter.Type.Contains(edition.Type));
             }
-            var dbPrintingEditions = _printingEditionRepository.GetNoPagination(filter).ToList();
+            var dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
             var lastPage = (int)Math.Ceiling(dbPrintingEditions.Count / (double)Constants.PRINTINGEDITIONPAGESIZE);
             if (printingEditionFilter is not null)
             {
                 filter = edition => (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
                 (printingEditionFilter.Type == default || printingEditionFilter.Type.Contains(edition.Type));
             }
-            dbPrintingEditions = _printingEditionRepository.GetNoPagination(filter).ToList();
+            dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
             var min = dbPrintingEditions.Aggregate((currentMin, x) => (currentMin == null || x.Price < currentMin.Price ? x : currentMin)).Price;
             var max = dbPrintingEditions.Aggregate((currentMax, x) => (currentMax == null || x.Price > currentMax.Price ? x : currentMax)).Price;
             
@@ -144,7 +151,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
             int page = Constants.DEFAULTPAGE, bool getRemoved = false)
         {
-            var dbPrintingEditions = _printingEditionRepository.GetNoPagination(filter, orderBy, getRemoved);
+            var dbPrintingEditions = _printingEditionRepository.GetAll(filter, getRemoved);
             return dbPrintingEditions.ToList();
         }
         public PrintingEditionModel GetPrintingEdition(int id)

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using EducationApp.DataAccessLayer.Entities.Base;
+using System.Collections.Generic;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
-    public class AuthorEntity : Base.BaseEntity
+    public class AuthorEntity : BaseEntity
     {
         public string Name { get; set; }
 

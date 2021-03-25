@@ -18,19 +18,17 @@ namespace EducationApp.DataAccessLayer.AppContext
 
         public ApplicationContext()
         {
-            _logStream = new StreamWriter(Constants.DBLOGSDESTINATION, true);
         }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
-            _logStream = new StreamWriter(Constants.DBLOGSDESTINATION, true);
+            Database.Migrate();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            optionsBuilder.UseLazyLoadingProxies()
-                .LogTo(_logStream.WriteLine, Microsoft.Extensions.Logging.LogLevel.Warning);
+            optionsBuilder.UseLazyLoadingProxies();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,17 +41,6 @@ namespace EducationApp.DataAccessLayer.AppContext
                 .Property(edition => edition.SubTitle)
                 .HasDefaultValue("empty");
             base.OnModelCreating(modelBuilder);
-        }
-        public override void Dispose()
-        {
-            base.Dispose();
-            _logStream.Dispose();
-        }
-
-        public override async ValueTask DisposeAsync()
-        {
-            await base.DisposeAsync();
-            await _logStream.DisposeAsync();
         }
     }
 }

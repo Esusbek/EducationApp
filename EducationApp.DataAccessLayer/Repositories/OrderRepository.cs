@@ -13,24 +13,14 @@ namespace EducationApp.DataAccessLayer.Repositories
             : base(dbContext)
         {
         }
-        public IQueryable<OrderEntity> GetAll(int page = Constants.DEFAULTPAGE)
-        {
-            return base.GetAll()
-                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE)
-                .Take(Constants.ORDERPAGESIZE);
-        }
-        public IQueryable<OrderEntity> Get(Expression<Func<OrderEntity, bool>> filter = null,
+        public List<OrderEntity> Get(Expression<Func<OrderEntity, bool>> filter = null,
             Func<IQueryable<OrderEntity>, IOrderedQueryable<OrderEntity>> orderBy = null,
             bool getRemoved = false,
             int page = Constants.DEFAULTPAGE)
         {
             return base.Get(filter, orderBy, getRemoved)
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE)
-                .Take(Constants.ORDERPAGESIZE);
-        }
-        public IQueryable<OrderEntity> GetNoPagination()
-        {
-            return base.Get();
+                .Take(Constants.ORDERPAGESIZE).ToList();
         }
     }
 }

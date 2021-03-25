@@ -27,7 +27,6 @@ export class AccountService {
       )
   }
   public register(user: RegisterModel): Observable<string> {
-    //debugger;
     return this.http.post<string>(`${environment.apiURL}${Urls.RegisterURL}`, user, HttpOptions)
       .pipe(
         catchError(error => handleError(error, this.modalService))
@@ -35,7 +34,6 @@ export class AccountService {
   }
 
   public activateEmail(activationModel: EmailActivationModel): Observable<string> {
-    //debugger;
     return this.http.post<string>(`${environment.apiURL}${Urls.ActivationURL}`, activationModel, HttpOptions)
       .pipe(
         catchError(error => handleError(error, this.modalService))

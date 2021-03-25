@@ -7,8 +7,8 @@ namespace EducationApp.BusinessLogicLayer.Providers.Interfaces
 {
     public interface IJwtProvider
     {
-        public Task<TokenHelperModel> GenerateTokenAsync(string userName, string usedId, IList<string> userRoles);
+        public Task<TokensModel> GenerateTokenAsync(string userName, string usedId, IList<string> userRoles);
         public Task RemoveRefreshTokenAsync(UserEntity user);
-        public Task<TokenHelperModel> RefreshAsync(string refreshToken, string accessToken);
+        public Task<TokensModel> RefreshAsync(string refreshToken, string accessToken);
     }
 }

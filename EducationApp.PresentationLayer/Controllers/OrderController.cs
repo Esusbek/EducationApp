@@ -20,7 +20,8 @@ namespace EducationApp.PresentationLayer.Controllers
             _orderService = orderService;
         }
         [HttpGet("Order/GetAll")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [AllowAnonymous]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         public IActionResult GetAll([FromQuery] int page = Constants.DEFAULTPAGE)
         {
             var orders = _orderService.GetAllOrders(page);

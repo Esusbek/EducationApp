@@ -44,10 +44,7 @@ export class LoginComponent implements OnInit {
     this.store.dispatch(login({ ...this.loginForm.value }))
   }
   onForgotPassword() {
-    this.forgotPassword = true;
-  }
-  onLoginReturn() {
-    this.forgotPassword = false;
+    this.forgotPassword = !this.forgotPassword;
   }
   onRecoverySubmit() {
     console.log({ ...this.forgotPasswordForm.value });

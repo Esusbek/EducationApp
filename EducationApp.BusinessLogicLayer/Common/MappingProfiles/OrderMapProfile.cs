@@ -10,15 +10,13 @@ namespace EducationApp.BusinessLogicLayer.Common.MappingProfiles
         {
             public OrderMapProfile()
             {
-                CreateMap<OrderModel, OrderEntity>();
-                CreateMap<OrderEntity, OrderModel>();
+                CreateMap<OrderModel, OrderEntity>().ReverseMap();
 
                 CreateMap<OrderItemModel, OrderItemEntity>().
                     ForMember(destination => destination.PrintingEdition, option => option.Ignore()); ;
                 CreateMap<OrderItemEntity, OrderItemModel>();
 
-                CreateMap<PaymentModel, PaymentEntity>();
-                CreateMap<PaymentEntity, PaymentModel>();
+                CreateMap<PaymentModel, PaymentEntity>().ReverseMap();
             }
         }
     }

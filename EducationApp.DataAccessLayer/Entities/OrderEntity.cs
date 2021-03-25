@@ -1,9 +1,10 @@
-﻿using EducationApp.Shared.Enums;
+﻿using EducationApp.DataAccessLayer.Entities.Base;
+using EducationApp.Shared.Enums;
 using System;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
-    public class OrderEntity : Base.BaseEntity
+    public class OrderEntity : BaseEntity
     {
         public string Description { get; set; }
         public DateTime Date { get; set; }

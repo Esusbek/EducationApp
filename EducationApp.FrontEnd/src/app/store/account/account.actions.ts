@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { createAction, props } from '@ngrx/store';
 import { EmailActivationModel, LoginCredentials, LoginResult, RegisterModel, ResetPasswordModel } from 'src/app/models/account.models';
 
@@ -14,17 +13,9 @@ export const refreshTokens = createAction(
     '[Any page] Refresh tokens',
     props<LoginResult>()
 );
-export const loginFailed = createAction(
-    '[Login Page] loginFailure',
-    props<{ error: HttpErrorResponse }>()
-);
 export const register = createAction(
     '[Register Page] register',
     props<{ user: RegisterModel }>()
-);
-export const registerFailed = createAction(
-    '[Register Page] registerFailure',
-    props<{ error: HttpErrorResponse }>()
 );
 export const registerSuccess = createAction(
     '[Register Page] registerSuccess'

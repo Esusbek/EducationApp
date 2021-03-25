@@ -30,7 +30,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
             _userManager = userManager;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.Key));
         }
-        public async Task<TokenHelperModel> GenerateTokenAsync(string userName, string userId, IList<string> userRoles)
+        public async Task<TokensModel> GenerateTokenAsync(string userName, string userId, IList<string> userRoles)
         {
             var claims = new List<Claim>
             {
@@ -55,7 +55,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
             var user = await _userManager.FindByNameAsync(userName);
             user.RefreshToken = refreshToken;
             await _userManager.UpdateAsync(user);
-            return new TokenHelperModel
+            return new TokensModel
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
@@ -68,7 +68,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
             await _userManager.UpdateAsync(user);
         }
 
-        public async Task<TokenHelperModel> RefreshAsync(string refreshToken, string accessToken)
+        public async Task<TokensModel> RefreshAsync(string refreshToken, string accessToken)
         {
             var (principal, jwtToken) = DecodeJwtToken(accessToken);
             if (jwtToken is null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256Signature))
@@ -114,7 +114,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
 
         private static string GenerateRefreshTokenString()
         {
-            var randomNumber = new byte[32];
+            var randomNumber = new byte[Constants.DEFAULTREFRESHTOKENLENGTH];
             using var randomNumberGenerator = RandomNumberGenerator.Create();
             randomNumberGenerator.GetBytes(randomNumber);
             return Convert.ToBase64String(randomNumber);

@@ -23,24 +23,24 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly IMapper _mapper;
-        private readonly IUserValidationProvider _validator;
+        private readonly IValidationProvider _validator;
         private readonly IEmailProvider _email;
         private readonly UrlConfig _urlConfig;
         private readonly IJwtProvider _jwtProvider;
 
         public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager,
             IOptions<UrlConfig> urlConfig, IMapper mapper,
-            IJwtProvider jwtProvider, IEmailProvider emailProvider, IUserValidationProvider userValidationProvider)
+            IJwtProvider jwtProvider, IEmailProvider emailProvider, IValidationProvider validationProvider)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
             _jwtProvider = jwtProvider;
-            _validator = userValidationProvider;
+            _validator = validationProvider;
             _urlConfig = urlConfig.Value;
             _email = emailProvider;
         }
-        public async Task<TokenHelperModel> LoginAsync(UserModel user, bool rememberMe)
+        public async Task<TokensModel> LoginAsync(UserModel user, bool rememberMe)
         {
             if (string.IsNullOrWhiteSpace(user.Password) || string.IsNullOrWhiteSpace(user.UserName))
             {
@@ -67,7 +67,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
         }
 
-        public async Task<TokenHelperModel> RefreshTokenAsync(string accessToken, string refreshToken)
+        public async Task<TokensModel> RefreshTokenAsync(string accessToken, string refreshToken)
         {
             if (string.IsNullOrWhiteSpace(refreshToken) || string.IsNullOrWhiteSpace(accessToken))
             {
@@ -77,25 +77,15 @@ namespace EducationApp.BusinessLogicLayer.Services
             return jwtResult;
         }
 
-        public async Task<bool> AuthorizationAsync(UserEntity user, string role)
+        public async Task BanAsync(UserModel user, int duration=0)
         {
-            return await _userManager.IsInRoleAsync(user, role);
+            var dbUser = _mapper.Map<UserEntity>(user);
+            dbUser.Id = user.Id;
+
+            await _userManager.SetLockoutEnabledAsync(dbUser, !dbUser.LockoutEnabled);
+            await _userManager.SetLockoutEndDateAsync(dbUser, (dbUser.LockoutEnabled) ? DateTime.Today.AddDays(duration): DateTime.MinValue);
         }
 
-        public async Task BanAsync(UserModel user, int duration)
-        {
-            var dbUser = _mapper.Map<UserEntity>(user);
-            dbUser.Id = user.Id;
-            await _userManager.SetLockoutEnabledAsync(dbUser, true);
-            await _userManager.SetLockoutEndDateAsync(dbUser, DateTime.Today.AddDays(duration));
-        }
-        public async Task UnbanAsync(UserModel user)
-        {
-            var dbUser = _mapper.Map<UserEntity>(user);
-            dbUser.Id = user.Id;
-            await _userManager.SetLockoutEnabledAsync(dbUser, false);
-            await _userManager.SetLockoutEndDateAsync(dbUser, DateTime.MinValue);
-        }
         public async Task ChangePasswordAsync(UserModel user, string currentPassword, string newPassword)
         {
             var dbUser = _mapper.Map<UserEntity>(user);
@@ -141,10 +131,10 @@ namespace EducationApp.BusinessLogicLayer.Services
 
         public async Task RegisterAsync(UserModel user)
         {
-            _validator.Validate(user);
+            _validator.ValidateUser(user);
             var newUser = _mapper.Map<UserEntity>(user);
             var dbUser = await _userManager.FindByNameAsync(user.UserName);
-            if(dbUser is not null)
+            if (dbUser is not null)
             {
                 throw new CustomApiException(HttpStatusCode.Conflict, Constants.USERNAMETAKENERROR);
             }
@@ -194,7 +184,7 @@ namespace EducationApp.BusinessLogicLayer.Services
 
         public async Task ConfirmEmailAsync(string id, string code)
         {
-            if (id is null || string.IsNullOrWhiteSpace(code))
+            if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(code))
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INCORRECTINPUTERROR);
             }
@@ -238,6 +228,10 @@ namespace EducationApp.BusinessLogicLayer.Services
 
         public async Task ResetPasswordAsync(string userId, string code, string password)
         {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(password))
+            {
+                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INCORRECTINPUTERROR);
+            }
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
             {
