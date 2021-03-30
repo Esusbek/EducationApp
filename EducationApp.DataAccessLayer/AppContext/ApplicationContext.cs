@@ -9,7 +9,6 @@ namespace EducationApp.DataAccessLayer.AppContext
 {
     public class ApplicationContext : IdentityDbContext<UserEntity>
     {
-        private readonly StreamWriter _logStream;
         public virtual DbSet<AuthorEntity> Authors { get; set; }
         public virtual DbSet<OrderEntity> Orders { get; set; }
         public virtual DbSet<PaymentEntity> Payments { get; set; }

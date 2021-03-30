@@ -1,4 +1,5 @@
-﻿using EducationApp.Shared.Enums;
+﻿using EducationApp.BusinessLogicLayer.Models.Users;
+using EducationApp.Shared.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -11,7 +12,9 @@ namespace EducationApp.BusinessLogicLayer.Models.Orders
         public DateTime Date { get; set; }
         public int PaymentId { get; set; }
         public Enums.OrderStatusType Status { get; set; }
+        public UserModel User { get; set; }
         public List<OrderItemModel> CurrentItems { get; set; }
+        public decimal Total { get; set; }
         public OrderModel()
         {
             CurrentItems = new List<OrderItemModel>();

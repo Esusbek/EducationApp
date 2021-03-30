@@ -72,7 +72,7 @@ namespace EducationApp.PresentationLayer
                         return Task.FromResult<object>(null);
                     };
             });
-            services.AddControllers();
+            services.AddControllersWithViews();
 
             services.AddSwaggerGen(options =>
             {
@@ -107,10 +107,11 @@ namespace EducationApp.PresentationLayer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
                 endpoints.MapControllerRoute(
                    name: "default",
-                   pattern: "{controller=Account}/{action=Login}");
+                   pattern: "{controller=Admin}/{action=Login}");
+                endpoints.MapControllers();
+                
             });
         }
     }

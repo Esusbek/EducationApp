@@ -19,14 +19,7 @@ namespace EducationApp.PresentationLayer.Controllers
         {
             _orderService = orderService;
         }
-        [HttpGet("Order/GetAll")]
-        [AllowAnonymous]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public IActionResult GetAll([FromQuery] int page = Constants.DEFAULTPAGE)
-        {
-            var orders = _orderService.GetAllOrders(page);
-            return Ok(orders);
-        }
+       
         [HttpGet("Order/Get")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public IActionResult Get([FromQuery] UserModel user, [FromQuery] int page = Constants.DEFAULTPAGE)

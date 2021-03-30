@@ -35,33 +35,5 @@ namespace EducationApp.PresentationLayer.Controllers
         {
             return Ok(_authorService.GetAuthorsFiltered(filter, page: page));
         }
-        [HttpPost("Author/Edit")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public IActionResult Edit([FromBody] AuthorModel author)
-        {
-            _authorService.UpdateAuthor(author);
-            return Ok();
-        }
-        [HttpPost("Author/Add")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public IActionResult Add([FromBody] AuthorModel author)
-        {
-            _authorService.AddAuthor(author);
-            return Ok();
-        }
-        [HttpPost("Author/Delete")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public IActionResult Delete([FromBody] AuthorModel author)
-        {
-            _authorService.DeleteAuthor(author);
-            return Ok();
-        }
-        [HttpPost("Author/AddPrintingEdition")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public IActionResult AddPrintingEdition([FromBody] AuthorAndEditionRequestModel model)
-        {
-            _authorService.AddPrintingEditionToAuthor(model.Author, model.PrintingEdition);
-            return Ok();
-        }
     }
 }

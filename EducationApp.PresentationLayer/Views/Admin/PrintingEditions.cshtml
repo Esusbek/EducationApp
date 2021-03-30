@@ -1,0 +1,34 @@
+﻿@using EducationApp.BusinessLogicLayer.Models.PrintingEditions
+@model PrintingEditionResponseModel
+@{
+    ViewData["Title"] = "Printing Editions list";
+}
+<table class="table">
+    <thead>
+        <tr>
+            <td>Edition id</td>
+            <td>Edition title</td>
+            <td>Edition description</td>
+            <td>Edition type</td>
+            <td>Edition authors</td>
+            <td>Edition price</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (PrintingEditionModel edition in Model.Books)
+        {
+            <tr>
+                <td>@edition.Id</td>
+                <td>@edition.Title</td>
+                <td>@edition.Description</td>
+                <td>@edition.Type.ToString()</td>
+                <td>@foreach (string authorName in edition.Authors)
+                    {
+                        <p>@authorName</p>
+                    }
+                </td>
+                <td>@edition.Price</td>
+            </tr>
+        }
+    </tbody>
+</table>

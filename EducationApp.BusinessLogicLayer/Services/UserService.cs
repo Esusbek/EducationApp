@@ -118,7 +118,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             return user;
         }
 
-        public List<UserModel> GetUsers()
+        public List<UserModel> GetUsers(int page)
         {
             var dbUsers = _userManager.Users.ToList();
             var users = new List<UserModel>();
@@ -126,7 +126,8 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 users.Add(_mapper.Map<UserModel>(user));
             }
-            return users;
+            return users.Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.USERPAGESIZE)
+                .Take(Constants.USERPAGESIZE).ToList();
         }
 
         public async Task RegisterAsync(UserModel user)

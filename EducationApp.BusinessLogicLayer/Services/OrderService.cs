@@ -146,8 +146,9 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 var mappedOrder = _mapper.Map<OrderModel>(order);
                 var currentItems = allItems.Where(item=>item.OrderId==order.Id).ToList();
-                var mappedItems = MapItems(currentItems);
+                var mappedItems = _mapper.Map<List<OrderItemModel>>(currentItems);
                 mappedOrder.CurrentItems = mappedItems;
+                mappedOrder.Total = currentItems.Sum(item => item.SubTotal);
                 orders.Add(mappedOrder);
             }
             return orders;
@@ -162,8 +163,8 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 var mappedOrder = _mapper.Map<OrderModel>(order);
                 var currentItems = allItems.Where(item => item.OrderId == order.Id).ToList();
-                var mappedItems = MapItems(currentItems);
-                mappedOrder.CurrentItems = mappedItems;
+                mappedOrder.CurrentItems = _mapper.Map<List<OrderItemModel>>(currentItems);
+                mappedOrder.Total = currentItems.Sum(item => item.SubTotal);
                 orders.Add(mappedOrder);
             }
             return new OrderResponseModel {
@@ -194,12 +195,6 @@ namespace EducationApp.BusinessLogicLayer.Services
         public async Task<decimal> ConvertCurrencyAsync(string fromCurrency, string toCurrency, decimal amount)
         {
             return await _currencyConverter.ConvertAsync(fromCurrency, toCurrency, amount);
-        }
-
-        private List<OrderItemModel> MapItems(List<OrderItemEntity> items)
-        {
-            var result = _mapper.Map<List<OrderItemModel>>(items);
-            return result;
         }
     }
 }

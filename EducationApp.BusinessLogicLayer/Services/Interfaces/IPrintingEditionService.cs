@@ -17,7 +17,7 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public void DeletePrintingEdition(PrintingEditionModel printingEdition);
         public PrintingEditionsInfoModel GetInfo(PrintingEditionFilterModel printingEditionFilter);
         public PrintingEditionResponseModel GetPrintingEditionsFiltered(PrintingEditionFilterModel filter = null,
-            bool orderAsc = false, int page = Constants.DEFAULTPAGE, bool getRemoved = false);
+            bool orderAsc = false, int page = Constants.DEFAULTPAGE, bool getRemoved = false, int pageSize = Constants.PRINTINGEDITIONPAGESIZE);
         public PrintingEditionResponseModel GetPrintingEditions(int page = Constants.DEFAULTPAGE);
         public List<PrintingEditionEntity> GetPrintingEditionsRange(Expression<Func<PrintingEditionEntity, bool>> filter = null,
             Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,

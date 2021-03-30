@@ -76,14 +76,6 @@ namespace EducationApp.PresentationLayer.Controllers
             await _userService.ForgotPasswordAsync(model.UserName);
             return Ok(Constants.DEFAULTPASSWORDRESETRESPONSE);
         }
-
-        [HttpGet("Account/GetUsers")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public IActionResult GetUsers()
-        {
-            return Ok(_userService.GetUsers());
-        }
-
         [HttpGet("Account/GetUserInfo")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public async Task<IActionResult> GetUserInfo([FromQuery] string userId)
@@ -97,32 +89,12 @@ namespace EducationApp.PresentationLayer.Controllers
             var newUser = await _userService.UpdateAsync(user);
             return Ok(newUser);
         }
-        [HttpPost("Account/BanUser")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public async Task<IActionResult> BanUser([FromBody] BanRequestModel model )
-        {
-            await _userService.BanAsync(model.User, model.Duration);
-            return Ok();
-        }
-        [HttpPost("Account/UnbanUser")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public async Task<IActionResult> UnbanUser([FromBody] UserModel user)
-        {
-            await _userService.BanAsync(user);
-            return Ok();
-        }
         [HttpPost("Account/ChangePassword")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestModel model)
         {
             await _userService.ChangePasswordAsync(model.User, model.CurrentPassword, model.NewPassword);
             return Ok();
-        }
-        [HttpPost("Account/DummyRequest")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
-        public IActionResult DummyRequest()
-        {
-            return Ok(false);
         }
 
 

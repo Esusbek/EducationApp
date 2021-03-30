@@ -1,0 +1,30 @@
+﻿@using EducationApp.BusinessLogicLayer.Models.Authors
+@using EducationApp.BusinessLogicLayer.Models.PrintingEditions
+@model IEnumerable<AuthorModel>
+@{
+    ViewData["Title"] = "Authors list";
+}
+<table class="table">
+    <thead>
+        <tr>
+            <td>Author id</td>
+            <td>Author name</td>
+            <td>Author works</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (AuthorModel author in Model)
+        {
+            <tr>
+                <td>@author.Id</td>
+                <td>@author.Name</td>
+                <td>
+                    @foreach (PrintingEditionModel edition in author.PrintingEditions)
+                    {
+                        <p>@edition.Title</p>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -15,7 +15,7 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public Task<TokensModel> RefreshTokenAsync(string accessToken, string refreshToken);
         public Task BanAsync(UserModel user, int duration=0);
         public Task ChangePasswordAsync(UserModel user, string currentPassword, string newPassword);
-        public List<UserModel> GetUsers();
+        public List<UserModel> GetUsers(int page);
         public Task<UserModel> GetUserByIdAsync(string id);
         public Task<UserModel> GetUserByUsernameAsync(string userName);
         public Task ConfirmEmailAsync(string id, string code);

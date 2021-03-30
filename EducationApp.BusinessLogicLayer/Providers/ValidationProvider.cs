@@ -56,7 +56,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
             {
                 printingEdition.Errors.Add(Constants.INVALIDEMPTYINPUT);
             }
-            if (printingEdition.Price==default(decimal))
+            if (printingEdition.Price==default)
             {
                 printingEdition.Errors.Add(Constants.INVALIDEMPTYINPUT);
             }

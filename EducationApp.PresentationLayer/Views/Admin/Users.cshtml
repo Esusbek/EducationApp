@@ -1,0 +1,24 @@
+﻿@using EducationApp.BusinessLogicLayer.Models.Users
+@model IEnumerable<UserModel>
+@{
+    ViewData["Title"] = "Users list";
+}
+<table class="table">
+    <thead>
+        <tr>
+            <td>Username</td>
+            <td>Email</td>
+            <td>Name</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UserModel user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>@user.FirstName @user.LastName</td>
+            </tr>
+        }
+    </tbody>
+</table>

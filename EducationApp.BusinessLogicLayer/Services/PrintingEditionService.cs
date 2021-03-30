@@ -73,7 +73,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             _printingEditionRepository.Delete(dbPrintingEdition);
         }
         public PrintingEditionResponseModel GetPrintingEditionsFiltered(PrintingEditionFilterModel printingEditionFilter = null,
-            bool orderAsc = false, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
+            bool orderAsc = false, int page = Constants.DEFAULTPAGE, bool getRemoved = false, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
             Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = editions => editions.OrderByDescending(edition => edition.Price);
@@ -88,7 +88,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                orderBy = editions => editions.OrderBy(edition=>edition.Price);
             }
-            var dbPrintingEditions = _printingEditionRepository.Get(filter, orderBy, getRemoved, page).ToList();
+            var dbPrintingEditions = _printingEditionRepository.Get(filter, orderBy, getRemoved, page, pageSize).ToList();
             var printingEditions = new List<PrintingEditionModel>();
             foreach (var printingEdition in dbPrintingEditions)
             {

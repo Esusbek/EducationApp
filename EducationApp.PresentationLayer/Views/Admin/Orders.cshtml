@@ -1,0 +1,50 @@
+﻿@using EducationApp.BusinessLogicLayer.Models.Orders
+@model IEnumerable<OrderModel>
+@{
+    ViewData["Title"] = "Orders list";
+}
+<table class="table">
+    <thead>
+        <tr>
+            <td>Order id</td>
+            <td>Order date and time</td>
+            <td>User name</td>
+            <td>User email</td>
+            <td>Item types</td>
+            <td>Item titles</td>
+            <td>Order total</td>
+            <td>Order status</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (OrderModel order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.Date</td>
+                <td>@order.User.FirstName @order.User.LastName</td>
+                <td>@order.User.Email</td>
+                <td>
+                    @foreach (OrderItemModel item in order.CurrentItems)
+                    {
+                        <p>@item.PrintingEdition.Type.ToString()</p>
+                    }
+                </td>
+                <td>
+                    @foreach (OrderItemModel item in order.CurrentItems)
+                    {
+                        <p>@item.PrintingEdition.Title</p>
+                    }
+                </td>
+                <td>
+                    @foreach (OrderItemModel item in order.CurrentItems)
+                    {
+                        <p>@item.Amount</p>
+                    }
+                </td>
+                <td>@order.Total</td>
+                <td>@order.Status.ToString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

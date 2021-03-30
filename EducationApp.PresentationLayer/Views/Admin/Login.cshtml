@@ -1,0 +1,25 @@
+﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="login-container" id="login">
+    <div class="image"><img src="/img/person-icon.png" alt="icon" /></div>
+    <div class="signin-header">
+        <span>Sign-In</span>
+    </div>
+
+    <div id="loginForm">
+        @using (Html.BeginForm("Login", "Admin", FormMethod.Post))
+        {
+            @Html.LabelFor(model => model.UserName)
+            @Html.TextBoxFor(model => model.UserName)
+            @Html.LabelFor(model => model.Password)
+            @Html.PasswordFor(model => model.Password)
+            <div class="button" id="loginButton" style="display:none">
+                <button type="submit">Login</button>
+            </div>
+        }
+    </div>
+</div>
