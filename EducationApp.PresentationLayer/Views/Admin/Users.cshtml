@@ -35,7 +35,7 @@
                     {
                         <input type="checkbox" name="GetUnblocked" id="GetUnblocked" />
                     }
-                    <label for="GetUnblocked">GetUnblocked</label>
+                    <label for="GetUnblocked">Unblocked</label>
                 </div>
             </th>
             <th></th>
@@ -49,20 +49,33 @@
                 <td>@user.Email</td>
                 <td>@user.FirstName @user.LastName</td>
                 <td>
-                    @if (user.LockoutEnabled)
+                    @if (user.UserName != User.Identity.Name)
                     {
-                        <label class="switch">
-                            <input type="checkbox" checked id=@user.Id>
-                            <span class="slider round"></span>
-                        </label>
+                        @if (user.IsRemoved)
+                        {
+                            <label class="switch">
+                                <input class="ban-switch" type="checkbox" id=@user.Id>
+                                <span class="slider round"></span>
+                            </label>
+                        }
+                        else
+                        {
+                            <label class="switch">
+                                <input class="ban-switch" type="checkbox" checked id=@user.Id>
+                                <span class="slider round"></span>
+                            </label>
+                        }
                     }
                     else
                     {
                         <label class="switch">
-                            <input type="checkbox" id=@user.Id>
+                            <input class="ban-switch" type="checkbox" checked disabled id=@user.Id>
                             <span class="slider round"></span>
                         </label>
                     }
+                </td>
+                <td>
+                    <button class="edit-user-open" onclick="test(@user.Id.ToString())"></button>
                 </td>
             </tr>
         }
@@ -74,7 +87,10 @@
     @Html.ActionLink("previous page", "Users", "Admin", new
 {
     page = Model.CurrentPage - Constants.DEFAULTPREVIOUSPAGEOFFSET,
-    searchString = HtmlEncoder.Encode(Model.SearchString)
+    searchString = HtmlEncoder.Encode(Model.SearchString),
+    getBlocked = Model.GetBlocked.ToString().ToLower(),
+    getUnblocked = Model.GetUnblocked.ToString().ToLower()
+
 }, new
 {
     id = "previousPage"
@@ -83,7 +99,9 @@
     @Html.ActionLink("next page", "Users", "Admin", new
 {
     page = Model.CurrentPage + Constants.DEFAULTPREVIOUSPAGEOFFSET,
-    searchString = HtmlEncoder.Encode(Model.SearchString)
+    searchString = HtmlEncoder.Encode(Model.SearchString),
+    getBlocked = Model.GetBlocked.ToString().ToLower(),
+    getUnblocked = Model.GetUnblocked.ToString().ToLower()
 }, new
 {
     id = "nextPage"
@@ -92,6 +110,9 @@
 
 @section scripts{
     <script>
+        function test(id) {
+            console.log(id);
+        }
         $(document).ready(function () {
             function reloadWithQueryStringVars(queryStringVars) {
                 var existingQueryVars = location.search ? location.search.substring(1).split("&") : [],
@@ -119,6 +140,37 @@
                     window.location.href = location.href;
                 }
             }
+            
+            var BstrapModal = function (title, body, buttons) {
+                var title = title || "Lorem Ipsum History", body = body || "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                    buttons = buttons || [{ Value: "CLOSE", Css: "btn-primary", Callback: function (event) { BstrapModal.Close(); } }];
+                var GetModalStructure = function () {
+                    var that = this;
+                    that.Id = BstrapModal.Id = Math.random();
+                    var buttonshtml = "";
+                    for (var i = 0; i < buttons.length; i++) {
+                        buttonshtml += "<button type='button' class='btn " + (buttons[i].Css || "") + "' name='btn" + that.Id + "'>" + (buttons[i].Value || "CLOSE") + "</button>";
+                    }
+                    return "<div class='modal fade' name='dynamiccustommodal' id='" + that.Id + "' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='" + that.Id + "Label'><div class='modal-dialog'><div class='modal-content'><div class='modal-header'><button type='button' class='close modal-white-close' onclick='BstrapModal.Close()'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>" + title + "</h4></div><div class='modal-body'><div class='row'><div class='col-xs-12 col-md-12 col-sm-12 col-lg-12'>" + body + "</div></div></div><div class='modal-footer bg-default'><div class='col-xs-12 col-sm-12 col-lg-12'>" + buttonshtml + "</div></div></div></div></div>";
+                }();
+                BstrapModal.Delete = function () {
+                    var modals = document.getElementsByName("dynamiccustommodal");
+                    if (modals.length > 0) document.body.removeChild(modals[0]);
+                };
+                BstrapModal.Close = function () {
+                    $(document.getElementById(BstrapModal.Id)).modal('hide');
+                    BstrapModal.Delete();
+                };
+                this.Show = function () {
+                    BstrapModal.Delete();
+                    document.body.appendChild($(GetModalStructure)[0]);
+                    var btns = document.querySelectorAll("button[name='btn" + BstrapModal.Id + "']");
+                    for (var i = 0; i < btns.length; i++) {
+                        btns[i].addEventListener("click", buttons[i].Callback || BstrapModal.Close);
+                    }
+                    $(document.getElementById(BstrapModal.Id)).modal('show');
+                };
+            };
 
             if (@Model.CurrentPage< 2) {
                 $('#previousPage').addClass('disabled')
@@ -149,6 +201,19 @@
                     searchString: '@HtmlEncoder.Encode(Model.SearchString)',
                     page: '@Constants.DEFAULTPAGE'
                 });
+            });
+            $("#searchString").change(function () {
+                reloadWithQueryStringVars({
+                    getUnblocked: '@Model.GetUnblocked.ToString().ToLower()',
+                    getBlocked: '@Model.GetBlocked.ToString().ToLower()',
+                    searchString: encodeURIComponent($("#searchString").val()),
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $(".ban-switch").change(function (event) {
+                console.log($(event.target).attr('id'));
+                var id = $(event.target).attr('id')
+                $.post("Ban", { userId: id })
             });
             $('#previousPage').click(function (link) {
                 link.preventDefault();

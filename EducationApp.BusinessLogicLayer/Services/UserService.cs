@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
@@ -87,13 +88,11 @@ namespace EducationApp.BusinessLogicLayer.Services
             return jwtResult;
         }
 
-        public async Task BanAsync(UserModel user, int duration=0)
+        public async Task BanAsync(string userId)
         {
-            var dbUser = _mapper.Map<UserEntity>(user);
-            dbUser.Id = user.Id;
-
-            await _userManager.SetLockoutEnabledAsync(dbUser, !dbUser.LockoutEnabled);
-            await _userManager.SetLockoutEndDateAsync(dbUser, (dbUser.LockoutEnabled) ? DateTime.Today.AddDays(duration): DateTime.MinValue);
+            var dbUser = await _userManager.FindByIdAsync(userId);
+            dbUser.IsRemoved = !dbUser.IsRemoved;
+            await _userManager.UpdateAsync(dbUser);
         }
 
         public async Task ChangePasswordAsync(UserModel user, string currentPassword, string newPassword)
@@ -128,11 +127,13 @@ namespace EducationApp.BusinessLogicLayer.Services
             return user;
         }
 
-        public List<UserModel> GetUsers(string searchString, int page)
+        public List<UserModel> GetUsers(bool getBlocked, bool getUnblocked, string searchString, int page)
         {
-            
-            var dbUsers = _userManager.Users.ToList();
-            if(!string.IsNullOrWhiteSpace(searchString))
+
+            Expression<Func<UserEntity, bool>> filter = user => (getBlocked && user.IsRemoved == true)
+            || (getUnblocked && user.IsRemoved == false);
+            var dbUsers = _userManager.Users.Where(filter).ToList();
+            if (!string.IsNullOrWhiteSpace(searchString))
             {
                 dbUsers = dbUsers.Where(user => $"{user.FirstName} {user.LastName}".ToLower().Contains(searchString.ToLower())).ToList();
             }
@@ -141,9 +142,12 @@ namespace EducationApp.BusinessLogicLayer.Services
                 .Take(Constants.USERPAGESIZE).ToList();
         }
 
-        public int GetLastPage(string searchString)
+
+        public int GetLastPage(bool getBlocked, bool getUnblocked, string searchString)
         {
-            var dbUsers = _userManager.Users.ToList();
+            Expression<Func<UserEntity, bool>> filter = user => (getBlocked && user.IsRemoved == true)
+            || (getUnblocked && user.IsRemoved == false);
+            var dbUsers = _userManager.Users.Where(filter).ToList();
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 dbUsers = dbUsers.Where(user => $"{user.FirstName} {user.LastName}".ToLower().Contains(searchString.ToLower())).ToList();

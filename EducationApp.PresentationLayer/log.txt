@@ -522,3 +522,42 @@ Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentC
 02.04.2021 12:22:46: Value cannot be null. (Parameter 'value')
 Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
 02.04.2021 12:24:16: Value cannot be null. (Parameter 'value')
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+02.04.2021 12:26:58: Value cannot be null. (Parameter 'value')
+
+02.04.2021 12:28:15: Value cannot be null. (Parameter 'value')
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+02.04.2021 12:30:08: Value cannot be null. (Parameter 'value')
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+02.04.2021 13:28:16: Error mapping types.
+
+Mapping types:
+UserModel -> UserEntity
+EducationApp.BusinessLogicLayer.Models.Users.UserModel -> EducationApp.DataAccessLayer.Entities.UserEntity
+
+Type Map configuration:
+UserModel -> UserEntity
+EducationApp.BusinessLogicLayer.Models.Users.UserModel -> EducationApp.DataAccessLayer.Entities.UserEntity
+
+Destination Member:
+LockoutEnd
+
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+02.04.2021 13:29:59: Error mapping types.
+
+Mapping types:
+UserModel -> UserEntity
+EducationApp.BusinessLogicLayer.Models.Users.UserModel -> EducationApp.DataAccessLayer.Entities.UserEntity
+
+Type Map configuration:
+UserModel -> UserEntity
+EducationApp.BusinessLogicLayer.Models.Users.UserModel -> EducationApp.DataAccessLayer.Entities.UserEntity
+
+Destination Member:
+LockoutEnd
+
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+02.04.2021 13:31:22: The UTC time represented when the offset is applied must be between year 0 and 10,000. (Parameter 'offset')
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerLockout for user failed because lockout is not enabled for this user.Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer
+02.04.2021 13:40:19: The instance of entity type 'UserEntity' cannot be tracked because another instance with the same key value for {'Id'} is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.
+Application started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayerApplication started. Press Ctrl+C to shut down.Hosting environment: DevelopmentContent root path: C:\Users\Anuitex-99\source\repos\EducationApp\EducationApp.PresentationLayer

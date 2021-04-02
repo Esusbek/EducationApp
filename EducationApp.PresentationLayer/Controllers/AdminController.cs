@@ -62,24 +62,20 @@ namespace EducationApp.PresentationLayer.Controllers
         [HttpGet]
         public IActionResult Users([FromQuery] UsersViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
-            var test = new UsersViewModel
-            {
-                Users = _userService.GetUsers(model.SearchString, page),
-                CurrentPage = page,
-                LastPage = _userService.GetLastPage(model.SearchString),
-                GetBlocked = model.GetBlocked,
-                GetUnblocked = model.GetUnblocked,
-                SearchString = model.SearchString
-            };
             return View(new UsersViewModel
             {
-                Users = _userService.GetUsers(model.SearchString, page),
+                Users = _userService.GetUsers(model.GetBlocked, model.GetUnblocked, model.SearchString, page),
                 CurrentPage = page,
-                LastPage = _userService.GetLastPage(model.SearchString),
+                LastPage = _userService.GetLastPage(model.GetBlocked, model.GetUnblocked, model.SearchString),
                 GetBlocked = model.GetBlocked,
                 GetUnblocked = model.GetUnblocked,
-                SearchString = model.SearchString
-            }) ;
+                SearchString = string.IsNullOrWhiteSpace(model.SearchString) ? "" : model.SearchString
+            });
+        }
+        public async Task<IActionResult> Ban(string userId)
+        {
+            await _userService.BanAsync(userId);
+            return Ok();
         }
         [HttpGet]
         public IActionResult PrintingEditions([FromQuery] int page = Constants.DEFAULTPAGE)
@@ -114,11 +110,6 @@ namespace EducationApp.PresentationLayer.Controllers
                 CurrentPage = page,
                 LastPage = _authorService.GetLastPage()
             });
-        }
-        public async Task<IActionResult> BanUser([FromBody] BanRequestModel model)
-        {
-            await _userService.BanAsync(model.User, model.Duration);
-            return Ok();
         }
         [HttpPost]
         public IActionResult EditAuthor(AuthorModel author)

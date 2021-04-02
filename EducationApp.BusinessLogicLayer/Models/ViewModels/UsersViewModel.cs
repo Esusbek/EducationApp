@@ -22,7 +22,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
             GetUnblocked = true;
             GetBlocked = true;
             CurrentPage = Constants.DEFAULTPAGE;
-
+            SearchString = "";
         }
     }
 }
