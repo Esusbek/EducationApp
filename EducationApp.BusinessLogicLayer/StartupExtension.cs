@@ -39,10 +39,7 @@ namespace EducationApp.BusinessLogicLayer
         {
             var mappingConfig = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new MappingProfiles.UserMapProfile());
-                cfg.AddProfile(new MappingProfiles.AuthorMapProfile());
-                cfg.AddProfile(new MappingProfiles.PrintingEditionMapProfile());
-                cfg.AddProfile(new MappingProfiles.OrderMapProfile());
+                cfg.AddMaps("EducationApp.BusinessLogicLayer");
             });
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

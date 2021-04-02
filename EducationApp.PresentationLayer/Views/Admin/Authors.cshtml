@@ -1,19 +1,20 @@
-﻿@using EducationApp.BusinessLogicLayer.Models.Authors
-@using EducationApp.BusinessLogicLayer.Models.PrintingEditions
-@model IEnumerable<AuthorModel>
+﻿@using EducationApp.BusinessLogicLayer.Models.PrintingEditions
+@using EducationApp.BusinessLogicLayer.Models.Authors
+@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@model AuthorsViewModel
 @{
     ViewData["Title"] = "Authors list";
 }
 <table class="table">
     <thead>
         <tr>
-            <td>Author id</td>
-            <td>Author name</td>
-            <td>Author works</td>
+            <th>Author id</th>
+            <th>Author name</th>
+            <th>Author works</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (AuthorModel author in Model)
+        @foreach (AuthorModel author in Model.Authors)
         {
             <tr>
                 <td>@author.Id</td>
@@ -28,3 +29,9 @@
         }
     </tbody>
 </table>
+<div class="pages">
+    <div class="filler"></div>
+    @Html.ActionLink("previous page", "Authors", "Admin", new { page = Model.CurrentPage - 1 }, new { id = "previousPage" })
+    <span>Page @Model.CurrentPage/ @Model.LastPage</span>
+    @Html.ActionLink("next page", "Authors", "Admin", new { page = Model.CurrentPage + 1 }, new { id = "nextPage" })
+</div>

@@ -1,24 +1,170 @@
-﻿@using EducationApp.BusinessLogicLayer.Models.Users
-@model IEnumerable<UserModel>
+﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@using EducationApp.BusinessLogicLayer.Models.Users
+@using EducationApp.Shared.Constants
+@model UsersViewModel
 @{
     ViewData["Title"] = "Users list";
 }
 <table class="table">
     <thead>
         <tr>
-            <td>Username</td>
-            <td>Email</td>
-            <td>Name</td>
+            <th><a href="javascript:void(0);" class="table-head">Username</a></th>
+            <th><a href="javascript:void(0);" class="table-head">Email</a></th>
+            <th>
+                <a href="javascript:void(0);" class="table-head sort-by descending-sort">Name</a>
+                <input type="text" placeholder="Search name" id="searchString" value=@Model.SearchString />
+            </th>
+            <th>
+                <a href="javascript:void(0);" class="table-head">Status</a>
+                <div id="checkboxes">
+
+                    @if (Model.GetBlocked)
+                    {
+                        <input type="checkbox" checked name="GetBlocked" id="GetBlocked" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="GetBlocked" id="GetBlocked" />
+                    }
+                    <label for="GetBlocked">Blocked</label>
+                    @if (Model.GetUnblocked)
+                    {
+                        <input type="checkbox" checked name="GetUnblocked" id="GetUnblocked" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="GetUnblocked" id="GetUnblocked" />
+                    }
+                    <label for="GetUnblocked">GetUnblocked</label>
+                </div>
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (UserModel user in Model)
+        @foreach (UserModel user in Model.Users)
         {
             <tr>
                 <td>@user.UserName</td>
                 <td>@user.Email</td>
                 <td>@user.FirstName @user.LastName</td>
+                <td>
+                    @if (user.LockoutEnabled)
+                    {
+                        <label class="switch">
+                            <input type="checkbox" checked id=@user.Id>
+                            <span class="slider round"></span>
+                        </label>
+                    }
+                    else
+                    {
+                        <label class="switch">
+                            <input type="checkbox" id=@user.Id>
+                            <span class="slider round"></span>
+                        </label>
+                    }
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+<div class="pages">
+    <div class="filler"></div>
+    @Html.ActionLink("previous page", "Users", "Admin", new
+{
+    page = Model.CurrentPage - Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    searchString = HtmlEncoder.Encode(Model.SearchString)
+}, new
+{
+    id = "previousPage"
+})
+    <span>Page @Model.CurrentPage/ @Model.LastPage</span>
+    @Html.ActionLink("next page", "Users", "Admin", new
+{
+    page = Model.CurrentPage + Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    searchString = HtmlEncoder.Encode(Model.SearchString)
+}, new
+{
+    id = "nextPage"
+})
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            function reloadWithQueryStringVars(queryStringVars) {
+                var existingQueryVars = location.search ? location.search.substring(1).split("&") : [],
+                    currentUrl = location.search ? location.href.replace(location.search, "") : location.href,
+                    newQueryVars = {},
+                    newUrl = currentUrl + "?";
+                if (existingQueryVars.length > 0) {
+                    for (var i = 0; i < existingQueryVars.length; i++) {
+                        var pair = existingQueryVars[i].split("=");
+                        newQueryVars[pair[0]] = pair[1];
+                    }
+                }
+                if (queryStringVars) {
+                    for (var queryStringVar in queryStringVars) {
+                        newQueryVars[queryStringVar] = queryStringVars[queryStringVar];
+                    }
+                }
+                if (newQueryVars) {
+                    for (var newQueryVar in newQueryVars) {
+                        newUrl += newQueryVar + "=" + newQueryVars[newQueryVar] + "&";
+                    }
+                    newUrl = newUrl.substring(0, newUrl.length - 1);
+                    window.location.href = newUrl;
+                } else {
+                    window.location.href = location.href;
+                }
+            }
+
+            if (@Model.CurrentPage< 2) {
+                $('#previousPage').addClass('disabled')
+            }
+            else {
+                $('#previousPage').removeClass('disabled')
+            }
+
+            if (@Model.CurrentPage>=@Model.LastPage) {
+                $('#nextPage').addClass('disabled')
+            }
+            else {
+                $('#nextPage').removeClass('disabled')
+            }
+
+            $("#GetUnblocked").change(function () {
+                reloadWithQueryStringVars({
+                    getUnblocked: this.checked,
+                    getBlocked: '@Model.GetBlocked.ToString().ToLower()',
+                    searchString: '@HtmlEncoder.Encode(Model.SearchString)',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $("#GetBlocked").change(function () {
+                reloadWithQueryStringVars({
+                    getUnblocked: '@Model.GetUnblocked.ToString().ToLower()',
+                    getBlocked: this.checked,
+                    searchString: '@HtmlEncoder.Encode(Model.SearchString)',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $('#previousPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                else
+                    window.location.href = $(this).attr('href');
+            });
+            $('#nextPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                else
+                    window.location.href = $(this).attr('href');
+            });
+
+        });
+    </script>
+}

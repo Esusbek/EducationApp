@@ -12,10 +12,12 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public Task<UserModel> UpdateAsync(UserModel user);
         public Task<TokensModel> LoginAsync(UserModel user, bool rememberMe);
         public Task LogoutAsync(string userId);
+        public Task LogoutByNameAsync(string userName);
         public Task<TokensModel> RefreshTokenAsync(string accessToken, string refreshToken);
         public Task BanAsync(UserModel user, int duration=0);
         public Task ChangePasswordAsync(UserModel user, string currentPassword, string newPassword);
-        public List<UserModel> GetUsers(int page);
+        public List<UserModel> GetUsers(string searchString, int page);
+        public int GetLastPage(string searchString);
         public Task<UserModel> GetUserByIdAsync(string id);
         public Task<UserModel> GetUserByUsernameAsync(string userName);
         public Task ConfirmEmailAsync(string id, string code);

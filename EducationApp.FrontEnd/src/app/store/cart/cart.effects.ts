@@ -24,6 +24,18 @@ export class CartEffects {
             )
         )
     );
+    CheckoutExisiting$: Observable<Action> = createEffect(() =>
+        this.action$.pipe(
+            ofType(CartActions.checkoutExisting),
+            mergeMap(action => {
+                return this.cartService.checkoutExisiting(action.order)
+                    .pipe(
+                        map(response => CartActions.checkoutSuccess(response))
+                    )
+            }
+            )
+        )
+    );
     CheckoutSuccess$: Observable<Action> = createEffect(() =>
         this.action$.pipe(
             ofType(CartActions.checkoutSuccess),

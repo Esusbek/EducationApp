@@ -25,6 +25,13 @@ export class CartService {
                 catchError(error => handleError(error, this.modalService))
             ) as Observable<SessionModel>;
     }
+    public checkoutExisiting(order: OrderModel): Observable<SessionModel> {
+        const id = getUserId();
+        return this.http.post<string>(`${environment.apiURL}${Urls.checkoutURL}`, { userId: id, ...order }, HttpOptions)
+            .pipe(
+                catchError(error => handleError(error, this.modalService))
+            ) as Observable<SessionModel>;
+    }
 
     public async createSession(session: SessionModel): Promise<void> {
         const stripe = await stripePromise;

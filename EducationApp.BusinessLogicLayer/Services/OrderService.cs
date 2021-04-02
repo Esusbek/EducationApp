@@ -60,16 +60,25 @@ namespace EducationApp.BusinessLogicLayer.Services
         public SessionModel CreateCheckoutSession(OrderModel order)
         {
             _validator.ValidateOrder(order);
-            order.Status = Enums.OrderStatusType.Unpaid;
-            order.Date = DateTime.UtcNow;
-            var dbOrder = _mapper.Map<OrderEntity>(order);
-            var payment = new PaymentEntity
+            bool isExisting = order.Id!=default;
+            PaymentEntity payment = isExisting? new PaymentEntity { Id = order.PaymentId}: null;
+            if (!isExisting)
             {
-                TransactionId = default
-            };
-            _paymentRepository.Insert(payment);
-            dbOrder.PaymentId = payment.Id;
-            _orderRepository.Insert(dbOrder);
+                order.Status = Enums.OrderStatusType.Unpaid;
+                order.Date = DateTime.UtcNow;
+                payment = new PaymentEntity
+                {
+                    TransactionId = default
+                };
+                _paymentRepository.Insert(payment);
+            }
+            var dbOrder = _mapper.Map<OrderEntity>(order);
+            if(!isExisting)
+            {
+                dbOrder.PaymentId = payment.Id;
+                dbOrder.Total = order.CurrentItems.Sum(item => item.Price);
+                _orderRepository.Insert(dbOrder);
+            }
             var items = new List<SessionLineItemOptions>();
             var editionIds = order.CurrentItems.Select(item => item.PrintingEditionId);
             var printingEditions = _printingEditionService.GetPrintingEditionsRange(edition => editionIds.Contains(edition.Id));
@@ -94,7 +103,10 @@ namespace EducationApp.BusinessLogicLayer.Services
                 };
                 items.Add(lineItem);
             }
-            _itemRepository.InsertRange(dbItems);
+            if (!isExisting)
+            {
+                _itemRepository.InsertRange(dbItems);
+            }
             var successUrl = new UriBuilder
             {
                 Scheme = _urlConfig.Scheme,
@@ -130,15 +142,26 @@ namespace EducationApp.BusinessLogicLayer.Services
                 PaymentIntentId = session.PaymentIntentId
             };
         }
-        public int GetLastPage()
+        public int GetLastPageUser(string userId)
         {
-            var dbOrders = _orderRepository.GetAll().ToList();
+            var dbOrders = _orderRepository.GetAll(order => order.UserId == userId).ToList();
             var lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
             return lastPage;
         }
-        public List<OrderModel> GetAllOrders(int page = Constants.DEFAULTPAGE)
+        public int GetLastPage(bool getPaid = true, bool getUnpaid = true)
         {
-            var dbOrders = _orderRepository.Get(getRemoved: true,page:page);
+            Expression<Func<OrderEntity, bool>> filter = order => (getPaid && order.Status == Enums.OrderStatusType.Paid)
+           || (getUnpaid && order.Status == Enums.OrderStatusType.Unpaid);
+            var dbOrders = _orderRepository.GetAll(filter).ToList();
+            var lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
+            return lastPage;
+        }
+        public List<OrderModel> GetAllOrders(bool getPaid = true, bool getUnpaid = true, string field = null, bool ascending = true,
+            int page = Constants.DEFAULTPAGE, bool getRemoved = true)
+        {
+            Expression<Func<OrderEntity, bool>> filter = order => (getPaid && order.Status==Enums.OrderStatusType.Paid) 
+            || (getUnpaid && order.Status==Enums.OrderStatusType.Unpaid);
+            var dbOrders = _orderRepository.Get(filter, field, ascending, getRemoved,page);
             var orders = new List<OrderModel>();
             var orderIds = dbOrders.Select(order => order.Id).ToList();
             var allItems = _itemRepository.Get(item => orderIds.Contains(item.OrderId));
@@ -155,7 +178,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public OrderResponseModel GetUserOrders(UserModel user, int page = Constants.DEFAULTPAGE)
         {
-            var dbOrders = _orderRepository.Get(order => order.UserId == user.Id.ToString(), page: page).ToList();
+            var dbOrders = _orderRepository.Get(order => order.UserId == user.Id, page: page).ToList();
             var orders = new List<OrderModel>();
             var orderIds = dbOrders.Select(order => order.Id);
             var allItems = _itemRepository.Get(item => orderIds.Contains(item.OrderId)).ToList();
@@ -169,27 +192,9 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             return new OrderResponseModel {
                 Orders = orders,
-                LastPage = GetLastPage()
+                LastPage = GetLastPageUser(user.Id)
             };
 
-        }
-
-        public List<OrderModel> GetOrdersFiltered(OrderFilterModel orderFilter = null,
-            Func<IQueryable<OrderEntity>, IOrderedQueryable<OrderEntity>> orderBy = null,
-            int page = Constants.DEFAULTPAGE, bool getRemoved = false)
-        {
-            Expression<Func<OrderEntity, bool>> filter = null;
-            if (orderFilter is not null)
-            {
-                filter = order => (string.IsNullOrWhiteSpace(orderFilter.Description) || order.Description.Contains(orderFilter.Description)) &&
-                (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId.Contains(orderFilter.UserId)) &&
-                (orderFilter.DateStart == default || DateTime.Compare(order.Date, orderFilter.DateStart) > 0) &&
-                (orderFilter.DateEnd == default || DateTime.Compare(order.Date, orderFilter.DateEnd) < 0) &&
-                (orderFilter.Status == default || order.Status == orderFilter.Status); 
-            }
-            var dbOrders = _orderRepository.Get(filter, orderBy, getRemoved, page);
-            var orders = _mapper.Map<List<OrderModel>>(dbOrders);
-            return orders;
         }
 
         public async Task<decimal> ConvertCurrencyAsync(string fromCurrency, string toCurrency, decimal amount)

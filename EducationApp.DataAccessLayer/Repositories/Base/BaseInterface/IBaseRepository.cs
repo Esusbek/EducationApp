@@ -10,7 +10,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base.BaseInterface
         T GetById(int id);
         List<T> GetAll();
         List<T> Get(Expression<Func<T, bool>> filter=null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy=null,
+            string field = null, bool ascending = true,
             bool getRemoved = false);
         void Insert(T entity);
         void InsertRange(IEnumerable<T> entity);

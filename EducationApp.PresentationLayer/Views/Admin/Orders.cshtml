@@ -1,23 +1,49 @@
-﻿@using EducationApp.BusinessLogicLayer.Models.Orders
-@model IEnumerable<OrderModel>
+﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@using EducationApp.BusinessLogicLayer.Models.Orders
+@using EducationApp.Shared.Constants
+@model OrdersViewModel
 @{
     ViewData["Title"] = "Orders list";
 }
 <table class="table">
     <thead>
         <tr>
-            <td>Order id</td>
-            <td>Order date and time</td>
-            <td>User name</td>
-            <td>User email</td>
-            <td>Item types</td>
-            <td>Item titles</td>
-            <td>Order total</td>
-            <td>Order status</td>
+            <th><a href="javascript:void(0);" class="table-head sort-by">Id</a></th>
+            <th><a href="javascript:void(0);" class="table-head sort-by">Date</a></th>
+            <th><a href="javascript:void(0);" class="table-head">User name</a></th>
+            <th><a href="javascript:void(0);" class="table-head">User email</a></th>
+            <th><a href="javascript:void(0);" class="table-head">Item types</a></th>
+            <th><a href="javascript:void(0);" class="table-head">Item titles</a></th>
+            <th><a href="javascript:void(0);" class="table-head">Item quantities</a></th>
+            <th><a href="javascript:void(0);" class="table-head sort-by">Total</a></th>
+            <th>
+                <a href="javascript:void(0);" class="table-head">Order status</a>
+                <div id="checkboxes">
+
+                    @if (Model.GetPaid)
+                    {
+                        <input type="checkbox" checked name="GetPaid" id="GetPaid" value="true" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="GetPaid" id="GetPaid" value="true" />
+                    }
+                    <label for="GetPaid">Paid</label>
+                    @if (Model.GetUnpaid)
+                    {
+                        <input type="checkbox" checked name="GetUnpaid" id="GetUnpaid" value="true" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="GetUnpaid" id="GetUnpaid" value="true" />
+                    }
+                    <label for="GetUnpaid">Unpaid</label>
+                </div>
+            </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (OrderModel order in Model)
+        @foreach (OrderModel order in Model.Orders)
         {
             <tr>
                 <td>@order.Id</td>
@@ -48,3 +74,137 @@
         }
     </tbody>
 </table>
+
+<div class="pages">
+    <div class="filler"></div>
+    @Html.ActionLink("previous page", "Orders", "Admin", new
+{
+    page = Model.CurrentPage - 1,
+    getPaid = Model.GetPaid,
+    getUnpaid = Model.GetUnpaid,
+    sortBy = Model.SortBy,
+    ascending = Model.Ascending
+}, new { id = "previousPage" })
+    <span>Page @Model.CurrentPage/ @Model.LastPage</span>
+    @Html.ActionLink("next page", "Orders", "Admin", new
+{
+    page = Model.CurrentPage + 1,
+    getPaid = Model.GetPaid,
+    getUnpaid = Model.GetUnpaid,
+    sortBy = Model.SortBy,
+    ascending = Model.Ascending
+}, new { id = "nextPage" })
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            function reloadWithQueryStringVars(queryStringVars) {
+                var existingQueryVars = location.search ? location.search.substring(1).split("&") : [],
+                    currentUrl = location.search ? location.href.replace(location.search, "") : location.href,
+                    newQueryVars = {},
+                    newUrl = currentUrl + "?";
+                if (existingQueryVars.length > 0) {
+                    for (var i = 0; i < existingQueryVars.length; i++) {
+                        var pair = existingQueryVars[i].split("=");
+                        newQueryVars[pair[0]] = pair[1];
+                    }
+                }
+                if (queryStringVars) {
+                    for (var queryStringVar in queryStringVars) {
+                        newQueryVars[queryStringVar] = queryStringVars[queryStringVar];
+                    }
+                }
+                if (newQueryVars) {
+                    for (var newQueryVar in newQueryVars) {
+                        newUrl += newQueryVar + "=" + newQueryVars[newQueryVar] + "&";
+                    }
+                    newUrl = newUrl.substring(0, newUrl.length - 1);
+                    window.location.href = newUrl;
+                } else {
+                    window.location.href = location.href;
+                }
+            }
+
+            if (@Model.CurrentPage< 2) {
+                $('#previousPage').addClass('disabled')
+            }
+            else {
+                $('#previousPage').removeClass('disabled')
+            }
+
+            if (@Model.CurrentPage>=@Model.LastPage) {
+                $('#nextPage').addClass('disabled')
+            }
+            else {
+                $('#nextPage').removeClass('disabled')
+            }
+            var links = document.getElementsByClassName('sort-by');
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].innerHTML === '@Model.SortBy') {
+                    console.log('@Model.Ascending.ToString().ToLower()')
+                    if ('@Model.Ascending.ToString().ToLower()' === 'true') {
+                        links[i].classList.add('ascending-sort');
+                    }
+                    else {
+                        links[i].classList.add('descending-sort');
+                    }
+                }
+            }
+
+            $("#GetPaid").change(function () {
+                reloadWithQueryStringVars({
+                    getPaid: this.checked,
+                    getUnpaid: '@Model.GetUnpaid.ToString().ToLower()',
+                    sortBy: '@Model.SortBy',
+                    ascending: '@Model.Ascending.ToString().ToLower()',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $("#GetUnpaid").change(function () {
+                reloadWithQueryStringVars({
+                    getPaid: '@Model.GetPaid.ToString().ToLower()',
+                    getUnpaid: this.checked,
+                    sortBy: '@Model.SortBy',
+                    ascending: '@Model.Ascending.ToString().ToLower()',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $('#previousPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                else
+                    window.location.href = $(this).attr('href');
+            });
+            $('#nextPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                else
+                    window.location.href = $(this).attr('href');
+            });
+            $('.sort-by').click(function (link) {
+                var text = $(link.target).text();
+                if ('@Model.SortBy' === text) {
+                    reloadWithQueryStringVars({
+                        getPaid: '@Model.GetPaid.ToString().ToLower()',
+                        getUnpaid: '@Model.GetUnpaid.ToString().ToLower()',
+                        sortBy: text,
+                        ascending: '@((!Model.Ascending).ToString().ToLower())',
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+                else {
+                    reloadWithQueryStringVars({
+                        getPaid: '@Model.GetPaid.ToString().ToLower()',
+                        getUnpaid: '@Model.GetUnpaid.ToString().ToLower()',
+                        sortBy: text,
+                        ascending: 'true',
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+            });
+        });
+    </script>
+}

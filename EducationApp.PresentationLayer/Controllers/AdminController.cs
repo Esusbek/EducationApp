@@ -1,4 +1,5 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Authors;
+using EducationApp.BusinessLogicLayer.Models.Orders;
 using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
 using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Models.Users;
@@ -43,6 +44,11 @@ namespace EducationApp.PresentationLayer.Controllers
             await _userService.LoginAsync(user, true);
             return RedirectToAction("Profile");
         }
+        public async Task<IActionResult> Logout()
+        {
+            await _userService.LogoutByNameAsync(User.Identity.Name);
+            return RedirectToAction("Login");
+        }
         public async Task<IActionResult> Profile()
         {
             return View(new ProfileViewModel { User = await _userService.GetUserByUsernameAsync("Admin")});
@@ -54,24 +60,60 @@ namespace EducationApp.PresentationLayer.Controllers
             return RedirectToAction("Profile");
         }
         [HttpGet]
-        public IActionResult Users([FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult Users([FromQuery] UsersViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
-            return View(_userService.GetUsers(page));
+            var test = new UsersViewModel
+            {
+                Users = _userService.GetUsers(model.SearchString, page),
+                CurrentPage = page,
+                LastPage = _userService.GetLastPage(model.SearchString),
+                GetBlocked = model.GetBlocked,
+                GetUnblocked = model.GetUnblocked,
+                SearchString = model.SearchString
+            };
+            return View(new UsersViewModel
+            {
+                Users = _userService.GetUsers(model.SearchString, page),
+                CurrentPage = page,
+                LastPage = _userService.GetLastPage(model.SearchString),
+                GetBlocked = model.GetBlocked,
+                GetUnblocked = model.GetUnblocked,
+                SearchString = model.SearchString
+            }) ;
         }
         [HttpGet]
         public IActionResult PrintingEditions([FromQuery] int page = Constants.DEFAULTPAGE)
         {
-            return View(_printingEditionService.GetPrintingEditionsFiltered(page: page, getRemoved: true, pageSize: Constants.ADMINPRINTINGEDITIONPAGESIZE));
+            return View(new PrintingEditionsViewModel
+            {
+                PrintingEditions = _printingEditionService.GetPrintingEditionsFiltered(page: page, getRemoved: true, pageSize: Constants.ADMINPRINTINGEDITIONPAGESIZE).Books,
+                CurrentPage = page,
+                LastPage = _printingEditionService.GetInfo(pageSize: Constants.ADMINPRINTINGEDITIONPAGESIZE).LastPage
+            });
         }
         [HttpGet]
-        public IActionResult Orders([FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult Orders([FromQuery] OrdersViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
-            return View(_orderService.GetAllOrders(page: page));
+            return View(new OrdersViewModel
+            {
+                Orders = _orderService.GetAllOrders(model.GetPaid, model.GetUnpaid, model.SortBy, model.Ascending, page),
+                CurrentPage = page,
+                LastPage = _orderService.GetLastPage(model.GetPaid, model.GetUnpaid),
+                GetUnpaid = model.GetUnpaid,
+                GetPaid = model.GetPaid, 
+                SortBy = model.SortBy,
+                Ascending = model.Ascending
+            });
         }
         [HttpGet]
         public IActionResult Authors([FromQuery] int page = Constants.DEFAULTPAGE)
         {
-            return View(_authorService.GetAuthorsFiltered(page: page, getRemoved: true));
+            return View(new AuthorsViewModel
+            {
+                Authors = _authorService.GetAuthorsFiltered(page: page, getRemoved: true),
+                CurrentPage = page,
+                LastPage = _authorService.GetLastPage()
+            });
         }
         public async Task<IActionResult> BanUser([FromBody] BanRequestModel model)
         {

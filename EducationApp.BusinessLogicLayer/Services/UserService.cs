@@ -67,6 +67,16 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
         }
 
+        public async Task LogoutByNameAsync(string userName)
+        {
+            await _signInManager.SignOutAsync();
+            var dbUser = await _userManager.FindByNameAsync(userName);
+            if (dbUser is not null)
+            {
+                await _jwtProvider.RemoveRefreshTokenAsync(dbUser);
+            }
+        }
+
         public async Task<TokensModel> RefreshTokenAsync(string accessToken, string refreshToken)
         {
             if (string.IsNullOrWhiteSpace(refreshToken) || string.IsNullOrWhiteSpace(accessToken))
@@ -118,16 +128,28 @@ namespace EducationApp.BusinessLogicLayer.Services
             return user;
         }
 
-        public List<UserModel> GetUsers(int page)
+        public List<UserModel> GetUsers(string searchString, int page)
         {
+            
             var dbUsers = _userManager.Users.ToList();
-            var users = new List<UserModel>();
-            foreach (var user in dbUsers)
+            if(!string.IsNullOrWhiteSpace(searchString))
             {
-                users.Add(_mapper.Map<UserModel>(user));
+                dbUsers = dbUsers.Where(user => $"{user.FirstName} {user.LastName}".ToLower().Contains(searchString.ToLower())).ToList();
             }
+            var users = _mapper.Map<List<UserModel>>(dbUsers);
             return users.Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.USERPAGESIZE)
                 .Take(Constants.USERPAGESIZE).ToList();
+        }
+
+        public int GetLastPage(string searchString)
+        {
+            var dbUsers = _userManager.Users.ToList();
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                dbUsers = dbUsers.Where(user => $"{user.FirstName} {user.LastName}".ToLower().Contains(searchString.ToLower())).ToList();
+            }
+            var lastPage = (int)Math.Ceiling(dbUsers.Count / (double)Constants.ORDERPAGESIZE);
+            return lastPage;
         }
 
         public async Task RegisterAsync(UserModel user)
@@ -245,5 +267,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             return;
         }
+
+
     }
 }

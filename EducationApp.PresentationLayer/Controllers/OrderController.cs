@@ -27,13 +27,6 @@ namespace EducationApp.PresentationLayer.Controllers
             var orders = _orderService.GetUserOrders(user, page);
             return Ok(orders);
         }
-        [HttpGet("Order/GetFiltered")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        public IActionResult GetFiltered([FromQuery] OrderFilterModel filter, [FromQuery] int page = Constants.DEFAULTPAGE)
-        {
-            var orders = _orderService.GetOrdersFiltered(filter, page: page);
-            return Ok(orders);
-        }
 
         [HttpPost("Order/Checkout")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]

@@ -15,11 +15,11 @@ namespace EducationApp.DataAccessLayer.Repositories
         {
         }
         public List<AuthorEntity> Get(Expression<Func<AuthorEntity, bool>> filter = null,
-            Func<IQueryable<AuthorEntity>, IOrderedQueryable<AuthorEntity>> orderBy = null,
+            string field = null, bool ascending = true,
             bool getRemoved = false,
             int page = Constants.DEFAULTPAGE)
         {
-            return base.Get(filter, orderBy, getRemoved)
+            return base.Get(filter, field, ascending, getRemoved)
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.AUTHORPAGESIZE)
                 .Take(Constants.AUTHORPAGESIZE).ToList();
         }

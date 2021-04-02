@@ -1,28 +1,29 @@
 <div class="container">
-    <h2>Checkout</h2>
+    <h2>Order list</h2>
     <table>
         <tr>
-            <th colspan="4">Order id</th>
-            <th colspan="2">Order date</th>
-            <th colspan="1">Order item types</th>
-            <th colspan="2">Order item names</th>
-            <th colspan="2">Order status</th>
+            <th colspan="1">Order id</th>
+            <th colspan="5">Order date</th>
+            <th colspan="2">Order item types</th>
+            <th colspan="4">Order item names</th>
+            <th colspan="1">Order status</th>
         </tr>
         <tr *ngFor="let order of orders">
-            <td colspan="4">{{order.id}}</td>
-            <td colspan="2">{{order.date}}</td>
-            <td colspan="1">
+            <td colspan="1">{{order.id}}</td>
+            <td colspan="5">{{order.date}}</td>
+            <td colspan="2">
                 <p *ngFor="let item of order.currentItems">
                     {{PrintingEditionType[item.printingEdition.type]}}
                 </p>
             </td>
-            <td colspan="2">
+            <td colspan="4">
                 <p *ngFor="let item of order.currentItems">
                     {{item.printingEdition.title}}
                 </p>
             </td>
-            <td colspan="2">
-                {{OrderStatusType[order.status]}}
+            <td colspan="1">
+                <button (click)="payOrder(order)" *ngIf="order.status==OrderStatusType.Unpaid">Pay</button>
+                <p *ngIf="order.status==OrderStatusType.Paid">{{OrderStatusType[order.status]}}</p>
             </td>
         </tr>
     </table>

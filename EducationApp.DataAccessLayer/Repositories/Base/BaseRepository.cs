@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using EducationApp.DataAccessLayer.Extensions;
 
 namespace EducationApp.DataAccessLayer.Repositories.Base
 {
@@ -24,7 +25,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             return _dbSet.ToList();
         }
         public virtual List<T> Get(Expression<Func<T, bool>> filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string field = null, bool ascending = true,
             bool getRemoved = false)
         {
             IQueryable<T> query = _dbSet;
@@ -37,9 +38,16 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
                 query = query.Where(filter);
             }
 
-            if (orderBy is not null)
+            if (field is not null)
             {
-                return orderBy(query).ToList();
+                if (ascending)
+                {
+                    query = query.OrderBy(field);
+                }
+                else
+                {
+                    query = query.OrderByDescending(field);
+                }
             }
             return query.ToList();
         }

@@ -1,3 +1,22 @@
+table {
+    background: #FFF;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,
+th {
+    padding: 4px;
+    border: 1px solid #CCC;
+    overflow: hidden;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background-color: #DDD;
+    font-weight: 400;
+}
 .pages {
     display: flex;
     flex-direction: row;

@@ -14,11 +14,11 @@ namespace EducationApp.DataAccessLayer.Repositories
         {
         }
         public List<PrintingEditionEntity> Get(Expression<Func<PrintingEditionEntity, bool>> filter = null,
-            Func<IQueryable<PrintingEditionEntity>, IOrderedQueryable<PrintingEditionEntity>> orderBy = null,
+            string field = null, bool ascending = true,
             bool getRemoved = false,
             int page = Constants.DEFAULTPAGE, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
-            return base.Get(filter, orderBy, getRemoved)
+            return base.Get(filter, field, ascending, getRemoved)
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * pageSize)
                 .Take(pageSize).ToList();
         }

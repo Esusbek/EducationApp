@@ -14,6 +14,11 @@ export const checkoutSuccess = createAction(
     '[Cart] Checkout success',
     props<SessionModel>()
 );
+
+export const checkoutExisting = createAction(
+    '[Cart] Checkout exisisting order',
+    props<{ order: OrderModel }>()
+);
 export const getOrders = createAction(
     '[Order list page] Get Orders',
     props<{ page: number }>()

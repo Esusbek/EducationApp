@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { OrderModel } from 'src/app/models/cart.models';
 import { PrintingEditionModel } from 'src/app/models/printing-edition.models';
 import { OrderStatusType, PrintingEditionType } from 'src/app/shared/enums';
-import { getOrders } from 'src/app/store/cart/cart.actions';
+import { checkoutExisting, getOrders } from 'src/app/store/cart/cart.actions';
 import { CartState } from 'src/app/store/cart/cart.state';
 import { PrintingEditionState } from 'src/app/store/printing-edition/printing-edition.state';
 
@@ -34,6 +34,9 @@ export class OrderListComponent implements OnInit {
   }
   public getOrders(): void {
     this.store.dispatch(getOrders({ page: this.page }))
+  }
+  public payOrder(order: OrderModel) {
+    this.store.dispatch(checkoutExisting({ order }));
   }
   hasPreviousPage() {
     return this.page > 1;

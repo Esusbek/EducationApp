@@ -17,5 +17,6 @@
         public const int DEFAULTPREVIOUSPAGEOFFSET = 1;
         public const int DEFAULTMINPASSWORDLENGTH = 6;
         public const int DEFAULTREFRESHTOKENLENGTH = 32;
+        public const string DEFAULTSORT = "Id";
     }
 }

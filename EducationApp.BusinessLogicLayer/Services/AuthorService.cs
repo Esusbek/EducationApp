@@ -77,16 +77,16 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             _authorRepository.Delete(dbAuthor);
         }
-        public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter,
-            Func<IQueryable<AuthorEntity>, IOrderedQueryable<AuthorEntity>> orderBy = null,
+        public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null,
+            string field = null, bool ascending = true,
             int page = Constants.DEFAULTPAGE, bool getRemoved = false)
         {
             Expression<Func<AuthorEntity, bool>> filter = null;
-            if (authorFilter != null)
+            if (authorFilter is not null)
             {
                 filter = author => string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name);
             }
-            var dbAuthors = _authorRepository.Get(filter, orderBy, getRemoved, page);
+            var dbAuthors = _authorRepository.Get(filter, field, ascending, getRemoved, page);
             var authors = _mapper.Map<List<AuthorModel>>(dbAuthors);
             return authors;
         }
@@ -95,6 +95,17 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbAuthors = _authorRepository.Get(page: page);
             var authors = _mapper.Map<List<AuthorModel>>(dbAuthors);
             return authors;
+        }
+        public int GetLastPage(AuthorFilterModel authorFilter=null, bool getRemoved = false)
+        {
+            Expression<Func<AuthorEntity, bool>> filter = null;
+            if (authorFilter is not null)
+            {
+                filter = author => string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name);
+            }
+            var authors = _authorRepository.GetAll(filter, getRemoved);
+            var lastPage = (int)Math.Ceiling(authors.Count / (double)Constants.AUTHORPAGESIZE);
+            return lastPage;
         }
         public AuthorModel GetAuthor(int id)
         {

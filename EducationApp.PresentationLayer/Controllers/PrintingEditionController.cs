@@ -27,7 +27,7 @@ namespace EducationApp.PresentationLayer.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public IActionResult GetFiltered([FromQuery] PrintingEditionFilterModel filter, [FromQuery] bool orderAsc, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
-            return Ok(_printingEditionService.GetPrintingEditionsFiltered(filter, orderAsc, page));
+            return Ok(_printingEditionService.GetPrintingEditionsFiltered(filter, orderAsc: orderAsc, page: page));
         }
     }
 }

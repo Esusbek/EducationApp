@@ -1,28 +1,30 @@
-﻿@using EducationApp.BusinessLogicLayer.Models.PrintingEditions
-@model PrintingEditionResponseModel
+﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@using EducationApp.BusinessLogicLayer.Models.PrintingEditions
+@model PrintingEditionsViewModel
 @{
     ViewData["Title"] = "Printing Editions list";
 }
 <table class="table">
     <thead>
         <tr>
-            <td>Edition id</td>
-            <td>Edition title</td>
-            <td>Edition description</td>
-            <td>Edition type</td>
-            <td>Edition authors</td>
-            <td>Edition price</td>
+            <th>Edition id</th>
+            <th>Edition title</th>
+            <th>Edition description</th>
+            <th>Edition type</th>
+            <th>Edition authors</th>
+            <th>Edition price</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (PrintingEditionModel edition in Model.Books)
+        @foreach (PrintingEditionModel edition in Model.PrintingEditions)
         {
             <tr>
                 <td>@edition.Id</td>
                 <td>@edition.Title</td>
                 <td>@edition.Description</td>
                 <td>@edition.Type.ToString()</td>
-                <td>@foreach (string authorName in edition.Authors)
+                <td>
+                    @foreach (string authorName in edition.Authors)
                     {
                         <p>@authorName</p>
                     }
@@ -32,3 +34,11 @@
         }
     </tbody>
 </table>
+
+
+<div class="pages">
+    <div class="filler"></div>
+    @Html.ActionLink("previous page", "PrintingEditions", "Admin", new { page = Model.CurrentPage - 1 }, new { id = "previousPage" })
+    <span>Page @Model.CurrentPage/@Model.LastPage</span>
+    @Html.ActionLink("next page", "PrintingEditions", "Admin", new { page = Model.CurrentPage + 1 }, new { id = "nextPage" })
+</div>
