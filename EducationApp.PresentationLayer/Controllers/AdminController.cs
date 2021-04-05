@@ -59,6 +59,13 @@ namespace EducationApp.PresentationLayer.Controllers
             await _userService.UpdateAsync(user);
             return RedirectToAction("Profile");
         }
+        [HttpPost]
+        public async Task<IActionResult> UpdateOtherUser([FromForm] UserModel user)
+        {
+            await _userService.UpdateAsync(user);
+            return RedirectToAction("Users");
+        }
+
         [HttpGet]
         public IActionResult Users([FromQuery] UsersViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
         {

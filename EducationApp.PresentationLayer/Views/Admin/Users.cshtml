@@ -1,6 +1,7 @@
 ﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
 @using EducationApp.BusinessLogicLayer.Models.Users
 @using EducationApp.Shared.Constants
+@using System.Web
 @model UsersViewModel
 @{
     ViewData["Title"] = "Users list";
@@ -75,12 +76,13 @@
                     }
                 </td>
                 <td>
-                    <button class="edit-user-open" onclick="test(@user.Id.ToString())"></button>
+                    <button class="edit-user-open" onclick="test('@user.Id')"></button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
 
 <div class="pages">
     <div class="filler"></div>
@@ -110,8 +112,77 @@
 
 @section scripts{
     <script>
+        var model = @Html.Raw(Json.Serialize(Model));
+        var BstrapModal = function (title, body, buttons) {
+            var title = title, body = body || "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                buttons = buttons || [{ Value: "CLOSE", Css: "btn-primary", Callback: function (event) { BstrapModal.Close(); } }, { Value: "Update", Css: "btn-primary", Callback: function (event) { $("#userEdit").submit() } } ];
+            var GetModalStructure = function () {
+                var that = this;
+                that.Id = BstrapModal.Id = Math.random();
+                var buttonshtml = "";
+                for (var i = 0; i < buttons.length; i++) {
+                    buttonshtml += "<button type='button' class='btn " + (buttons[i].Css || "") + "' name='btn" + that.Id + "'>" + (buttons[i].Value || "CLOSE") + "</button>";
+                }
+                return `<div class='modal fade' name='dynamiccustommodal' id='${that.Id}\
+' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='${that.Id}Label'>\
+    <div class='modal-dialog'>\
+        <div class='modal-content'>\
+            <div class='modal-header'>\
+                <h4 class='modal-title'>${title}</h4>\
+            </div>\
+            <div class='modal-body'>\
+                <div class='row'>\
+                    <div class='col-xs-12 col-md-12 col-sm-12 col-lg-12'>\
+                        ${body}\
+                    </div>\
+                </div>
+            </div>
+            <div class='modal-footer bg-default'>
+                <div class='col-xs-12 col-sm-12 col-lg-12'>\
+                    ${buttonshtml}\
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>`;
+            }();
+            BstrapModal.Delete = function () {
+                var modals = document.getElementsByName("dynamiccustommodal");
+                if (modals.length > 0) document.body.removeChild(modals[0]);
+            };
+            BstrapModal.Close = function () {
+                $(document.getElementById(BstrapModal.Id)).modal('hide');
+                BstrapModal.Delete();
+            };
+            this.Show = function () {
+                BstrapModal.Delete();
+                document.body.appendChild($(GetModalStructure)[0]);
+                var btns = document.querySelectorAll("button[name='btn" + BstrapModal.Id + "']");
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].addEventListener("click", buttons[i].Callback || BstrapModal.Close);
+                }
+                $(document.getElementById(BstrapModal.Id)).modal('show');
+            };
+        };
         function test(id) {
-            console.log(id);
+            var user = model.users.find(user => user.id === id);
+            var title = `Editing ${user.firstName} ${user.lastName}`;
+            var body = `<form action="UpdateOtherUser" method="post" id="userEdit">\
+    <input type="hidden" value="${user.id}" name="id"/>
+    <label for="userName">Username</label>\
+    <input id="userName" value="${user.userName}" type="text" name="userName" />\
+    <br />\
+    <label for="firstName">First name</label>\
+    <input id="firstName" value="${user.firstName}" type="text" name="firstName"/>\
+    <br />\
+    <label for="lastName">Last name</label>\
+    <input id="lastName" value="${user.lastName}" type="text" name="lastName"/>\
+    <br />\
+    <label for="userEmail">Email</label>\
+    <input id="userEmail" value="${user.email}" type="text" name="email"/>\
+    <br />\
+</form>`;
+            new BstrapModal(title, body).Show();
         }
         $(document).ready(function () {
             function reloadWithQueryStringVars(queryStringVars) {
@@ -140,37 +211,6 @@
                     window.location.href = location.href;
                 }
             }
-            
-            var BstrapModal = function (title, body, buttons) {
-                var title = title || "Lorem Ipsum History", body = body || "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                    buttons = buttons || [{ Value: "CLOSE", Css: "btn-primary", Callback: function (event) { BstrapModal.Close(); } }];
-                var GetModalStructure = function () {
-                    var that = this;
-                    that.Id = BstrapModal.Id = Math.random();
-                    var buttonshtml = "";
-                    for (var i = 0; i < buttons.length; i++) {
-                        buttonshtml += "<button type='button' class='btn " + (buttons[i].Css || "") + "' name='btn" + that.Id + "'>" + (buttons[i].Value || "CLOSE") + "</button>";
-                    }
-                    return "<div class='modal fade' name='dynamiccustommodal' id='" + that.Id + "' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='" + that.Id + "Label'><div class='modal-dialog'><div class='modal-content'><div class='modal-header'><button type='button' class='close modal-white-close' onclick='BstrapModal.Close()'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>" + title + "</h4></div><div class='modal-body'><div class='row'><div class='col-xs-12 col-md-12 col-sm-12 col-lg-12'>" + body + "</div></div></div><div class='modal-footer bg-default'><div class='col-xs-12 col-sm-12 col-lg-12'>" + buttonshtml + "</div></div></div></div></div>";
-                }();
-                BstrapModal.Delete = function () {
-                    var modals = document.getElementsByName("dynamiccustommodal");
-                    if (modals.length > 0) document.body.removeChild(modals[0]);
-                };
-                BstrapModal.Close = function () {
-                    $(document.getElementById(BstrapModal.Id)).modal('hide');
-                    BstrapModal.Delete();
-                };
-                this.Show = function () {
-                    BstrapModal.Delete();
-                    document.body.appendChild($(GetModalStructure)[0]);
-                    var btns = document.querySelectorAll("button[name='btn" + BstrapModal.Id + "']");
-                    for (var i = 0; i < btns.length; i++) {
-                        btns[i].addEventListener("click", buttons[i].Callback || BstrapModal.Close);
-                    }
-                    $(document.getElementById(BstrapModal.Id)).modal('show');
-                };
-            };
 
             if (@Model.CurrentPage< 2) {
                 $('#previousPage').addClass('disabled')

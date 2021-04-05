@@ -191,9 +191,6 @@ button {
     height: 30px;
 }
 
-.filler {
-    flex: 1;
-}
 #previousPage {
     background-image: url(/img/previous.png);
     display: block;
@@ -343,7 +340,13 @@ input:checked + .slider:before {
     background-size: cover;
     background-color: white;
 }
-
+.modal-buttons {
+    display: flex;
+    flex-direction: row;
+}
+.modal-buttons>.filler {
+    min-width:55%;
+}
 @media (max-width:520px) {
     .header {
         flex-direction: column;
