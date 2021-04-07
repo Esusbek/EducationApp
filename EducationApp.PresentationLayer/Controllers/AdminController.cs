@@ -51,7 +51,8 @@ namespace EducationApp.PresentationLayer.Controllers
         }
         public async Task<IActionResult> Profile()
         {
-            return View(new ProfileViewModel { User = await _userService.GetUserByUsernameAsync("Admin")});
+            var user = await _userService.GetUserByUsernameAsync(User.Identity.Name);
+            return View(new ProfileViewModel { User = user });
         }
         [HttpPost]
         public async Task<IActionResult> UpdateUser([FromForm] UserModel user)
@@ -85,13 +86,19 @@ namespace EducationApp.PresentationLayer.Controllers
             return Ok();
         }
         [HttpGet]
-        public IActionResult PrintingEditions([FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult PrintingEditions([FromQuery] PrintingEditionsViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return View(new PrintingEditionsViewModel
             {
-                PrintingEditions = _printingEditionService.GetPrintingEditionsFiltered(page: page, getRemoved: true, pageSize: Constants.ADMINPRINTINGEDITIONPAGESIZE).Books,
+                PrintingEditions = _printingEditionService.GetPrintingEditionsAdmin(model.GetBook, model.GetNewspaper, model.GetJournal, model.SortBy, model.Ascending),
                 CurrentPage = page,
-                LastPage = _printingEditionService.GetInfo(pageSize: Constants.ADMINPRINTINGEDITIONPAGESIZE).LastPage
+                LastPage = _printingEditionService.GetLastPage(model.GetBook, model.GetNewspaper, model.GetJournal),
+                Ascending = model.Ascending,
+                Authors = _authorService.GetAllAuthors(),
+                GetBook = model.GetBook,
+                GetJournal = model.GetJournal,
+                GetNewspaper = model.GetNewspaper,
+                SortBy = model.SortBy
             });
         }
         [HttpGet]
@@ -109,30 +116,32 @@ namespace EducationApp.PresentationLayer.Controllers
             });
         }
         [HttpGet]
-        public IActionResult Authors([FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult Authors([FromQuery] AuthorsViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
         {
             return View(new AuthorsViewModel
             {
-                Authors = _authorService.GetAuthorsFiltered(page: page, getRemoved: true),
+                Authors = _authorService.GetAuthorsFiltered(null, model.SortBy, model.Ascending, page: page),
                 CurrentPage = page,
-                LastPage = _authorService.GetLastPage()
+                LastPage = _authorService.GetLastPage(),
+                SortBy = model.SortBy,
+                Ascending = model.Ascending
             });
         }
         [HttpPost]
         public IActionResult EditAuthor(AuthorModel author)
         {
             _authorService.UpdateAuthor(author);
-            return Ok();
+            return RedirectToAction("Authors");
         }
         public IActionResult AddAuthor(AuthorModel author)
         {
             _authorService.AddAuthor(author);
-            return Ok();
+            return RedirectToAction("Authors");
         }
         public IActionResult DeleteAuthor(AuthorModel author)
         {
             _authorService.DeleteAuthor(author);
-            return Ok();
+            return RedirectToAction("Authors");
         }
         public IActionResult AddPrintingEdition(AuthorAndEditionRequestModel model)
         {

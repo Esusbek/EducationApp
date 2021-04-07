@@ -13,7 +13,7 @@ namespace EducationApp.BusinessLogicLayer.Common.MappingProfiles
                 CreateMap<OrderModel, OrderEntity>().ReverseMap();
 
                 CreateMap<OrderItemModel, OrderItemEntity>().
-                    ForMember(destination => destination.PrintingEdition, option => option.Ignore()); ;
+                    ForMember(destination => destination.PrintingEdition, option => option.Ignore());
                 CreateMap<OrderItemEntity, OrderItemModel>();
 
                 CreateMap<PaymentModel, PaymentEntity>().ReverseMap();

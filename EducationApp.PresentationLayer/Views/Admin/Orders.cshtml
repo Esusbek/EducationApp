@@ -5,6 +5,9 @@
 @{
     ViewData["Title"] = "Orders list";
 }
+<div class="tables-header">
+    <div><h4>Orders Page</h4></div>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -129,20 +132,13 @@
             if (@Model.CurrentPage< 2) {
                 $('#previousPage').addClass('disabled')
             }
-            else {
-                $('#previousPage').removeClass('disabled')
-            }
 
             if (@Model.CurrentPage>=@Model.LastPage) {
                 $('#nextPage').addClass('disabled')
             }
-            else {
-                $('#nextPage').removeClass('disabled')
-            }
             var links = document.getElementsByClassName('sort-by');
             for (var i = 0; i < links.length; i++) {
                 if (links[i].innerHTML === '@Model.SortBy') {
-                    console.log('@Model.Ascending.ToString().ToLower()')
                     if ('@Model.Ascending.ToString().ToLower()' === 'true') {
                         links[i].classList.add('ascending-sort');
                     }

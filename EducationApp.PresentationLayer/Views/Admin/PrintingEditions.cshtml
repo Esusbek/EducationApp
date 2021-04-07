@@ -1,18 +1,61 @@
 ﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
 @using EducationApp.BusinessLogicLayer.Models.PrintingEditions
+@using EducationApp.BusinessLogicLayer.Models.Authors
+@using EducationApp.Shared.Constants
 @model PrintingEditionsViewModel
 @{
     ViewData["Title"] = "Printing Editions list";
 }
+<div class="tables-header">
+    <div><h4>Products Page</h4></div>
+    <div class="filler"></div>
+    <div class="editionTooltip">
+        <button class="addEdition" onclick="addEditionModal()"></button>
+        <span class="editionTooltiptext">Add new product</span>
+    </div>
+</div>
 <table class="table">
     <thead>
         <tr>
-            <th>Edition id</th>
-            <th>Edition title</th>
-            <th>Edition description</th>
-            <th>Edition type</th>
-            <th>Edition authors</th>
-            <th>Edition price</th>
+            <th><a href="javascript:void(0);" class="table-head sort-by">Id</a></th>
+            <th><a href="javascript:void(0);" class="table-head">Title</a></th>
+            <th><a href="javascript:void(0);" class="table-head">Description</a></th>
+            <th>
+                <a href="javascript:void(0);" class="table-head">Type</a>
+                <div id="checkboxes">
+
+                    @if (Model.GetBook)
+                    {
+                        <input type="checkbox" checked name="GetBook" id="GetBook" value="true" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="GetBook" id="GetBook" value="true" />
+                    }
+                    <label for="GetBook">Book</label>
+                    @if (Model.GetNewspaper)
+                    {
+                        <input type="checkbox" checked name="GetNewspaper" id="GetNewspaper" value="true" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="GetNewspaper" id="GetNewspaper" value="true" />
+                    }
+                    <label for="GetNewspaper">Newspaper</label>
+                    @if (Model.GetJournal)
+                    {
+                        <input type="checkbox" checked name="GetJournal" id="GetJournal" value="true" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="GetJournal" id="GetJournal" value="true" />
+                    }
+                    <label for="GetJournal">Journal</label>
+                </div>
+            </th>
+            <th><a href="javascript:void(0);" class="table-head">Authors</a></th>
+            <th><a href="javascript:void(0);" class="table-head sort-by">Price</a></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -24,12 +67,16 @@
                 <td>@edition.Description</td>
                 <td>@edition.Type.ToString()</td>
                 <td>
-                    @foreach (string authorName in edition.Authors)
+                    @foreach (AuthorModel author in edition.Authors)
                     {
-                        <p>@authorName</p>
+                        <p>@author.Name</p>
                     }
                 </td>
                 <td>@edition.Price</td>
+                <td>
+                    <button class="edit-open" onclick="editionModal('@edition.Id')"></button>
+                    <button class="remove" onclick="deleteEditionModal('@edition.Id')"></button>
+                </td>
             </tr>
         }
     </tbody>
@@ -38,7 +85,268 @@
 
 <div class="pages">
     <div class="filler"></div>
-    @Html.ActionLink("previous page", "PrintingEditions", "Admin", new { page = Model.CurrentPage - 1 }, new { id = "previousPage" })
+    @Html.ActionLink("previous page", "PrintingEditions", "Admin", new
+    {
+        page = Model.CurrentPage - 1,
+    ascending = Model.Ascending,
+    sortBy = Model.SortBy,
+    getBook = Model.GetBook,
+    getNewspaper = Model.GetNewspaper,
+    getJournal = Model.GetJournal
+}, new { id = "previousPage" })
     <span>Page @Model.CurrentPage/@Model.LastPage</span>
-    @Html.ActionLink("next page", "PrintingEditions", "Admin", new { page = Model.CurrentPage + 1 }, new { id = "nextPage" })
+    @Html.ActionLink("next page", "PrintingEditions", "Admin", new
+    {
+        page = Model.CurrentPage + 1,
+    ascending = Model.Ascending,
+    sortBy = Model.SortBy,
+    getBook = Model.GetBook,
+    getNewspaper = Model.GetNewspaper,
+    getJournal = Model.GetJournal
+}, new { id = "nextPage" })
 </div>
+
+@section scripts{
+    <script>
+        var model = @Html.Raw(Json.Serialize(Model));
+        var BstrapModal = function (title, body, buttons) {
+            var GetModalStructure = function () {
+                var that = this;
+                that.Id = BstrapModal.Id = Math.random();
+                var buttonshtml = `<button type='button' class='btn ${buttons[0].Css}' name='btn${that.Id}'>${buttons[0].Value}</button>`;
+                for (var i = 1; i < buttons.length; i++) {
+                    buttonshtml += `<div class="filler"></div><button type='button' class='btn ${buttons[i].Css}' name='btn${that.Id}'>${buttons[i].Value}</button>`;
+                }
+                return `<div class='modal fade' name='dynamiccustommodal' id='${that.Id}\
+' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='${that.Id}Label'>\
+    <div class='modal-dialog'>\
+        <div class='modal-content'>\
+            <div class='modal-header'>\
+                <h4 class='modal-title'>${title}</h4>\
+            </div>\
+            <div class='modal-body'>\
+                <div class='row'>\
+                    <div class='col-xs-12 col-md-12 col-sm-12 col-lg-12'>\
+                        ${body}\
+                    </div>\
+                </div>
+            </div>
+            <div class='modal-footer bg-default'>
+                <div class='col-xs-12 col-sm-12 col-lg-12 modal-buttons'>\
+                    ${buttonshtml}\
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>`;
+            }();
+            BstrapModal.Delete = function () {
+                var modals = document.getElementsByName("dynamiccustommodal");
+                if (modals.length > 0) document.body.removeChild(modals[0]);
+            };
+            BstrapModal.Close = function () {
+                $(document.getElementById(BstrapModal.Id)).modal('hide');
+                BstrapModal.Delete();
+            };
+            this.Show = function () {
+                BstrapModal.Delete();
+                document.body.appendChild($(GetModalStructure)[0]);
+                var btns = document.querySelectorAll(`button[name='btn${BstrapModal.Id}']`);
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].addEventListener("click", buttons[i].Callback || BstrapModal.Close);
+                }
+                $(document.getElementById(BstrapModal.Id)).modal('show');
+            };
+        };
+        function editionModal(id) {
+            var edition = model.printingEditions.find(edition => edition.id === +id);
+            var title = `Editing ${edition.title}`;
+            var body = `<form action="EditEdition" method="post" id="editionEdit">\
+    <input type="hidden" value="${edition.id}" name="id"/>
+    <label for="name">Title</label>\
+    <input id="name" value="${edition.title}" type="text" name="title" />\
+    <label for="description">Description<label>\
+    <textarea rows="5" maxlength="1000" cols="50" id="description" type="text" name="description">${edition.description}</textarea>\
+    <label for="category">Category</label>`;
+
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Update",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        $("#editionEdit").submit()
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
+        }
+        function addEditionModal() {
+            var title = `Add new author`;
+            var body = `<form action="AddAuthor" method="post" id="authorAdd">\
+    <label for="name">Name</label>\
+    <input id="name" value="" type="text" name="name" />\
+</form>`;
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Add",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        $("#authorAdd").submit()
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
+        }
+        function deleteEditionModal(id) {
+            var author = model.printingEditions.find(edition => edition.id === +id);
+            var title = `Delete ${author.name}`;
+            var body = `<h3>Are you sure you want to delete ${author.name}?</h3>
+<form action="DeleteAuthor" method="post" id="authorDelete">\
+    <input type="hidden" value="${author.id}" name="id"/>
+</form>`;
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Delete",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        $("#authorDelete").submit()
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
+        }
+        $(document).ready(function () {
+            function reloadWithQueryStringVars(queryStringVars) {
+                var existingQueryVars = location.search ? location.search.substring(1).split("&") : [],
+                    currentUrl = location.search ? location.href.replace(location.search, "") : location.href,
+                    newQueryVars = {},
+                    newUrl = currentUrl + "?";
+                if (existingQueryVars.length > 0) {
+                    for (var i = 0; i < existingQueryVars.length; i++) {
+                        var pair = existingQueryVars[i].split("=");
+                        newQueryVars[pair[0]] = pair[1];
+                    }
+                }
+                if (queryStringVars) {
+                    for (var queryStringVar in queryStringVars) {
+                        newQueryVars[queryStringVar] = queryStringVars[queryStringVar];
+                    }
+                }
+                if (newQueryVars) {
+                    for (var newQueryVar in newQueryVars) {
+                        newUrl += newQueryVar + "=" + newQueryVars[newQueryVar] + "&";
+                    }
+                    newUrl = newUrl.substring(0, newUrl.length - 1);
+                    window.location.href = newUrl;
+                } else {
+                    window.location.href = location.href;
+                }
+            }
+
+            if (@Model.CurrentPage< 2) {
+                $('#previousPage').addClass('disabled')
+            }
+            if (@Model.CurrentPage>=@Model.LastPage) {
+                $('#nextPage').addClass('disabled')
+            }
+            var links = document.getElementsByClassName('sort-by');
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].innerHTML === '@Model.SortBy') {
+                    if ('@Model.Ascending.ToString().ToLower()' === 'true') {
+                        links[i].classList.add('ascending-sort');
+                    }
+                    else {
+                        links[i].classList.add('descending-sort');
+                    }
+                }
+            }
+            $("#GetBook").change(function () {
+                reloadWithQueryStringVars({
+                    getBook: this.checked,
+                    getJournal: '@Model.GetJournal.ToString().ToLower()',
+                    getNewspaper: '@Model.GetNewspaper.ToString().ToLower()',
+                    sortBy: '@Model.SortBy',
+                    ascending: '@((!Model.Ascending).ToString().ToLower())',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $("#GetNewspaper").change(function () {
+                reloadWithQueryStringVars({
+                    getBook: '@Model.GetBook.ToString().ToLower()',
+                    getJournal: '@Model.GetJournal.ToString().ToLower()',
+                    getNewspaper: this.checked,
+                    sortBy: '@Model.SortBy',
+                    ascending: '@((!Model.Ascending).ToString().ToLower())',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $("#GetJournal").change(function () {
+                reloadWithQueryStringVars({
+                    getBook: '@Model.GetBook.ToString().ToLower()',
+                    getJournal: this.checked,
+                    getNewspaper: '@Model.GetNewspaper.ToString().ToLower()',
+                    sortBy: '@Model.SortBy',
+                    ascending: '@((!Model.Ascending).ToString().ToLower())',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $('#previousPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                else
+                    window.location.href = $(this).attr('href');
+            });
+            $('#nextPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                else
+                    window.location.href = $(this).attr('href');
+            });
+            $('.sort-by').click(function (link) {
+                var text = $(link.target).text();
+                console.log(model);
+                if ('@Model.SortBy' === text) {
+                    reloadWithQueryStringVars({
+                        getBook: '@Model.GetBook.ToString().ToLower()',
+                        getJournal: '@Model.GetJournal.ToString().ToLower()',
+                        getNewspaper: '@Model.GetNewspaper.ToString().ToLower()',
+                        sortBy: text,
+                        ascending: '@((!Model.Ascending).ToString().ToLower())',
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+                else {
+                    reloadWithQueryStringVars({
+                        getBook: '@Model.GetBook.ToString().ToLower()',
+                        getJournal: '@Model.GetJournal.ToString().ToLower()',
+                        getNewspaper: '@Model.GetNewspaper.ToString().ToLower()',
+                        sortBy: text,
+                        ascending: 'true',
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+            });
+
+        });
+    </script>
+}

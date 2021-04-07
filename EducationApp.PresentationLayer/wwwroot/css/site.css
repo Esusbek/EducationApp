@@ -142,7 +142,7 @@ table {
     min-width: 350px;
 }
 
-.profile-images {
+.profile-images, .modal-buttons, .tables-header {
     display: flex;
     flex-direction: row;
 }
@@ -333,20 +333,82 @@ input:checked + .slider:before {
     .slider.round:before {
         border-radius: 50%;
     }
-.edit-user-open {
+.edit-open {
     width: 50px;
     height: 50px;
     background-image: url(/img/pencil.png) ;
     background-size: cover;
     background-color: white;
 }
-.modal-buttons {
-    display: flex;
-    flex-direction: row;
+.remove {
+    width: 50px;
+    height: 50px;
+    background-image: url(/img/remove.png);
+    background-size: cover;
+    background-color: white;
 }
-.modal-buttons>.filler {
-    min-width:55%;
+.authors {
+    table-layout: fixed;
 }
+.authors-id {
+    width: 5%;
+}
+.authors-name {
+    width: 30%;
+}
+.authors-works {
+    width: 50%;
+}
+.authors-controls {
+    width: 15%;
+}
+.tables-header {
+    padding: 20px;
+}
+.addAuthor, .addEdition {
+    width: 50px;
+    height: 50px;
+    background-image: url(/img/add.png);
+    background-size: cover;
+    background-color: #f2f2f2;
+}
+.authorTooltip, .editionTooltip {
+    position: relative;
+    display: inline-block;
+}
+
+    .authorTooltip .authorTooltiptext, .editionTooltip .editionTooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+        .authorTooltip .authorTooltiptext::after, .editionTooltip .editionTooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+    .authorTooltip:hover .authorTooltiptext, .editionTooltip:hover .editionTooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
 @media (max-width:520px) {
     .header {
         flex-direction: column;

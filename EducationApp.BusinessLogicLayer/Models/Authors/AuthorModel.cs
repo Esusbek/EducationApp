@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+using System.Collections.Generic;
 
 namespace EducationApp.BusinessLogicLayer.Models.Authors
 {
     public class AuthorModel : Base.BaseModel
     {
         public string Name { get; set; }
-        public List<PrintingEditions.PrintingEditionModel> PrintingEditions { get; set; }
+        public List<PrintingEditionModel> PrintingEditions { get; set; }
         public AuthorModel()
         {
-            PrintingEditions = new List<PrintingEditions.PrintingEditionModel>();
+            PrintingEditions = new List<PrintingEditionModel>();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Orders;
+using EducationApp.Shared.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +20,10 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
 
         public OrdersViewModel()
         {
-            CurrentPage = 1;
+            CurrentPage = Constants.DEFAULTPAGE;
             GetPaid = true;
             GetUnpaid = true;
-            SortBy = "Date";
+            SortBy = Constants.DEFAULTORDERSORT;
             Ascending = true;
         }
     }

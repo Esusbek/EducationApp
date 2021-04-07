@@ -18,5 +18,9 @@
         public const int DEFAULTMINPASSWORDLENGTH = 6;
         public const int DEFAULTREFRESHTOKENLENGTH = 32;
         public const string DEFAULTSORT = "Id";
+        public const string ALLOWSPECIFICORIGINS = "AllowSpecificOrigins";
+        public const string DEFAULTORDERSORT = "Date";
+        public const string DEFAULTAUTHORSORT = "Id";
+        public const string DEFAULTEDITIONSORT = "Price";
     }
 }

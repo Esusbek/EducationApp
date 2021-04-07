@@ -1,11 +1,13 @@
 ﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
 @using EducationApp.BusinessLogicLayer.Models.Users
 @using EducationApp.Shared.Constants
-@using System.Web
 @model UsersViewModel
 @{
     ViewData["Title"] = "Users list";
 }
+<div class="tables-header">
+    <div><h4>Users Page</h4></div>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -13,7 +15,15 @@
             <th><a href="javascript:void(0);" class="table-head">Email</a></th>
             <th>
                 <a href="javascript:void(0);" class="table-head sort-by descending-sort">Name</a>
-                <input type="text" placeholder="Search name" id="searchString" value=@Model.SearchString />
+                @if (string.IsNullOrWhiteSpace(Model.SearchString))
+                {
+                    <input type="text" placeholder="Search name" id="searchString" value="" />
+                }
+                else
+                {
+                    <input type="text" placeholder="Search name" id="searchString" value=@Model.SearchString />
+                }
+
             </th>
             <th>
                 <a href="javascript:void(0);" class="table-head">Status</a>
@@ -76,7 +86,15 @@
                     }
                 </td>
                 <td>
-                    <button class="edit-user-open" onclick="test('@user.Id')"></button>
+                    @if (user.UserName != User.Identity.Name)
+                    {
+                        <button class="edit-open" onclick="userModal('@user.Id')"></button>
+                    }
+                    else
+                    {
+                        <button class="edit-open" disabled onclick="userModal('@user.Id')"></button>
+                    }
+                    
                 </td>
             </tr>
         }
@@ -114,14 +132,12 @@
     <script>
         var model = @Html.Raw(Json.Serialize(Model));
         var BstrapModal = function (title, body, buttons) {
-            var title = title, body = body || "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                buttons = buttons || [{ Value: "CLOSE", Css: "btn-primary", Callback: function (event) { BstrapModal.Close(); } }, { Value: "Update", Css: "btn-primary", Callback: function (event) { $("#userEdit").submit() } } ];
             var GetModalStructure = function () {
                 var that = this;
                 that.Id = BstrapModal.Id = Math.random();
-                var buttonshtml = "";
-                for (var i = 0; i < buttons.length; i++) {
-                    buttonshtml += "<button type='button' class='btn " + (buttons[i].Css || "") + "' name='btn" + that.Id + "'>" + (buttons[i].Value || "CLOSE") + "</button>";
+                var buttonshtml = `<button type='button' class='btn ${buttons[0].Css}' name='btn${that.Id}'>${buttons[0].Value}</button>`;
+                for (var i = 1; i < buttons.length; i++) {
+                    buttonshtml += `<div class="filler"></div><button type='button' class='btn ${buttons[i].Css}' name='btn${that.Id}'>${buttons[i].Value}</button>`;
                 }
                 return `<div class='modal fade' name='dynamiccustommodal' id='${that.Id}\
 ' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='${that.Id}Label'>\
@@ -138,7 +154,7 @@
                 </div>
             </div>
             <div class='modal-footer bg-default'>
-                <div class='col-xs-12 col-sm-12 col-lg-12'>\
+                <div class='col-xs-12 col-sm-12 col-lg-12 modal-buttons'>\
                     ${buttonshtml}\
                  </div>
             </div>
@@ -157,14 +173,14 @@
             this.Show = function () {
                 BstrapModal.Delete();
                 document.body.appendChild($(GetModalStructure)[0]);
-                var btns = document.querySelectorAll("button[name='btn" + BstrapModal.Id + "']");
+                var btns = document.querySelectorAll(`button[name='btn${BstrapModal.Id}']`);
                 for (var i = 0; i < btns.length; i++) {
                     btns[i].addEventListener("click", buttons[i].Callback || BstrapModal.Close);
                 }
                 $(document.getElementById(BstrapModal.Id)).modal('show');
             };
         };
-        function test(id) {
+        function userModal(id) {
             var user = model.users.find(user => user.id === id);
             var title = `Editing ${user.firstName} ${user.lastName}`;
             var body = `<form action="UpdateOtherUser" method="post" id="userEdit">\
@@ -182,7 +198,22 @@
     <input id="userEmail" value="${user.email}" type="text" name="email"/>\
     <br />\
 </form>`;
-            new BstrapModal(title, body).Show();
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Update",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        $("#userEdit").submit()
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
         }
         $(document).ready(function () {
             function reloadWithQueryStringVars(queryStringVars) {
@@ -215,16 +246,12 @@
             if (@Model.CurrentPage< 2) {
                 $('#previousPage').addClass('disabled')
             }
-            else {
-                $('#previousPage').removeClass('disabled')
-            }
+            
 
             if (@Model.CurrentPage>=@Model.LastPage) {
                 $('#nextPage').addClass('disabled')
             }
-            else {
-                $('#nextPage').removeClass('disabled')
-            }
+
 
             $("#GetUnblocked").change(function () {
                 reloadWithQueryStringVars({

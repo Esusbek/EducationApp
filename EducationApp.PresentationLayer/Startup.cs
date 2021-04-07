@@ -2,6 +2,7 @@ using EducationApp.BusinessLogicLayer;
 using EducationApp.DataAccessLayer;
 using EducationApp.DataAccessLayer.Initialization;
 using EducationApp.Shared.Configs;
+using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,6 @@ namespace EducationApp.PresentationLayer
         }
 
         public IConfiguration Configuration { get; }
-        readonly string MyAllowSpecificOrigins = "AllowSpecificOrigins";
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -48,11 +48,10 @@ namespace EducationApp.PresentationLayer
 
             services.AddCors(options =>
             {
-                options.AddPolicy(MyAllowSpecificOrigins,
+                options.AddPolicy(Constants.ALLOWSPECIFICORIGINS,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:53135",
-                                        "http://localhost:4200")
+                    builder.WithOrigins("http://localhost:4200")
                                         .AllowAnyHeader()
                                         .AllowAnyMethod();
                 });
@@ -100,7 +99,7 @@ namespace EducationApp.PresentationLayer
             });
 
             app.UseRouting();
-            app.UseCors(MyAllowSpecificOrigins);
+            app.UseCors(Constants.ALLOWSPECIFICORIGINS);
 
             app.UseAuthentication();
             app.UseAuthorization();

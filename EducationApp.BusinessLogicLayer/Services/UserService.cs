@@ -47,12 +47,20 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INCORRECTINPUTERROR);
             }
+            var dbUser = await _userManager.FindByNameAsync(user.UserName);
+            if(dbUser is null)
+            {
+                throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+            }
+            if(dbUser.IsRemoved)
+            {
+                throw new CustomApiException(HttpStatusCode.Forbidden, Constants.USERBANNED);
+            }
             var result = await _signInManager.PasswordSignInAsync(user.UserName, user.Password, rememberMe, false);
             if (!result.Succeeded)
             {
                 throw new CustomApiException(HttpStatusCode.Forbidden, Constants.FAILEDLOGINERROR);
             }
-            var dbUser = await _userManager.FindByNameAsync(user.UserName);
             var userRoles = await _userManager.GetRolesAsync(dbUser);
             var jwtResult = await _jwtProvider.GenerateTokenAsync(dbUser.UserName, dbUser.Id, userRoles);
             return jwtResult;
@@ -175,7 +183,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 throw new CustomApiException(HttpStatusCode.Conflict, Constants.FAILEDTOCREATEUSERERROR);
             }
-            result = await _userManager.AddToRoleAsync(newUser, Enums.UserRolesType.Client.ToString("g"));
+            result = await _userManager.AddToRoleAsync(newUser, Enums.UserRolesType.Client.ToString());
             if (!result.Succeeded)
             {
                 await _userManager.DeleteAsync(newUser);
@@ -202,8 +210,14 @@ namespace EducationApp.BusinessLogicLayer.Services
         public async Task<UserModel> UpdateAsync(UserModel user)
         {
             var dbUser = await _userManager.FindByIdAsync(user.Id);
+            if(dbUser is null)
+            {
+                throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+            }
+            dbUser.Email = user.Email;
             dbUser.FirstName = user.FirstName;
             dbUser.LastName = user.LastName;
+            dbUser.UserName = user.UserName;
             await _userManager.UpdateAsync(dbUser);
             var updatedUser = _mapper.Map<UserModel>(dbUser);
             return updatedUser;

@@ -5,6 +5,7 @@ using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
+using EducationApp.Shared.Enums;
 using EducationApp.Shared.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -72,8 +73,26 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             _printingEditionRepository.Delete(dbPrintingEdition);
         }
+        public List<PrintingEditionModel> GetPrintingEditionsAdmin( bool getBook = true, bool getNewspaper = true, bool getJournal = true,
+            string field = Constants.DEFAULTEDITIONSORT, bool orderAsc = false, int page = Constants.DEFAULTPAGE,
+            bool getRemoved = false)
+        {
+            Expression<Func<PrintingEditionEntity, bool>> filter = edition => (getBook && edition.Type == Enums.PrintingEditionType.Book)
+            || (getNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper) 
+            || (getJournal && edition.Type == Enums.PrintingEditionType.Journal);
+            var dbPrintingEditions = _printingEditionRepository.Get(filter, field, orderAsc, getRemoved, page, Constants.ADMINPRINTINGEDITIONPAGESIZE).ToList();
+            var printingEditions = new List<PrintingEditionModel>();
+            foreach (var printingEdition in dbPrintingEditions)
+            {
+                var mappedEdition = _mapper.Map<PrintingEditionModel>(printingEdition);
+                mappedEdition.Authors = printingEdition.Authors.Select(author => author.Name).ToList();
+                printingEditions.Add(mappedEdition);
+            }
+            return printingEditions;
+        }
         public PrintingEditionResponseModel GetPrintingEditionsFiltered(PrintingEditionFilterModel printingEditionFilter = null,
-            string field = "Price", bool orderAsc = false, int page = Constants.DEFAULTPAGE, bool getRemoved = false, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
+            string field = Constants.DEFAULTEDITIONSORT, bool orderAsc = false, int page = Constants.DEFAULTPAGE,
+            bool getRemoved = false, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
             
@@ -128,6 +147,16 @@ namespace EducationApp.BusinessLogicLayer.Services
                 MinPrice = min,
                 LastPage = lastPage
             };
+        }
+        public int GetLastPage(bool getBook = true, bool getNewspaper = true, bool getJournal = true)
+        {
+            Expression<Func<PrintingEditionEntity, bool>> filter = edition => (getBook && edition.Type == Enums.PrintingEditionType.Book)
+            || (getNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
+            || (getJournal && edition.Type == Enums.PrintingEditionType.Journal);
+            var dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
+            var lastPage = (int)Math.Ceiling(dbPrintingEditions.Count / (double)Constants.ADMINPRINTINGEDITIONPAGESIZE);
+
+            return lastPage;
         }
         public PrintingEditionResponseModel GetPrintingEditions(int page = Constants.DEFAULTPAGE)
         {

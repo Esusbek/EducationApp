@@ -19,6 +19,7 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
             int page = Constants.DEFAULTPAGE, bool getRemoved = false);
         public int GetLastPage(AuthorFilterModel authorFilter = null, bool getRemoved = false);
         public List<AuthorModel> GetAuthors(int page = Constants.DEFAULTPAGE);
+        public List<AuthorModel> GetAllAuthors();
         public AuthorModel GetAuthor(int id);
         public AuthorModel GetAuthorByName(string name);
     }
