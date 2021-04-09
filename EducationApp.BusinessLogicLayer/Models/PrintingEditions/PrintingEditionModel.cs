@@ -1,5 +1,4 @@
-﻿using EducationApp.BusinessLogicLayer.Models.Authors;
-using EducationApp.Shared.Enums;
+﻿using EducationApp.Shared.Enums;
 using System.Collections.Generic;
 
 namespace EducationApp.BusinessLogicLayer.Models.PrintingEditions
@@ -14,6 +13,6 @@ namespace EducationApp.BusinessLogicLayer.Models.PrintingEditions
         public Enums.CurrencyType Currency { get; set; }
         public Enums.PrintingEditionType Type { get; set; }
 
-        public List<AuthorModel> Authors { get; set; }
+        public List<string> Authors { get; set; }
     }
 }

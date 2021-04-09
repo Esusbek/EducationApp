@@ -1,9 +1,8 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Base;
-using System;
 
 namespace EducationApp.BusinessLogicLayer.Models.Users
 {
-    public class UserModel: BaseErrorsModel
+    public class UserModel : BaseErrorsModel
     {
         public string Id { get; set; }
         public string UserName { get; set; }

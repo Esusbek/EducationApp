@@ -1,18 +1,17 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Authors;
-using EducationApp.BusinessLogicLayer.Models.Orders;
 using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
-using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.BusinessLogicLayer.Models.ViewModels;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace EducationApp.PresentationLayer.Controllers
 {
-    [Authorize(Roles="admin")]
+    [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
         private readonly IAuthorService _authorService;
@@ -110,7 +109,7 @@ namespace EducationApp.PresentationLayer.Controllers
                 CurrentPage = page,
                 LastPage = _orderService.GetLastPage(model.GetPaid, model.GetUnpaid),
                 GetUnpaid = model.GetUnpaid,
-                GetPaid = model.GetPaid, 
+                GetPaid = model.GetPaid,
                 SortBy = model.SortBy,
                 Ascending = model.Ascending
             });
@@ -143,29 +142,23 @@ namespace EducationApp.PresentationLayer.Controllers
             _authorService.DeleteAuthor(author);
             return RedirectToAction("Authors");
         }
-        public IActionResult AddPrintingEdition(AuthorAndEditionRequestModel model)
+        [HttpPost]
+        public IActionResult EditEdition([FromForm] PrintingEditionModel printingEdition, [FromForm] string price)
         {
-            _authorService.AddPrintingEditionToAuthor(model.Author, model.PrintingEdition);
-            return Ok();
-        }
-        public IActionResult GetAllEditions([FromQuery] int page = Constants.DEFAULTPAGE)
-        {
-            return Ok(_printingEditionService.GetPrintingEditionsFiltered(page: page, getRemoved: true));
-        }
-        public IActionResult EditPrintingEdition([FromBody] PrintingEditionModel printingEdition)
-        {
+            decimal priceDecimal = decimal.Parse(price, CultureInfo.InvariantCulture);
+            printingEdition.Price = priceDecimal;
             _printingEditionService.UpdatePrintingEdition(printingEdition);
-            return Ok();
+            return RedirectToAction("PrintingEditions");
         }
-        public IActionResult AddPrintingEdition([FromBody] PrintingEditionModel printingEdition)
+        public IActionResult AddEdition([FromForm] PrintingEditionModel printingEdition)
         {
             _printingEditionService.AddPrintingEdition(printingEdition);
-            return Ok();
+            return RedirectToAction("PrintingEditions");
         }
-        public IActionResult DeletePrintingEdition([FromBody] PrintingEditionModel printingEdition)
+        public IActionResult DeleteEdition([FromForm] PrintingEditionModel printingEdition)
         {
             _printingEditionService.DeletePrintingEdition(printingEdition);
-            return Ok();
+            return RedirectToAction("PrintingEditions");
         }
     }
 }

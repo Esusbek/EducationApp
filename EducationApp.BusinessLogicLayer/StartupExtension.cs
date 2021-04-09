@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using EducationApp.BusinessLogicLayer.Common.MappingProfiles;
 using EducationApp.BusinessLogicLayer.Providers;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.BusinessLogicLayer.Services;
@@ -39,7 +38,7 @@ namespace EducationApp.BusinessLogicLayer
         {
             var mappingConfig = new MapperConfiguration(cfg =>
             {
-                cfg.AddMaps("EducationApp.BusinessLogicLayer");
+                cfg.AddMaps(Constants.MAPPROFILEASSEMBLYNAME);
             });
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
@@ -57,7 +56,8 @@ namespace EducationApp.BusinessLogicLayer
                 config.Password.RequireUppercase = true;
                 config.Password.RequireLowercase = true;
             })
-                .AddEntityFrameworkStores<ApplicationContext>();
+                .AddEntityFrameworkStores<ApplicationContext>()
+                .AddDefaultTokenProviders();
         }
 
         public static void AddJwt(this IServiceCollection services, JwtConfig jwtConfig)

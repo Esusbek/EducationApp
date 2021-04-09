@@ -1,17 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EducationApp.DataAccessLayer.AppContext;
+using EducationApp.DataAccessLayer.Entities.Base;
+using EducationApp.DataAccessLayer.Extensions;
+using EducationApp.DataAccessLayer.Repositories.Base.BaseInterface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using EducationApp.DataAccessLayer.Extensions;
 
 namespace EducationApp.DataAccessLayer.Repositories.Base
 {
-    public class BaseRepository<T> : BaseInterface.IBaseRepository<T> where T : Entities.Base.BaseEntity
+    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
-        private readonly AppContext.ApplicationContext _dbContext;
+        private readonly ApplicationContext _dbContext;
         protected readonly DbSet<T> _dbSet;
-        public BaseRepository(AppContext.ApplicationContext dbContext)
+        public BaseRepository(ApplicationContext dbContext)
         {
             _dbContext = dbContext;
             _dbSet = dbContext.Set<T>();
@@ -40,14 +43,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
 
             if (field is not null)
             {
-                if (ascending)
-                {
-                    query = query.OrderBy(field);
-                }
-                else
-                {
-                    query = query.OrderByDescending(field);
-                }
+                query = query.OrderBy(field, ascending);
             }
             return query.ToList();
         }
@@ -56,7 +52,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             _dbSet.Add(entity);
             _dbContext.SaveChanges();
         }
-        
+
         public virtual void InsertRange(IEnumerable<T> entity)
         {
             _dbSet.AddRange(entity);

@@ -1,4 +1,4 @@
-﻿using EducationApp.BusinessLogicLayer.Models.Helpers;
+﻿using EducationApp.BusinessLogicLayer.Models;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.Shared.Configs;
@@ -34,12 +34,12 @@ namespace EducationApp.BusinessLogicLayer.Providers
         {
             var claims = new List<Claim>
             {
-                new Claim("id", userId)
+                new Claim(Constants.IDCLAIMNAME, userId)
             };
             foreach (var role in userRoles)
             {
-                claims.Add(new Claim("username", userName));
-                claims.Add(new Claim("role", role));
+                claims.Add(new Claim(Constants.USERNAMECLAIMNAME, userName));
+                claims.Add(new Claim(Constants.ROLECLAIMNAME, role));
             }
             var timeNow = DateTime.UtcNow;
             var shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Aud)?.Value);
@@ -75,9 +75,9 @@ namespace EducationApp.BusinessLogicLayer.Providers
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDTOKENERROR);
             }
-            var id = jwtToken.Claims.FirstOrDefault(claim => claim.Type.Equals("id")).Value;
+            var id = jwtToken.Claims.FirstOrDefault(claim => claim.Type.Equals(Constants.IDCLAIMNAME)).Value;
             var user = await _userManager.FindByIdAsync(id);
-            if(user is null)
+            if (user is null)
             {
                 throw new CustomApiException(HttpStatusCode.Unauthorized, Constants.INVALIDTOKENERROR);
             }

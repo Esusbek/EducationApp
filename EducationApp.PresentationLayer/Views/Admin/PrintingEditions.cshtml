@@ -1,7 +1,7 @@
 ﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
 @using EducationApp.BusinessLogicLayer.Models.PrintingEditions
-@using EducationApp.BusinessLogicLayer.Models.Authors
 @using EducationApp.Shared.Constants
+@using EducationApp.Shared.Enums
 @model PrintingEditionsViewModel
 @{
     ViewData["Title"] = "Printing Editions list";
@@ -14,13 +14,13 @@
         <span class="editionTooltiptext">Add new product</span>
     </div>
 </div>
-<table class="table">
+<table class="table editions">
     <thead>
         <tr>
-            <th><a href="javascript:void(0);" class="table-head sort-by">Id</a></th>
-            <th><a href="javascript:void(0);" class="table-head">Title</a></th>
-            <th><a href="javascript:void(0);" class="table-head">Description</a></th>
-            <th>
+            <th class="edition-id"><a href="javascript:void(0);" class="table-head sort-by">Id</a></th>
+            <th class="edition-title"><a href="javascript:void(0);" class="table-head">Title</a></th>
+            <th class="edition-description"><a href="javascript:void(0);" class="table-head">Description</a></th>
+            <th class="edition-type">
                 <a href="javascript:void(0);" class="table-head">Type</a>
                 <div id="checkboxes">
 
@@ -53,9 +53,9 @@
                     <label for="GetJournal">Journal</label>
                 </div>
             </th>
-            <th><a href="javascript:void(0);" class="table-head">Authors</a></th>
-            <th><a href="javascript:void(0);" class="table-head sort-by">Price</a></th>
-            <th></th>
+            <th class="edition-authors"><a href="javascript:void(0);" class="table-head">Authors</a></th>
+            <th class="edition-price"><a href="javascript:void(0);" class="table-head sort-by">Price</a></th>
+            <th class="edition-controls"></th>
         </tr>
     </thead>
     <tbody>
@@ -64,12 +64,14 @@
             <tr>
                 <td>@edition.Id</td>
                 <td>@edition.Title</td>
-                <td>@edition.Description</td>
+                <td>
+                    <div class="description-text">@edition.Description</div>
+                </td>
                 <td>@edition.Type.ToString()</td>
                 <td>
-                    @foreach (AuthorModel author in edition.Authors)
+                    @foreach (string authorName in edition.Authors)
                     {
-                        <p>@author.Name</p>
+                        <p>@authorName</p>
                     }
                 </td>
                 <td>@edition.Price</td>
@@ -119,7 +121,7 @@
                 }
                 return `<div class='modal fade' name='dynamiccustommodal' id='${that.Id}\
 ' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='${that.Id}Label'>\
-    <div class='modal-dialog'>\
+    <div class='modal-dialog' style="max-width:700px">\
         <div class='modal-content'>\
             <div class='modal-header'>\
                 <h4 class='modal-title'>${title}</h4>\
@@ -160,15 +162,45 @@
         };
         function editionModal(id) {
             var edition = model.printingEditions.find(edition => edition.id === +id);
+            console.log(edition);
             var title = `Editing ${edition.title}`;
             var body = `<form action="EditEdition" method="post" id="editionEdit">\
     <input type="hidden" value="${edition.id}" name="id"/>
+    <div class="editionForm">\
     <label for="name">Title</label>\
     <input id="name" value="${edition.title}" type="text" name="title" />\
-    <label for="description">Description<label>\
+    <label for="description">Description</label>\
     <textarea rows="5" maxlength="1000" cols="50" id="description" type="text" name="description">${edition.description}</textarea>\
-    <label for="category">Category</label>`;
+    </div>\
+    <div class="editionForm">\
+    <label for="category">Category</label>\
+    <select size="1" id="category" name="type">\
+        <option ${edition.type === @((int)Enums.PrintingEditionType.Book) ? "selected" : ""} value="@((int)Enums.PrintingEditionType.Book)">Book</option>\
+        <option ${edition.type === @((int)Enums.PrintingEditionType.Journal) ? "selected" : ""} value="@((int)Enums.PrintingEditionType.Journal)">Journal</option>\
+        <option ${edition.type === @((int)Enums.PrintingEditionType.Newspaper) ? "selected" : ""} value="@((int)Enums.PrintingEditionType.Newspaper)">Newspaper</option>\
+    </select>\
+    <label for="authors">Authors</label>\
+    <select size="3" multiple required id="authors" name="authors">`;
 
+            for (var i = 0; i < model.authors.length; i++) {
+                body += `\
+<option value="${model.authors[i].name}"`
+                if (edition.authors.includes(model.authors[i].name)) {
+                    body += ` selected `;
+                }
+                body += `>${model.authors[i].name}</option>`
+            }
+
+            body += `\
+    </select>\
+    <label for="price">Price</label>\
+    <input type="number" min="0" value="${edition.price}" placeholder="0.00" name="price" id="price" step="0.01"/>\
+    <label for="currency">Currency</label>\
+    <select id="currency" name="currency">
+        <option selected value="1">USD</option>
+    </select>
+    </div>
+</form>`;
             var buttons = [
                 {
                     Value: "Cancel",
@@ -187,10 +219,38 @@
             new BstrapModal(title, body, buttons).Show();
         }
         function addEditionModal() {
-            var title = `Add new author`;
-            var body = `<form action="AddAuthor" method="post" id="authorAdd">\
-    <label for="name">Name</label>\
-    <input id="name" value="" type="text" name="name" />\
+            var title = `Add new edition`;
+            var body = `<form action="AddEdition" method="post" id="editionAdd">\
+    <div class="editionForm">\
+    <label for="name">Title</label>\
+    <input id="name" value="" type="text" name="title" />\
+    <label for="description">Description</label>\
+    <textarea rows="5" maxlength="1000" cols="50" id="description" type="text" name="description"></textarea>\
+    </div>\
+    <div class="editionForm">\
+    <label for="category">Category</label>\
+    <select size="1" id="category" name="type">\
+        <option selected value="@((int)Enums.PrintingEditionType.Book)">Book</option>\
+        <option value="@((int)Enums.PrintingEditionType.Journal)">Journal</option>\
+        <option value="@((int)Enums.PrintingEditionType.Newspaper)">Newspaper</option>\
+    </select>\
+    <label for="authors">Authors</label>\
+    <select size="3" multiple required id="authors" name="authors">`;
+
+            for (var i = 0; i < model.authors.length; i++) {
+                body += `\
+<option value="${model.authors[i].name}">${model.authors[i].name}</option>`
+            }
+
+            body += `\
+    </select>\
+    <label for="price">Price</label>\
+    <input type="number" min="0" value="0.00" placeholder="0.00" name="price" id="price" step="0.01"/>\
+    <label for="currency">Currency</label>\
+    <select id="currency" name="currency">
+        <option selected value="1">USD</option>
+    </select>
+    </div>
 </form>`;
             var buttons = [
                 {
@@ -204,17 +264,17 @@
                     Value: "Add",
                     Css: "btn-primary",
                     Callback: function () {
-                        $("#authorAdd").submit()
+                        $("#editionAdd").submit()
                     }
                 }];
             new BstrapModal(title, body, buttons).Show();
         }
         function deleteEditionModal(id) {
-            var author = model.printingEditions.find(edition => edition.id === +id);
-            var title = `Delete ${author.name}`;
-            var body = `<h3>Are you sure you want to delete ${author.name}?</h3>
-<form action="DeleteAuthor" method="post" id="authorDelete">\
-    <input type="hidden" value="${author.id}" name="id"/>
+            var edition = model.printingEditions.find(edition => edition.id === +id);
+            var title = `Delete ${edition.title}`;
+            var body = `<h3>Are you sure you want to delete ${edition.title}?</h3>
+<form action="DeleteEdition" method="post" id="editionDelete">\
+    <input type="hidden" value="${edition.id}" name="id"/>
 </form>`;
             var buttons = [
                 {
@@ -228,7 +288,7 @@
                     Value: "Delete",
                     Css: "btn-primary",
                     Callback: function () {
-                        $("#authorDelete").submit()
+                        $("#editionDelete").submit()
                     }
                 }];
             new BstrapModal(title, body, buttons).Show();

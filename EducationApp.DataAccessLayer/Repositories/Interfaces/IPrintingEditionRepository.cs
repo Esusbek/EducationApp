@@ -1,13 +1,13 @@
 ﻿using EducationApp.DataAccessLayer.Entities;
+using EducationApp.DataAccessLayer.Repositories.Base.BaseInterface;
 using EducationApp.Shared.Constants;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace EducationApp.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IPrintingEditionRepository : Base.BaseInterface.IBaseRepository<PrintingEditionEntity>
+    public interface IPrintingEditionRepository : IBaseRepository<PrintingEditionEntity>
     {
         public List<PrintingEditionEntity> Get(Expression<Func<PrintingEditionEntity, bool>> filter = null,
                 string field = null, bool ascending = true,

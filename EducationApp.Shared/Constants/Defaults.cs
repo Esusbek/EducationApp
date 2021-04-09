@@ -22,5 +22,11 @@
         public const string DEFAULTORDERSORT = "Date";
         public const string DEFAULTAUTHORSORT = "Id";
         public const string DEFAULTEDITIONSORT = "Price";
+        public const string DEFAULTFRONTENDORIGIN = "http://localhost:4200";
+        public const string USERNAMECLAIMNAME = "username";
+        public const string IDCLAIMNAME = "id";
+        public const string ROLECLAIMNAME = "role";
+        public const string MAPPROFILEASSEMBLYNAME = "EducationApp.BusinessLogicLayer";
+        public const int ORDERBYPARAMCOUNT = 2;
     }
 }

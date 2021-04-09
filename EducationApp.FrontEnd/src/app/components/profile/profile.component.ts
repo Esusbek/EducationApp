@@ -40,7 +40,7 @@ export class ProfileComponent implements OnInit {
     password: new FormControl('', [
       Validators.required
     ]),
-    confirmPassword: new FormControl('', [
+    passwordConfirm: new FormControl('', [
       Validators.required
     ])
   }, { validators: passwordMatchValidator })

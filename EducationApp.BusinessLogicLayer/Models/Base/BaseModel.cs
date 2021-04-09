@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace EducationApp.BusinessLogicLayer.Models.Base
+﻿namespace EducationApp.BusinessLogicLayer.Models.Base
 {
-    public class BaseModel: BaseErrorsModel
+    public class BaseModel : BaseErrorsModel
     {
         public int Id { get; set; }
-        
+
     }
 }

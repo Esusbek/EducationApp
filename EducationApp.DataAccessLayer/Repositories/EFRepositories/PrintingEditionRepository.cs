@@ -1,15 +1,18 @@
-﻿using EducationApp.DataAccessLayer.Entities;
+﻿using EducationApp.DataAccessLayer.AppContext;
+using EducationApp.DataAccessLayer.Entities;
+using EducationApp.DataAccessLayer.Repositories.Base;
+using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace EducationApp.DataAccessLayer.Repositories
+namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
 {
-    public class PrintingEditionRepository : Base.BaseRepository<PrintingEditionEntity>, Interfaces.IPrintingEditionRepository
+    public class PrintingEditionRepository : BaseRepository<PrintingEditionEntity>, IPrintingEditionRepository
     {
-        public PrintingEditionRepository(AppContext.ApplicationContext dbContext)
+        public PrintingEditionRepository(ApplicationContext dbContext)
             : base(dbContext)
         {
         }
@@ -34,6 +37,11 @@ namespace EducationApp.DataAccessLayer.Repositories
                 printingEdition.Authors.Add(author);
             }
             base.Update(printingEdition);
+        }
+        public override void Delete(PrintingEditionEntity entityToDelete)
+        {
+            entityToDelete.Authors.Clear();
+            base.Delete(entityToDelete);
         }
     }
 }

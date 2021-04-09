@@ -51,7 +51,7 @@ namespace EducationApp.PresentationLayer
                 options.AddPolicy(Constants.ALLOWSPECIFICORIGINS,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:4200")
+                    builder.WithOrigins(Constants.DEFAULTFRONTENDORIGIN)
                                         .AllowAnyHeader()
                                         .AllowAnyMethod();
                 });
@@ -87,7 +87,7 @@ namespace EducationApp.PresentationLayer
                 app.UseDeveloperExceptionPage();
                 app.Seed();
             }
-           
+
             app.UseMiddleware<Middlewares.LogMiddleware>();
 
             app.UseHttpsRedirection();
@@ -110,7 +110,7 @@ namespace EducationApp.PresentationLayer
                    name: "default",
                    pattern: "{controller=Admin}/{action=Login}");
                 endpoints.MapControllers();
-                
+
             });
         }
     }

@@ -27,3 +27,10 @@ export const Urls = {
   getOrdersURL: 'Order/Get',
   payOrderURL: 'Order/Success'
 }
+
+export const Defaults = {
+  pageOffset: 1,
+  defaultPage: 1,
+  maxQuantity: 10,
+  startQuantity: 1
+}

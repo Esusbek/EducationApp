@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
+
+    [Table("PrintingEditions")]
     public class PrintingEditionEntity : BaseEntity
     {
         public string Title { get; set; }

@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
+    [Table("AspNetUsers")]
     public class UserEntity : IdentityUser
     {
         public string FirstName { get; set; }

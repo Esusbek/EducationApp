@@ -1,8 +1,10 @@
-﻿namespace EducationApp.BusinessLogicLayer.Models.Requests
+﻿using EducationApp.BusinessLogicLayer.Models.Users;
+
+namespace EducationApp.BusinessLogicLayer.Models.Requests
 {
     public class LoginRequestModel
     {
-        public Users.UserModel User { get; set; }
+        public UserModel User { get; set; }
         public bool RememberMe { get; set; }
     }
 }

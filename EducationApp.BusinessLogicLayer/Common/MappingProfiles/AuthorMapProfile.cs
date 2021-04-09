@@ -10,7 +10,9 @@ namespace EducationApp.BusinessLogicLayer.Common.MappingProfiles
         {
             public AuthorMapProfile()
             {
-                CreateMap<AuthorModel, AuthorEntity>().ReverseMap();
+                CreateMap<AuthorModel, AuthorEntity>().
+                    ForMember(destination => destination.PrintingEditions, option => option.Ignore());
+                CreateMap<AuthorEntity, AuthorModel>();
             }
         }
     }

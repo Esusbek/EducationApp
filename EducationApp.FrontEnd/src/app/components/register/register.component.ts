@@ -30,7 +30,7 @@ export class RegisterComponent implements OnInit {
       Validators.required,
       Validators.minLength(6)
     ]),
-    confirmPassword: new FormControl('', [
+    passwordConfirm: new FormControl('', [
       Validators.required,
       Validators.minLength(6)
     ])
@@ -41,7 +41,7 @@ export class RegisterComponent implements OnInit {
   get lastName() { return this.registerForm.get('lastName') }
   get email() { return this.registerForm.get('email') }
   get password() { return this.registerForm.get('password') }
-  get confirmPassword() { return this.registerForm.get('confirmPassword') }
+  get passwordConfirm() { return this.registerForm.get('passwordConfirm') }
 
   constructor(private store: Store<{ Account: AccountState }>) {
     store.select('Account').subscribe(value => this.isRegistered = value.isRegistered);

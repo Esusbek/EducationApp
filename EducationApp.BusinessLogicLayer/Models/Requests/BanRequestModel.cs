@@ -1,8 +1,10 @@
-﻿namespace EducationApp.BusinessLogicLayer.Models.Requests
+﻿using EducationApp.BusinessLogicLayer.Models.Users;
+
+namespace EducationApp.BusinessLogicLayer.Models.Requests
 {
     public class BanRequestModel
     {
-        public Users.UserModel User { get; set; }
+        public UserModel User { get; set; }
         public int Duration { get; set; }
     }
 }

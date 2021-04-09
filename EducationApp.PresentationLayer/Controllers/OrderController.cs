@@ -19,7 +19,7 @@ namespace EducationApp.PresentationLayer.Controllers
         {
             _orderService = orderService;
         }
-       
+
         [HttpGet("Order/Get")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public IActionResult Get([FromQuery] UserModel user, [FromQuery] int page = Constants.DEFAULTPAGE)

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { OrderModel } from 'src/app/models/cart.models';
 import { PrintingEditionModel } from 'src/app/models/printing-edition.models';
+import { Defaults } from 'src/app/shared/consts';
 import { OrderStatusType, PrintingEditionType } from 'src/app/shared/enums';
 import { checkoutExisting, getOrders } from 'src/app/store/cart/cart.actions';
 import { CartState } from 'src/app/store/cart/cart.state';
@@ -39,17 +40,17 @@ export class OrderListComponent implements OnInit {
     this.store.dispatch(checkoutExisting({ order }));
   }
   hasPreviousPage() {
-    return this.page > 1;
+    return this.page > Defaults.defaultPage;
   }
   hasNextPage() {
     return this.page < this.lastPage;
   }
   nextPage() {
-    this.page = this.page + 1;
+    this.page = this.page + Defaults.pageOffset;
     this.getOrders();
   }
   previousPage() {
-    this.page = this.page - 1;
+    this.page = this.page - Defaults.pageOffset;
     this.getOrders();
   }
 }

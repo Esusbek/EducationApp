@@ -1,8 +1,11 @@
-﻿namespace EducationApp.BusinessLogicLayer.Models.Requests
+﻿using EducationApp.BusinessLogicLayer.Models.Authors;
+using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+
+namespace EducationApp.BusinessLogicLayer.Models.Requests
 {
     public class AuthorAndEditionRequestModel
     {
-        public Authors.AuthorModel Author { get; set; }
-        public PrintingEditions.PrintingEditionModel PrintingEdition { get; set; }
+        public AuthorModel Author { get; set; }
+        public PrintingEditionModel PrintingEdition { get; set; }
     }
 }

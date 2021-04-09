@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using EducationApp.BusinessLogicLayer.Models.Authors;
-using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
+using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
@@ -14,17 +14,14 @@ using System.Net;
 
 namespace EducationApp.BusinessLogicLayer.Services
 {
-    public class AuthorService : Interfaces.IAuthorService
+    public class AuthorService : IAuthorService
     {
         private readonly IAuthorRepository _authorRepository;
-        private readonly IPrintingEditionRepository _printingEditionRepository;
         private readonly IMapper _mapper;
         private readonly IValidationProvider _validator;
-        public AuthorService(IMapper mapper,
-            IAuthorRepository authorRepository, IPrintingEditionRepository printingEditionRepository, IValidationProvider validationProvider)
+        public AuthorService(IMapper mapper,IAuthorRepository authorRepository, IValidationProvider validationProvider)
         {
             _authorRepository = authorRepository;
-            _printingEditionRepository = printingEditionRepository;
             _mapper = mapper;
             _validator = validationProvider;
         }
@@ -48,34 +45,10 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
             }
-            dbAuthor.Name = author.Name;
-            var mappedEditions = _mapper.Map<List<PrintingEditionEntity>>(author.PrintingEditions);
-            foreach (var edition in mappedEditions)
-            {
-                if(!dbAuthor.PrintingEditions.Contains(edition))
-                {
-                    dbAuthor.PrintingEditions.Add(edition);
-                }
-            }
+            _mapper.Map(author, dbAuthor);
             _authorRepository.Update(dbAuthor);
         }
-        public void AddPrintingEditionToAuthor(AuthorModel author, PrintingEditionModel printingEdition)
-        {
-            _validator.ValidateAuthor(author);
-            _validator.ValidatePrintingEdition(printingEdition);
-            var dbAuthor = _authorRepository.GetById(author.Id);
-            if (dbAuthor is null)
-            {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
-            }
-            var dbPrintingEdition = _printingEditionRepository.GetById(printingEdition.Id);
-            if (dbPrintingEdition is null)
-            {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
-            }
-            dbAuthor.PrintingEditions = new List<PrintingEditionEntity>();
-            _authorRepository.Update(dbAuthor, dbPrintingEdition);
-        }
+        
         public void DeleteAuthor(AuthorModel author)
         {
             var dbAuthor = _authorRepository.GetById(author.Id);
@@ -83,6 +56,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
             }
+            dbAuthor.PrintingEditions.Clear();
             _authorRepository.Delete(dbAuthor);
         }
         public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null,
@@ -110,7 +84,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var authors = _mapper.Map<List<AuthorModel>>(dbAuthors);
             return authors;
         }
-        public int GetLastPage(AuthorFilterModel authorFilter=null, bool getRemoved = false)
+        public int GetLastPage(AuthorFilterModel authorFilter = null, bool getRemoved = false)
         {
             Expression<Func<AuthorEntity, bool>> filter = null;
             if (authorFilter is not null)

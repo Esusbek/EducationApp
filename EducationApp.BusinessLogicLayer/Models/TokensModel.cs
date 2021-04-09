@@ -1,4 +1,4 @@
-﻿namespace EducationApp.BusinessLogicLayer.Models.Helpers
+﻿namespace EducationApp.BusinessLogicLayer.Models
 {
     public class TokensModel
     {

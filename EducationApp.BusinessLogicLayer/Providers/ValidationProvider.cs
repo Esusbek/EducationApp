@@ -5,7 +5,6 @@ using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.Shared.Constants;
 using EducationApp.Shared.Exceptions;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -52,11 +51,11 @@ namespace EducationApp.BusinessLogicLayer.Providers
 
         public void ValidatePrintingEdition(PrintingEditionModel printingEdition)
         {
-            if (string.IsNullOrWhiteSpace(printingEdition.Title)) 
+            if (string.IsNullOrWhiteSpace(printingEdition.Title))
             {
                 printingEdition.Errors.Add(Constants.INVALIDEMPTYINPUT);
             }
-            if (printingEdition.Price==default)
+            if (printingEdition.Price == default)
             {
                 printingEdition.Errors.Add(Constants.INVALIDEMPTYINPUT);
             }
@@ -103,6 +102,6 @@ namespace EducationApp.BusinessLogicLayer.Providers
             }
             return IdentityResult.Success;
         }
-       
+
     }
 }

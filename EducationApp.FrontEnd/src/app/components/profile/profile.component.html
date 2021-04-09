@@ -33,7 +33,7 @@
         <label for="newPassword">New password</label>
         <input [type]="showPasswords ? 'text': 'password'" id="newPassword" formControlName="password">
         <label for="newPasswordConfirm">Confirm new password</label>
-        <input [type]="showPasswords ? 'text': 'password'" id="newPasswordConfirm" formControlName="confirmPassword">
+        <input [type]="showPasswords ? 'text': 'password'" id="newPasswordConfirm" formControlName="passwordConfirm">
         <div class="button">
             <button type="submit" [disabled]="!changePasswordForm.valid">Change password</button>
         </div>

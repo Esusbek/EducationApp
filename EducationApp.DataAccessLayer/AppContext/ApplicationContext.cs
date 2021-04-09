@@ -2,8 +2,6 @@
 using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace EducationApp.DataAccessLayer.AppContext
 {

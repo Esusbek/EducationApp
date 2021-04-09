@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EducationApp.BusinessLogicLayer.Models.Helpers;
+using EducationApp.BusinessLogicLayer.Models;
 using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
@@ -48,11 +48,11 @@ namespace EducationApp.BusinessLogicLayer.Services
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INCORRECTINPUTERROR);
             }
             var dbUser = await _userManager.FindByNameAsync(user.UserName);
-            if(dbUser is null)
+            if (dbUser is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
             }
-            if(dbUser.IsRemoved)
+            if (dbUser.IsRemoved)
             {
                 throw new CustomApiException(HttpStatusCode.Forbidden, Constants.USERBANNED);
             }
@@ -210,14 +210,11 @@ namespace EducationApp.BusinessLogicLayer.Services
         public async Task<UserModel> UpdateAsync(UserModel user)
         {
             var dbUser = await _userManager.FindByIdAsync(user.Id);
-            if(dbUser is null)
+            if (dbUser is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
             }
-            dbUser.Email = user.Email;
-            dbUser.FirstName = user.FirstName;
-            dbUser.LastName = user.LastName;
-            dbUser.UserName = user.UserName;
+            _mapper.Map(user, dbUser);
             await _userManager.UpdateAsync(dbUser);
             var updatedUser = _mapper.Map<UserModel>(dbUser);
             return updatedUser;

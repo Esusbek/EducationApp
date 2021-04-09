@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
+    [Table("OrderItems")]
     public class OrderItemEntity : BaseEntity
     {
         public int Amount { get; set; }

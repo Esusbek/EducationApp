@@ -14,24 +14,24 @@ export class ResetPasswordComponent implements OnInit {
   code: string;
   id: string;
   resetPasswordForm = new FormGroup({
-      password: new FormControl('', [
-        Validators.required
-      ]),
-      confirmPassword: new FormControl('', [
-        Validators.required
-      ])
-  }, {validators: passwordMatchValidator})
-  constructor(private route: ActivatedRoute,private store: Store) { }
-  get password() { return this.resetPasswordForm.get('password')}
-  get confirmPassword() { return this.resetPasswordForm.get('confirmPassword')}
+    password: new FormControl('', [
+      Validators.required
+    ]),
+    passwordConfirm: new FormControl('', [
+      Validators.required
+    ])
+  }, { validators: passwordMatchValidator })
+  constructor(private route: ActivatedRoute, private store: Store) { }
+  get password() { return this.resetPasswordForm.get('password') }
+  get passwordConfirm() { return this.resetPasswordForm.get('passwordConfirm') }
   ngOnInit(): void {
     this.route.queryParamMap
       .subscribe((params) => {
-        this.code= params.get('code');
+        this.code = params.get('code');
         this.id = params.get('userId');
       })
   }
   onSubmit() {
-    this.store.dispatch(resetPassword({payload: {code: this.code, userId: this.id, password: this.resetPasswordForm.value.password}}));
+    this.store.dispatch(resetPassword({ payload: { code: this.code, userId: this.id, password: this.resetPasswordForm.value.password } }));
   }
 }

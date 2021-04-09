@@ -1,4 +1,4 @@
-﻿using EducationApp.BusinessLogicLayer.Models.Helpers;
+﻿using EducationApp.BusinessLogicLayer.Models;
 using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;

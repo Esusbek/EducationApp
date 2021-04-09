@@ -80,7 +80,7 @@
                     else
                     {
                         <label class="switch">
-                            <input class="ban-switch" type="checkbox" checked disabled id=@user.Id>
+                            <input class="ban-switch-admin" type="checkbox" checked id=@user.Id>
                             <span class="slider round"></span>
                         </label>
                     }
@@ -92,7 +92,7 @@
                     }
                     else
                     {
-                        <button class="edit-open" disabled onclick="userModal('@user.Id')"></button>
+                        <button class="edit-open"  onclick="adminEdit()"></button>
                     }
                     
                 </td>
@@ -180,6 +180,9 @@
                 $(document.getElementById(BstrapModal.Id)).modal('show');
             };
         };
+        function adminEdit() {
+            alert("You cant edit admin account");
+        }
         function userModal(id) {
             var user = model.users.find(user => user.id === id);
             var title = `Editing ${user.firstName} ${user.lastName}`;
@@ -278,9 +281,12 @@
                 });
             });
             $(".ban-switch").change(function (event) {
-                console.log($(event.target).attr('id'));
                 var id = $(event.target).attr('id')
                 $.post("Ban", { userId: id })
+            });
+            $(".ban-switch-admin").change(function (event) {
+                $(event.target).prop('checked', true);
+                alert("You cant ban admin account");
             });
             $('#previousPage').click(function (link) {
                 link.preventDefault();

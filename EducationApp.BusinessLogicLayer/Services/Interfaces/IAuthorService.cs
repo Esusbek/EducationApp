@@ -1,10 +1,6 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Authors;
-using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
-using EducationApp.DataAccessLayer.Entities;
 using EducationApp.Shared.Constants;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace EducationApp.BusinessLogicLayer.Services.Interfaces
 {
@@ -12,7 +8,6 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
     {
         public void AddAuthor(AuthorModel author);
         public void UpdateAuthor(AuthorModel author);
-        public void AddPrintingEditionToAuthor(AuthorModel author, PrintingEditionModel printingEdition);
         public void DeleteAuthor(AuthorModel author);
         public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null,
             string field = null, bool ascending = true,

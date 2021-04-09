@@ -347,10 +347,10 @@ input:checked + .slider:before {
     background-size: cover;
     background-color: white;
 }
-.authors {
+.authors, .editions {
     table-layout: fixed;
 }
-.authors-id {
+.authors-id, .edition-id {
     width: 5%;
 }
 .authors-name {
@@ -359,8 +359,35 @@ input:checked + .slider:before {
 .authors-works {
     width: 50%;
 }
-.authors-controls {
+.authors-controls{
     width: 15%;
+}
+.edition-title {
+    width: 15%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.edition-description {
+    width: 25%;
+}
+.description-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+
+}
+.edition-type {
+    width: 15%;
+}
+.edition-authors {
+    width: 15%;
+}
+.edition-price {
+    width: 15%;
+}
+.edition-controls {
+    width: 10%;
 }
 .tables-header {
     padding: 20px;
@@ -409,6 +436,20 @@ input:checked + .slider:before {
         visibility: visible;
         opacity: 1;
     }
+#editionEdit, #editionAdd {
+    display: flex;
+    flex-direction: row;
+}
+.editionForm {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding: 10px;
+}
+.editionForm input, .editionForm textarea, .editionForm select {
+    width: 90%;
+    margin: 0 auto;
+}
 @media (max-width:520px) {
     .header {
         flex-direction: column;

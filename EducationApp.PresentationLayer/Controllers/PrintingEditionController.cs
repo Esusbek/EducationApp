@@ -1,11 +1,9 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
-using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace EducationApp.PresentationLayer.Controllers
 {

@@ -32,7 +32,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly UrlConfig _urlConfig;
         public OrderService(IMapper mapper, IPrintingEditionService printingEditionService,
             IOptions<UrlConfig> urlConfig, ICurrencyConvertionProvider currencyConverter,
-            IOrderRepository orderRepository,IOrderItemRepository orderItemRepository, IPaymentRepository paymentRepository, IValidationProvider validationProvider)
+            IOrderRepository orderRepository, IOrderItemRepository orderItemRepository, IPaymentRepository paymentRepository, IValidationProvider validationProvider)
         {
             _urlConfig = urlConfig.Value;
             _orderRepository = orderRepository;
@@ -47,21 +47,21 @@ namespace EducationApp.BusinessLogicLayer.Services
 
         public void PayOrder(string paymentIntentId)
         {
-            if(string.IsNullOrWhiteSpace(paymentIntentId))
+            if (string.IsNullOrWhiteSpace(paymentIntentId))
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDINTENTIDERROR);
-            }    
-            var dbPayment = _paymentRepository.Get(payment=>payment.TransactionId == paymentIntentId).FirstOrDefault();
-            var dbOrder = _orderRepository.Get(order=>order.PaymentId == dbPayment.Id).FirstOrDefault();
-            dbOrder.Status = Enums.OrderStatusType.Paid;
-            _orderRepository.Update(dbOrder);
+            }
+            var payment = _paymentRepository.Get(payment => payment.TransactionId == paymentIntentId).FirstOrDefault();
+            var order = _orderRepository.Get(order => order.PaymentId == payment.Id).FirstOrDefault();
+            order.Status = Enums.OrderStatusType.Paid;
+            _orderRepository.Update(order);
         }
 
         public SessionModel CreateCheckoutSession(OrderModel order)
         {
             _validator.ValidateOrder(order);
-            bool isExisting = order.Id!=default;
-            PaymentEntity payment = isExisting? new PaymentEntity { Id = order.PaymentId}: null;
+            bool isExisting = order.Id != default;
+            PaymentEntity payment = isExisting ? new PaymentEntity { Id = order.PaymentId } : null;
             if (!isExisting)
             {
                 order.Status = Enums.OrderStatusType.Unpaid;
@@ -73,7 +73,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 _paymentRepository.Insert(payment);
             }
             var dbOrder = _mapper.Map<OrderEntity>(order);
-            if(!isExisting)
+            if (!isExisting)
             {
                 dbOrder.PaymentId = payment.Id;
                 dbOrder.Total = order.CurrentItems.Sum(item => item.Price);
@@ -91,7 +91,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        UnitAmountDecimal = printingEdition.Price*100,
+                        UnitAmountDecimal = printingEdition.Price * 100,
                         Currency = item.Currency.ToString(),
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
@@ -134,10 +134,11 @@ namespace EducationApp.BusinessLogicLayer.Services
             };
             var service = new SessionService();
             Session session = service.Create(options);
-            
+
             payment.TransactionId = session.PaymentIntentId;
             _paymentRepository.Update(payment);
-            return new SessionModel { 
+            return new SessionModel
+            {
                 Id = session.Id,
                 PaymentIntentId = session.PaymentIntentId
             };
@@ -159,16 +160,16 @@ namespace EducationApp.BusinessLogicLayer.Services
         public List<OrderModel> GetAllOrders(bool getPaid = true, bool getUnpaid = true, string field = null, bool ascending = true,
             int page = Constants.DEFAULTPAGE, bool getRemoved = true)
         {
-            Expression<Func<OrderEntity, bool>> filter = order => (getPaid && order.Status==Enums.OrderStatusType.Paid) 
-            || (getUnpaid && order.Status==Enums.OrderStatusType.Unpaid);
-            var dbOrders = _orderRepository.Get(filter, field, ascending, getRemoved,page);
+            Expression<Func<OrderEntity, bool>> filter = order => (getPaid && order.Status == Enums.OrderStatusType.Paid)
+            || (getUnpaid && order.Status == Enums.OrderStatusType.Unpaid);
+            var dbOrders = _orderRepository.Get(filter, field, ascending, getRemoved, page);
             var orders = new List<OrderModel>();
             var orderIds = dbOrders.Select(order => order.Id).ToList();
             var allItems = _itemRepository.Get(item => orderIds.Contains(item.OrderId));
             foreach (var order in dbOrders)
             {
                 var mappedOrder = _mapper.Map<OrderModel>(order);
-                var currentItems = allItems.Where(item=>item.OrderId==order.Id).ToList();
+                var currentItems = allItems.Where(item => item.OrderId == order.Id).ToList();
                 var mappedItems = _mapper.Map<List<OrderItemModel>>(currentItems);
                 mappedOrder.CurrentItems = mappedItems;
                 mappedOrder.Total = currentItems.Sum(item => item.SubTotal);
@@ -190,7 +191,8 @@ namespace EducationApp.BusinessLogicLayer.Services
                 mappedOrder.Total = currentItems.Sum(item => item.SubTotal);
                 orders.Add(mappedOrder);
             }
-            return new OrderResponseModel {
+            return new OrderResponseModel
+            {
                 Orders = orders,
                 LastPage = GetLastPageUser(user.Id)
             };

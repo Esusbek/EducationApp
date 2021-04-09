@@ -42,11 +42,11 @@
         </div>
         <input id="password" type="password" placeholder="Password" formControlName="password">
         <label for="passwordconfirm">Repeat password:</label>
-        <div *ngIf="registerForm.errors?.passwordsDontMatch && (confirmPassword.dirty || confirmPassword.touched)"
+        <div *ngIf="registerForm.errors?.passwordsDontMatch && (passwordConfirm.dirty || passwordConfirm.touched)"
             class="alert alert-danger">
             Passwords must match.
         </div>
-        <input id="passwordconfirm" type="password" placeholder="Repeat password" formControlName="confirmPassword">
+        <input id="passwordconfirm" type="password" placeholder="Repeat password" formControlName="passwordConfirm">
         <div class="button">
             <button type="submit" [disabled]="!registerForm.valid">Sign Up</button>
         </div>

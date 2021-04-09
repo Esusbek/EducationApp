@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { Store } from '@ngrx/store';
 import { Subscription } from "rxjs";
 import { PrintingEditionInfoModel, PrintingEditionModel } from 'src/app/models/printing-edition.models';
+import { Defaults } from "src/app/shared/consts";
 import { Currency, PrintingEditionType } from 'src/app/shared/enums';
 import { getBooks, getFiltered } from 'src/app/store/printing-edition/printing-edition.actions';
 import { PrintingEditionState } from "src/app/store/printing-edition/printing-edition.state";
@@ -117,17 +118,17 @@ export class BookListComponent implements OnInit {
     this.maxValue = event.target.value;
   }
   hasPreviousPage() {
-    return this.page > 1;
+    return this.page > Defaults.defaultPage;
   }
   hasNextPage() {
     return this.page < this.info.lastPage;
   }
   nextPage() {
-    this.page = this.page + 1;
+    this.page = this.page + Defaults.pageOffset;
     this.filter();
   }
   previousPage() {
-    this.page = this.page - 1;
+    this.page = this.page - Defaults.pageOffset;
     this.filter();
   }
   resetFilter() {

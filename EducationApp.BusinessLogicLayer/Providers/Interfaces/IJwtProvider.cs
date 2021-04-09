@@ -1,4 +1,4 @@
-﻿using EducationApp.BusinessLogicLayer.Models.Helpers;
+﻿using EducationApp.BusinessLogicLayer.Models;
 using EducationApp.DataAccessLayer.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using EducationApp.BusinessLogicLayer.Models.Authors;
 using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
+using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
@@ -15,7 +15,7 @@ using System.Net;
 
 namespace EducationApp.BusinessLogicLayer.Services
 {
-    public class PrintingEditionService : Interfaces.IPrintingEditionService
+    public class PrintingEditionService : IPrintingEditionService
     {
         private readonly IPrintingEditionRepository _printingEditionRepository;
         private readonly IAuthorRepository _authorRepository;
@@ -33,6 +33,9 @@ namespace EducationApp.BusinessLogicLayer.Services
         {
             _validator.ValidatePrintingEdition(printingEdition);
             var dbPrintingEdition = _mapper.Map<PrintingEditionEntity>(printingEdition);
+            dbPrintingEdition.Status = Enums.PrintingEditionStatusType.InStock;
+            var authors = _authorRepository.GetAll(author => printingEdition.Authors.Contains(author.Name));
+            dbPrintingEdition.Authors = new List<AuthorEntity>(authors);
             _printingEditionRepository.Insert(dbPrintingEdition);
         }
         public void UpdatePrintingEdition(PrintingEditionModel printingEdition)
@@ -43,27 +46,15 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
             }
-            var updatedPrintingEdition = _mapper.Map<PrintingEditionEntity>(printingEdition);
-            updatedPrintingEdition.CreatedAt = dbPrintingEdition.CreatedAt;
-            _printingEditionRepository.Update(updatedPrintingEdition);
+            _mapper.Map(printingEdition, dbPrintingEdition);
+            var authors = _authorRepository.GetAll(author => printingEdition.Authors.Contains(author.Name));
+            dbPrintingEdition.Authors.Clear();
+            var dbAuthors = dbPrintingEdition.Authors.ToList();
+            dbAuthors.AddRange(authors);
+            dbPrintingEdition.Authors = dbAuthors;
+            _printingEditionRepository.Update(dbPrintingEdition);
         }
-        public void AddAuthorToPrintingEdition(PrintingEditionModel printingEdition, AuthorModel author)
-        {
-            _validator.ValidatePrintingEdition(printingEdition);
-            var dbPrintingEdition = _printingEditionRepository.GetById(printingEdition.Id);
-            if (dbPrintingEdition is null)
-            {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
-            }
-            _validator.ValidateAuthor(author);
-            var dbAuthor = _authorRepository.GetById(author.Id);
-            if (dbAuthor is null)
-            {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
-            }
-            dbPrintingEdition.Authors = new List<AuthorEntity>();
-            _printingEditionRepository.Update(dbPrintingEdition, dbAuthor);
-        }
+
         public void DeletePrintingEdition(PrintingEditionModel printingEdition)
         {
             var dbPrintingEdition = _printingEditionRepository.GetById(printingEdition.Id);
@@ -72,13 +63,14 @@ namespace EducationApp.BusinessLogicLayer.Services
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
             }
             _printingEditionRepository.Delete(dbPrintingEdition);
+
         }
-        public List<PrintingEditionModel> GetPrintingEditionsAdmin( bool getBook = true, bool getNewspaper = true, bool getJournal = true,
+        public List<PrintingEditionModel> GetPrintingEditionsAdmin(bool getBook = true, bool getNewspaper = true, bool getJournal = true,
             string field = Constants.DEFAULTEDITIONSORT, bool orderAsc = false, int page = Constants.DEFAULTPAGE,
             bool getRemoved = false)
         {
             Expression<Func<PrintingEditionEntity, bool>> filter = edition => (getBook && edition.Type == Enums.PrintingEditionType.Book)
-            || (getNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper) 
+            || (getNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
             || (getJournal && edition.Type == Enums.PrintingEditionType.Journal);
             var dbPrintingEditions = _printingEditionRepository.Get(filter, field, orderAsc, getRemoved, page, Constants.ADMINPRINTINGEDITIONPAGESIZE).ToList();
             var printingEditions = new List<PrintingEditionModel>();
@@ -95,7 +87,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             bool getRemoved = false, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
-            
+
             if (printingEditionFilter is not null)
             {
                 filter = edition => (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
@@ -103,7 +95,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
                 (printingEditionFilter.Type == default || printingEditionFilter.Type.Contains(edition.Type));
             }
-            
+
             var dbPrintingEditions = _printingEditionRepository.Get(filter, field, orderAsc, getRemoved, page, pageSize).ToList();
             var printingEditions = new List<PrintingEditionModel>();
             foreach (var printingEdition in dbPrintingEditions)
@@ -111,7 +103,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 var mappedEdition = _mapper.Map<PrintingEditionModel>(printingEdition);
                 mappedEdition.Authors = printingEdition.Authors.Select(author => author.Name).ToList();
                 printingEditions.Add(mappedEdition);
-                
+
             }
             var info = GetInfo(printingEditionFilter);
             return new PrintingEditionResponseModel
@@ -120,7 +112,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 Info = info
             };
         }
-        public PrintingEditionsInfoModel GetInfo(PrintingEditionFilterModel printingEditionFilter = null, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
+        private PrintingEditionsInfoModel GetInfo(PrintingEditionFilterModel printingEditionFilter = null, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
             if (printingEditionFilter is not null)
@@ -140,7 +132,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
             var min = dbPrintingEditions.Aggregate((currentMin, x) => (currentMin == null || x.Price < currentMin.Price ? x : currentMin)).Price;
             var max = dbPrintingEditions.Aggregate((currentMax, x) => (currentMax == null || x.Price > currentMax.Price ? x : currentMax)).Price;
-            
+
             return new PrintingEditionsInfoModel
             {
                 MaxPrice = max,
@@ -161,11 +153,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         public PrintingEditionResponseModel GetPrintingEditions(int page = Constants.DEFAULTPAGE)
         {
             var dbPrintingEditions = _printingEditionRepository.Get(page: page);
-            var printingEditions = new List<PrintingEditionModel>();
-            foreach (var printingEdition in dbPrintingEditions)
-            {
-                printingEditions.Add(_mapper.Map<PrintingEditionModel>(printingEdition));
-            }
+            var printingEditions = _mapper.Map<List<PrintingEditionModel>>(dbPrintingEditions);
             var info = GetInfo();
             return new PrintingEditionResponseModel
             {
@@ -180,11 +168,13 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public PrintingEditionModel GetPrintingEdition(int id)
         {
-            return _mapper.Map<PrintingEditionModel>(_printingEditionRepository.GetById(id));
+            var result = _mapper.Map<PrintingEditionModel>(_printingEditionRepository.GetById(id));
+            return result;
         }
         public PrintingEditionModel GetPrintingEditionByTitle(string title)
         {
-            return _mapper.Map<PrintingEditionModel>(_printingEditionRepository.Get(edition => edition.Title == title).First());
+            var result = _mapper.Map<PrintingEditionModel>(_printingEditionRepository.Get(edition => edition.Title == title).First());
+            return result;
         }
     }
 }

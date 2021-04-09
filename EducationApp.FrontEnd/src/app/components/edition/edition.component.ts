@@ -5,6 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Store } from '@ngrx/store';
 import { CartConfirmComponent } from 'src/app/components/cart-confirm/cart-confirm.component';
 import { PrintingEditionModel } from 'src/app/models/printing-edition.models';
+import { Defaults } from 'src/app/shared/consts';
 import { Currency, PrintingEditionType } from 'src/app/shared/enums';
 import { addToCart } from 'src/app/store/cart/cart.actions';
 import { PrintingEditionState } from 'src/app/store/printing-edition/printing-edition.state';
@@ -30,9 +31,9 @@ export class EditionComponent implements OnInit {
     store.select('Books').subscribe(value => {
       this.books = value.books;
     });
-    this.maxQuantity = 10;
-    this.selectedQuantity = 1;
-    this.quantity = Array(this.maxQuantity).fill(1).map((x, i) => i + 1);
+    this.maxQuantity = Defaults.maxQuantity;
+    this.selectedQuantity = Defaults.startQuantity;
+    this.quantity = Array(this.maxQuantity).fill(Defaults.startQuantity).map((x, i) => i + 1);
     this.route.queryParamMap
       .subscribe((params) => {
         this.id = +params.get('id');
