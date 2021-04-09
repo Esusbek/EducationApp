@@ -7,7 +7,7 @@ export const login = createAction(
 );
 export const loginSuccess = createAction(
     '[Login Page] loginSuccess',
-    props<LoginResult>()
+    props<{ tokens: LoginResult, rememberMe: boolean }>()
 );
 export const refreshTokens = createAction(
     '[Any page] Refresh tokens',

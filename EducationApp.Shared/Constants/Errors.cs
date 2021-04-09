@@ -19,5 +19,6 @@
         public const string PASSWORDCHANGEFAILEDERROR = "Password change failed";
         public const string INVALIDINTENTIDERROR = "Invalid intent id";
         public const string USERBANNED = "This username is banned from the site by administrator";
+        public const string VALIDATIONERROR = "Invalid model";
     }
 }

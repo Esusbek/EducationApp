@@ -129,36 +129,65 @@ namespace EducationApp.PresentationLayer.Controllers
         [HttpPost]
         public IActionResult EditAuthor(AuthorModel author)
         {
-            _authorService.UpdateAuthor(author);
-            return RedirectToAction("Authors");
+            if (ModelState.IsValid)
+            {
+                _authorService.UpdateAuthor(author);
+                return RedirectToAction("Authors");
+            }
+            return View("Error", Constants.VALIDATIONERROR);
         }
         public IActionResult AddAuthor(AuthorModel author)
         {
-            _authorService.AddAuthor(author);
-            return RedirectToAction("Authors");
+            if (ModelState.IsValid)
+            {
+                _authorService.AddAuthor(author);
+                return RedirectToAction("Authors");
+            }
+            return View("Error", Constants.VALIDATIONERROR);
         }
         public IActionResult DeleteAuthor(AuthorModel author)
         {
-            _authorService.DeleteAuthor(author);
-            return RedirectToAction("Authors");
+            if (ModelState.IsValid)
+            {
+                _authorService.DeleteAuthor(author);
+                return RedirectToAction("Authors");
+            }
+            return View("Error", Constants.VALIDATIONERROR);
         }
         [HttpPost]
         public IActionResult EditEdition([FromForm] PrintingEditionModel printingEdition, [FromForm] string price)
         {
             decimal priceDecimal = decimal.Parse(price, CultureInfo.InvariantCulture);
             printingEdition.Price = priceDecimal;
-            _printingEditionService.UpdatePrintingEdition(printingEdition);
-            return RedirectToAction("PrintingEditions");
+            ModelState.Clear();
+            if (TryValidateModel(printingEdition))
+            {
+                _printingEditionService.UpdatePrintingEdition(printingEdition);
+                return RedirectToAction("PrintingEditions");
+            }
+            
+            return View("Error", Constants.VALIDATIONERROR);
         }
-        public IActionResult AddEdition([FromForm] PrintingEditionModel printingEdition)
+        public IActionResult AddEdition([FromForm] PrintingEditionModel printingEdition, [FromForm] string price)
         {
-            _printingEditionService.AddPrintingEdition(printingEdition);
-            return RedirectToAction("PrintingEditions");
+            decimal priceDecimal = decimal.Parse(price, CultureInfo.InvariantCulture);
+            printingEdition.Price = priceDecimal;
+            ModelState.Clear();
+            if (TryValidateModel(printingEdition))
+            {
+                _printingEditionService.AddPrintingEdition(printingEdition);
+                return RedirectToAction("PrintingEditions");
+            }
+            return View("Error", Constants.VALIDATIONERROR);
         }
         public IActionResult DeleteEdition([FromForm] PrintingEditionModel printingEdition)
         {
-            _printingEditionService.DeletePrintingEdition(printingEdition);
-            return RedirectToAction("PrintingEditions");
+            if (ModelState.IsValid)
+            {
+                _printingEditionService.DeletePrintingEdition(printingEdition);
+                return RedirectToAction("PrintingEditions");
+            }
+            return View("Error", Constants.VALIDATIONERROR);
         }
     }
 }

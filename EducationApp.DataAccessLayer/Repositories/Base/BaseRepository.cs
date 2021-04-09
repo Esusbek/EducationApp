@@ -40,7 +40,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             {
                 query = query.Where(filter);
             }
-
+            var test = query;
             if (field is not null)
             {
                 query = query.OrderBy(field, ascending);

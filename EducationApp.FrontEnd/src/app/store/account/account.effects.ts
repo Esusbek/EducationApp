@@ -19,7 +19,7 @@ export class AccountEffects {
             mergeMap(action => {
                 return this.accountService.login(action.user, action.rememberMe)
                     .pipe(
-                        map(tokens => AccountActions.loginSuccess(tokens))
+                        map(tokens => AccountActions.loginSuccess({ tokens, rememberMe: action.rememberMe }))
                     )
             }
             )
@@ -29,8 +29,10 @@ export class AccountEffects {
         this.action$.pipe(
             ofType(AccountActions.loginSuccess),
             tap((action) => {
-                localStorage.setItem('accessToken', action.accessToken);
-                localStorage.setItem('refreshToken', action.refreshToken);
+                localStorage.setItem('accessToken', action.tokens.accessToken);
+                if (action.rememberMe) {
+                    localStorage.setItem('refreshToken', action.tokens.refreshToken);
+                }
                 this.router.navigate(['/book-list'])
             })
         )
