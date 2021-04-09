@@ -1,4 +1,5 @@
-﻿using EducationApp.DataAccessLayer.Entities.Base;
+﻿using Dapper.Contrib.Extensions;
+using EducationApp.DataAccessLayer.Entities.Base;
 using EducationApp.Shared.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EducationApp.DataAccessLayer.Entities
 {
 
-    [Table("PrintingEditions")]
+    [Dapper.Contrib.Extensions.Table("PrintingEditions")]
     public class PrintingEditionEntity : BaseEntity
     {
         public string Title { get; set; }
@@ -20,7 +21,7 @@ namespace EducationApp.DataAccessLayer.Entities
         public Enums.PrintingEditionStatusType Status { get; set; }
         public Enums.CurrencyType Currency { get; set; }
         public Enums.PrintingEditionType Type { get; set; }
-
+        [Computed]
         public virtual ICollection<AuthorEntity> Authors { get; set; }
     }
 }

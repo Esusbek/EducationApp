@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Dapper;
+using EducationApp.DataAccessLayer.Extensions;
 using Dapper.Contrib.Extensions;
 
 namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
@@ -25,30 +26,58 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
         public List<OrderEntity> Get(Expression<Func<OrderEntity, bool>> filter = null,
             string field = null, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
         {
-            var orders = base.Get(filter, field, ascending, getRemoved)
-                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE)
-                .Take(Constants.ORDERPAGESIZE).ToList();
+            string sql = "select o.*, u.* from Orders o inner join AspNetUsers u on o.UserId=u.Id";
             using (SqlConnection connection = new(_connectionString))
             {
-                var users = connection.GetAll<UserEntity>();
-                var payments = connection.GetAll<PaymentEntity>();
-                foreach (var order in orders)
+                var orders = connection.Query<OrderEntity, UserEntity, OrderEntity>(sql, (OrderEntity, UserEntity) =>
                 {
-                    order.User = users.FirstOrDefault(user => user.Id == order.UserId);
-                    order.Payment = payments.FirstOrDefault(payment => payment.Id == order.PaymentId);
+                    OrderEntity.User = UserEntity;
+                    return OrderEntity;
+                }).AsQueryable();
+                if (!getRemoved)
+                {
+                    orders = orders.Where(entity => entity.IsRemoved == false);
                 }
+                if (filter is not null)
+                {
+                    orders = orders.Where(filter);
+                }
+                if (field is not null)
+                {
+                    orders = orders.OrderBy(field, ascending);
+                }
+                return orders
+                .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE)
+                .Take(Constants.ORDERPAGESIZE).ToList();
             }
-            return orders;
+            
         }
 
         public List<OrderEntity> GetAll(Expression<Func<OrderEntity, bool>> filter = null, bool getRemoved = false)
         {
-            return base.Get(filter, getRemoved: getRemoved);
+            string sql = "select o.*, u.* from Orders o inner join AspNetUsers u on o.UserId=u.Id";
+            using (SqlConnection connection = new(_connectionString))
+            {
+                var orders = connection.Query<OrderEntity, UserEntity, OrderEntity>(sql, (OrderEntity, UserEntity) =>
+                {
+                    OrderEntity.User = UserEntity;
+                    return OrderEntity;
+                }).AsQueryable();
+                if (!getRemoved)
+                {
+                    orders = orders.Where(entity => entity.IsRemoved == false);
+                }
+                if (filter is not null)
+                {
+                    orders = orders.Where(filter);
+                }
+                return orders.ToList();
+            }
         }
 
         public void SaveChanges()
         {
-            throw new NotImplementedException();
+            return;
         }
     }
 }

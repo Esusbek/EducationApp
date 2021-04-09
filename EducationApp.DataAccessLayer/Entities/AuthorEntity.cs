@@ -1,6 +1,6 @@
-﻿using EducationApp.DataAccessLayer.Entities.Base;
+﻿using Dapper.Contrib.Extensions;
+using EducationApp.DataAccessLayer.Entities.Base;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
@@ -8,7 +8,7 @@ namespace EducationApp.DataAccessLayer.Entities
     public class AuthorEntity : BaseEntity
     {
         public string Name { get; set; }
-
+        [Computed]
         public virtual ICollection<PrintingEditionEntity> PrintingEditions { get; set; }
     }
 }

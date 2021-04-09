@@ -1,10 +1,11 @@
-﻿using EducationApp.DataAccessLayer.Entities.Base;
+﻿using Dapper.Contrib.Extensions;
+using EducationApp.DataAccessLayer.Entities.Base;
 using EducationApp.Shared.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationApp.DataAccessLayer.Entities
 {
-    [Table("OrderItems")]
+    [Dapper.Contrib.Extensions.Table("OrderItems")]
     public class OrderItemEntity : BaseEntity
     {
         public int Amount { get; set; }
@@ -13,8 +14,10 @@ namespace EducationApp.DataAccessLayer.Entities
 
         public Enums.CurrencyType Currency { get; set; }
         public int OrderId { get; set; }
+        [Computed]
         public virtual OrderEntity Order { get; set; }
         public int PrintingEditionId { get; set; }
+        [Computed]
         public virtual PrintingEditionEntity PrintingEdition { get; set; }
     }
 }

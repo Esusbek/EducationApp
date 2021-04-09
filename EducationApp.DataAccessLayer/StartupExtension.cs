@@ -17,7 +17,7 @@ namespace EducationApp.DataAccessLayer
         {
             services.AddTransient<IAuthorRepository, AuthorRepository>();
             services.AddTransient<IOrderItemRepository, OrderItemRepository>();
-            services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IOrderRepository, Repositories.DapperRepositories.OrderRepository>();
             services.AddTransient<IPaymentRepository, PaymentRepository>();
             services.AddTransient<IPrintingEditionRepository, PrintingEditionRepository>();
         }

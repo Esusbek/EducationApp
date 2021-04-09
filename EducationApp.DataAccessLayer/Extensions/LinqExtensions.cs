@@ -1,4 +1,5 @@
 ﻿using EducationApp.Shared.Constants;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -37,6 +38,7 @@ namespace EducationApp.DataAccessLayer.Extensions
                  .Invoke(genericMethod, new object[] { query, selector });
             return newQuery;
         }
+        
 
     }
 }
