@@ -11,9 +11,9 @@ import { passwordMatchValidator } from 'src/app/validators/password-match.direct
   styleUrls: ['./resetpassword.component.css']
 })
 export class ResetPasswordComponent implements OnInit {
-  code: string;
-  id: string;
-  resetPasswordForm = new FormGroup({
+  private code: string;
+  private id: string;
+  public resetPasswordForm = new FormGroup({
     password: new FormControl('', [
       Validators.required
     ]),
@@ -21,17 +21,17 @@ export class ResetPasswordComponent implements OnInit {
       Validators.required
     ])
   }, { validators: passwordMatchValidator })
-  constructor(private route: ActivatedRoute, private store: Store) { }
-  get password() { return this.resetPasswordForm.get('password') }
-  get passwordConfirm() { return this.resetPasswordForm.get('passwordConfirm') }
-  ngOnInit(): void {
+  public constructor(private route: ActivatedRoute, private store: Store) { }
+  public get password() { return this.resetPasswordForm.get('password') }
+  public get passwordConfirm() { return this.resetPasswordForm.get('passwordConfirm') }
+  public ngOnInit(): void {
     this.route.queryParamMap
       .subscribe((params) => {
         this.code = params.get('code');
         this.id = params.get('userId');
       })
   }
-  onSubmit() {
+  public onSubmit() {
     this.store.dispatch(resetPassword({ payload: { code: this.code, userId: this.id, password: this.resetPasswordForm.value.password } }));
   }
 }

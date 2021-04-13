@@ -14,7 +14,7 @@
                         <option *ngFor="let number of quantity">{{number}}</option>
                     </select>
                     <div class="total">
-                        <p>{{currentBook.price*selectedQuantity | currency: Currency[currentBook.currency]}}</p>
+                        <p>{{currentBook.price*selectedQuantity | currency: currency[currentBook.currency]}}</p>
                     </div>
                 </div>
                 <button (click)="addToCart()">Add to cart</button>

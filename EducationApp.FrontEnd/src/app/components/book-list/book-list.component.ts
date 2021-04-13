@@ -18,12 +18,12 @@ import { PrintingEditionState } from "src/app/store/printing-edition/printing-ed
 export class BookListComponent implements OnInit {
   public page: number;
   public books: Array<PrintingEditionModel>;
-  public Currency = Currency;
+  public currency = Currency;
   private info$: PrintingEditionInfoModel;
-  get info(): PrintingEditionInfoModel {
+  public get info(): PrintingEditionInfoModel {
     return this.info$;
   }
-  set info(value: PrintingEditionInfoModel) {
+  public set info(value: PrintingEditionInfoModel) {
     if (value !== this.info$) {
       this.info$ = value;
       this.updateInfo();
@@ -41,7 +41,7 @@ export class BookListComponent implements OnInit {
   })
 
 
-  constructor(private store: Store<{ Books: PrintingEditionState }>, private formBuilder: FormBuilder, private router: Router) {
+  public constructor(private store: Store<{ Books: PrintingEditionState }>, private formBuilder: FormBuilder, private router: Router) {
     store.select('Books').subscribe(value => {
       this.books = value.books;
       this.info = value.info;
@@ -72,7 +72,7 @@ export class BookListComponent implements OnInit {
     })
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.page = 1;
     const checkboxControl = (this.filterForm.controls.checkboxes as FormArray);
     this.subscription = checkboxControl.valueChanges.subscribe(() => {
@@ -84,10 +84,10 @@ export class BookListComponent implements OnInit {
     this.store.dispatch(getBooks({ page: this.page }))
     this.updateInfo();
   }
-  getImage(type: number): string {
+  public getImage(type: number): string {
     return `assets/img/${PrintingEditionType[type]}.png`
   }
-  updateInfo() {
+  public updateInfo() {
     this.options = {
       floor: this.info.minPrice,
       ceil: this.info.maxPrice,
@@ -99,10 +99,10 @@ export class BookListComponent implements OnInit {
     this.minValue = this.info.minPrice;
     this.maxValue = this.info.maxPrice;
   }
-  show(id: number): void {
+  public show(id: number): void {
     this.router.navigate(['/edition'], { queryParams: { id: String(id) } });
   }
-  filter(): void {
+  public filter(): void {
     const checkboxControl = (this.filterForm.controls.checkboxes as FormArray);
     const formValue = {
       ...this.filterForm.value,
@@ -111,30 +111,30 @@ export class BookListComponent implements OnInit {
     }
     this.store.dispatch(getFiltered({ filter: formValue, orderAsc: this.orderForm.value.order, page: this.page }));
   }
-  updateSliderLow(event) {
+  public updateSliderLow(event) {
     this.minValue = event.target.value;
   }
-  updateSliderHigh(event) {
+  public updateSliderHigh(event) {
     this.maxValue = event.target.value;
   }
-  hasPreviousPage() {
+  public hasPreviousPage() {
     return this.page > Defaults.defaultPage;
   }
-  hasNextPage() {
+  public hasNextPage() {
     return this.page < this.info.lastPage;
   }
-  nextPage() {
+  public nextPage() {
     this.page = this.page + Defaults.pageOffset;
     this.filter();
   }
-  previousPage() {
+  public previousPage() {
     this.page = this.page - Defaults.pageOffset;
     this.filter();
   }
-  resetFilter() {
+  public resetFilter() {
     this.ngOnInit();
   }
-  ngOnDestroy() {
+  public ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 }

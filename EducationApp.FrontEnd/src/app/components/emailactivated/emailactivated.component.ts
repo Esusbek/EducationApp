@@ -11,9 +11,9 @@ import { activateEmail } from 'src/app/store/account/account.actions';
 })
 export class EmailactivatedComponent implements OnInit {
   private activationModel: EmailActivationModel;
-  constructor(private route: ActivatedRoute, private store: Store) { }
+  public constructor(private route: ActivatedRoute, private store: Store) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.route.queryParamMap
       .subscribe((params) => {
         this.activationModel = { code: params.get('code'), userId: params.get('userId') };

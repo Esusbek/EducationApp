@@ -20,7 +20,7 @@ export class OrderListComponent implements OnInit {
   public lastPage: number;
   public PrintingEditionType;
   public OrderStatusType;
-  constructor(private store: Store<{ Cart: CartState, Books: PrintingEditionState }>) {
+  public constructor(private store: Store<{ Cart: CartState, Books: PrintingEditionState }>) {
     store.select('Cart').subscribe(value => {
       this.orders = value.orders,
         this.lastPage = value.lastPage
@@ -29,7 +29,7 @@ export class OrderListComponent implements OnInit {
     this.PrintingEditionType = PrintingEditionType;
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.page = 1;
     this.getOrders();
   }
@@ -39,17 +39,17 @@ export class OrderListComponent implements OnInit {
   public payOrder(order: OrderModel) {
     this.store.dispatch(checkoutExisting({ order }));
   }
-  hasPreviousPage() {
+  public hasPreviousPage() {
     return this.page > Defaults.defaultPage;
   }
-  hasNextPage() {
+  public hasNextPage() {
     return this.page < this.lastPage;
   }
-  nextPage() {
+  public nextPage() {
     this.page = this.page + Defaults.pageOffset;
     this.getOrders();
   }
-  previousPage() {
+  public previousPage() {
     this.page = this.page - Defaults.pageOffset;
     this.getOrders();
   }

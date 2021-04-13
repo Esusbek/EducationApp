@@ -7,7 +7,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
     public class OrdersViewModel
     {
         public List<OrderModel> Orders { get; set; }
-        public int CurrentPage { get; set; }
+        public int Page { get; set; }
         public int LastPage { get; set; }
         public bool GetPaid { get; set; }
         public bool GetUnpaid { get; set; }
@@ -16,7 +16,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
 
         public OrdersViewModel()
         {
-            CurrentPage = Constants.DEFAULTPAGE;
+            Page = Constants.DEFAULTPAGE;
             GetPaid = true;
             GetUnpaid = true;
             SortBy = Constants.DEFAULTORDERSORT;

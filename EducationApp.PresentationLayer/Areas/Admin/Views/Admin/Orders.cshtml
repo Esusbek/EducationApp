@@ -1,6 +1,7 @@
 ﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
 @using EducationApp.BusinessLogicLayer.Models.Orders
 @using EducationApp.Shared.Constants
+@using EducationApp.Shared.Enums
 @model OrdersViewModel
 @{
     ViewData["Title"] = "Orders list";
@@ -22,25 +23,10 @@
             <th>
                 <a href="javascript:void(0);" class="table-head">Order status</a>
                 <div id="checkboxes">
-
-                    @if (Model.GetPaid)
-                    {
-                        <input type="checkbox" checked name="GetPaid" id="GetPaid" value="true" />
-                    }
-                    else
-                    {
-                        <input type="checkbox" name="GetPaid" id="GetPaid" value="true" />
-                    }
-                    <label for="GetPaid">Paid</label>
-                    @if (Model.GetUnpaid)
-                    {
-                        <input type="checkbox" checked name="GetUnpaid" id="GetUnpaid" value="true" />
-                    }
-                    else
-                    {
-                        <input type="checkbox" name="GetUnpaid" id="GetUnpaid" value="true" />
-                    }
-                    <label for="GetUnpaid">Unpaid</label>
+                    @Html.CheckBoxFor(model => model.GetPaid)
+                    @Html.LabelFor(model => model.GetPaid, Enums.OrderStatusType.Paid.ToString())
+                    @Html.CheckBoxFor(model => model.GetUnpaid)
+                    @Html.LabelFor(model => model.GetUnpaid, Enums.OrderStatusType.Unpaid.ToString())
                 </div>
             </th>
         </tr>
@@ -82,16 +68,16 @@
     <div class="filler"></div>
     @Html.ActionLink("previous page", "Orders", "Admin", new
 {
-    page = Model.CurrentPage - 1,
+    page = Model.Page - 1,
     getPaid = Model.GetPaid,
     getUnpaid = Model.GetUnpaid,
     sortBy = Model.SortBy,
     ascending = Model.Ascending
 }, new { id = "previousPage" })
-    <span>Page @Model.CurrentPage/ @Model.LastPage</span>
+    <span>Page @Model.Page/ @Model.LastPage</span>
     @Html.ActionLink("next page", "Orders", "Admin", new
 {
-    page = Model.CurrentPage + 1,
+    page = Model.Page + 1,
     getPaid = Model.GetPaid,
     getUnpaid = Model.GetUnpaid,
     sortBy = Model.SortBy,
@@ -129,11 +115,11 @@
                 }
             }
 
-            if (@Model.CurrentPage< 2) {
+            if (@Model.Page< 2) {
                 $('#previousPage').addClass('disabled')
             }
 
-            if (@Model.CurrentPage>=@Model.LastPage) {
+            if (@Model.Page>=@Model.LastPage) {
                 $('#nextPage').addClass('disabled')
             }
             var links = document.getElementsByClassName('sort-by');

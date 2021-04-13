@@ -11,17 +11,17 @@ import { CartState } from 'src/app/store/cart/cart.state';
 })
 export class CheckoutComponent implements OnInit {
   public cart: CartState;
-  public Currency = Currency;
+  public currency = Currency;
   public sum: number;
-  constructor(private store: Store<{ Cart: CartState }>) {
+  public constructor(private store: Store<{ Cart: CartState }>) {
     store.select('Cart').subscribe(value => {
       this.cart = value
     });
     this.sum = this.cart.currentItems.map(item => item.subTotal).reduce((sum, item) => sum + item)
   }
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
-  checkout(): void {
+  public checkout(): void {
     this.store.dispatch(checkout({ items: this.cart.currentItems }));
   }
 }

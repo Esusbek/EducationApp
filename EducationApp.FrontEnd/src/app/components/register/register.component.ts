@@ -12,7 +12,7 @@ import { passwordMatchValidator } from 'src/app/validators/password-match.direct
 })
 export class RegisterComponent implements OnInit {
   public isRegistered: boolean;
-  registerForm = new FormGroup({
+  public registerForm = new FormGroup({
     userName: new FormControl('', [
       Validators.required
     ]),
@@ -36,20 +36,20 @@ export class RegisterComponent implements OnInit {
     ])
   }, { validators: passwordMatchValidator })
 
-  get userName() { return this.registerForm.get('userName') }
-  get firstName() { return this.registerForm.get('firstName') }
-  get lastName() { return this.registerForm.get('lastName') }
-  get email() { return this.registerForm.get('email') }
-  get password() { return this.registerForm.get('password') }
-  get passwordConfirm() { return this.registerForm.get('passwordConfirm') }
+  public get userName() { return this.registerForm.get('userName') }
+  public get firstName() { return this.registerForm.get('firstName') }
+  public get lastName() { return this.registerForm.get('lastName') }
+  public get email() { return this.registerForm.get('email') }
+  public get password() { return this.registerForm.get('password') }
+  public get passwordConfirm() { return this.registerForm.get('passwordConfirm') }
 
-  constructor(private store: Store<{ Account: AccountState }>) {
+  public constructor(private store: Store<{ Account: AccountState }>) {
     store.select('Account').subscribe(value => this.isRegistered = value.isRegistered);
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
-  onSubmit() {
+  public onSubmit() {
     this.store.dispatch(register({ user: this.registerForm.value }));
   }
 }

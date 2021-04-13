@@ -18,7 +18,7 @@ export class ProfileComponent implements OnInit {
   public profile: UserModel;
   public isChangingPassword: boolean;
   public showPasswords: boolean;
-  profileForm = new FormGroup({
+  public profileForm = new FormGroup({
     userName: new FormControl('', [
       Validators.required
     ]),
@@ -33,7 +33,7 @@ export class ProfileComponent implements OnInit {
       Validators.email
     ])
   })
-  changePasswordForm = new FormGroup({
+  public changePasswordForm = new FormGroup({
     currentPassword: new FormControl('', [
       Validators.required
     ]),
@@ -44,7 +44,7 @@ export class ProfileComponent implements OnInit {
       Validators.required
     ])
   }, { validators: passwordMatchValidator })
-  constructor(private store: Store<{ Profile: ProfileState }>, private auth: AccountService) {
+  public constructor(private store: Store<{ Profile: ProfileState }>, private auth: AccountService) {
     store.select('Profile').subscribe(val => this.profileForm.controls['userName'].setValue(val.user.userName));
     store.select('Profile').subscribe(val => this.profileForm.controls['firstName'].setValue(val.user.firstName));
     store.select('Profile').subscribe(val => this.profileForm.controls['lastName'].setValue(val.user.lastName));
@@ -58,30 +58,30 @@ export class ProfileComponent implements OnInit {
     this.showPasswords = false;
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.store.dispatch(getInfo());
 
   }
-  editStart() {
+  public editStart() {
     this.isEditing = true;
     this.profileForm.controls['firstName'].enable();
     this.profileForm.controls['lastName'].enable();
   }
-  editEnd() {
+  public editEnd() {
     this.isEditing = false;
     this.profileForm.controls['firstName'].disable();
     this.profileForm.controls['lastName'].disable();
   }
-  onSubmit() {
+  public onSubmit() {
     this.isEditing = false;
     this.profileForm.controls['firstName'].disable();
     this.profileForm.controls['lastName'].disable();
     this.store.dispatch(editProfile({ ...this.profileForm.value, id: getUserId() }));
   }
-  changingPassword() {
+  public changingPassword() {
     this.isChangingPassword = !this.isChangingPassword;
   }
-  onChangePassword() {
+  public onChangePassword() {
     this.isChangingPassword = false;
     this.store.dispatch(changePassword({
       user: { id: getUserId() },
@@ -89,7 +89,7 @@ export class ProfileComponent implements OnInit {
       currentPassword: this.changePasswordForm.value.currentPassword
     }));
   }
-  showPassword() {
+  public showPassword() {
     this.showPasswords = !this.showPasswords;
   }
 }

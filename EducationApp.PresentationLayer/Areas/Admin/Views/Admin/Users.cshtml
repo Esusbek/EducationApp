@@ -106,7 +106,7 @@
     <div class="filler"></div>
     @Html.ActionLink("previous page", "Users", "Admin", new
 {
-    page = Model.CurrentPage - Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    page = Model.Page - Constants.DEFAULTPREVIOUSPAGEOFFSET,
     searchString = HtmlEncoder.Encode(Model.SearchString),
     getBlocked = Model.GetBlocked.ToString().ToLower(),
     getUnblocked = Model.GetUnblocked.ToString().ToLower()
@@ -115,10 +115,10 @@
 {
     id = "previousPage"
 })
-    <span>Page @Model.CurrentPage/ @Model.LastPage</span>
+    <span>Page @Model.Page/ @Model.LastPage</span>
     @Html.ActionLink("next page", "Users", "Admin", new
 {
-    page = Model.CurrentPage + Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    page = Model.Page + Constants.DEFAULTPREVIOUSPAGEOFFSET,
     searchString = HtmlEncoder.Encode(Model.SearchString),
     getBlocked = Model.GetBlocked.ToString().ToLower(),
     getUnblocked = Model.GetUnblocked.ToString().ToLower()
@@ -128,43 +128,35 @@
 })
 </div>
 
+<div class='modal fade' name='dynamiccustommodal' id='1' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='1Label'>
+    <div class='modal-dialog' style="max-width:700px">
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h4 class='modal-title' id="modal-title"></h4>
+            </div>
+            <div class='modal-body'>
+                <div class='row'>
+                    <div class='col-xs-12 col-md-12 col-sm-12 col-lg-12' id='modal-body'>
+                    </div>
+                </div>
+            </div>
+            <div class='modal-footer bg-default'>
+                <div class='col-xs-12 col-sm-12 col-lg-12 modal-buttons' id='modal-buttons'>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts{
     <script>
         var model = @Html.Raw(Json.Serialize(Model));
         var BstrapModal = function (title, body, buttons) {
-            var GetModalStructure = function () {
-                var that = this;
-                that.Id = BstrapModal.Id = Math.random();
-                var buttonshtml = `<button type='button' class='btn ${buttons[0].Css}' name='btn${that.Id}'>${buttons[0].Value}</button>`;
-                for (var i = 1; i < buttons.length; i++) {
-                    buttonshtml += `<div class="filler"></div><button type='button' class='btn ${buttons[i].Css}' name='btn${that.Id}'>${buttons[i].Value}</button>`;
-                }
-                return `<div class='modal fade' name='dynamiccustommodal' id='${that.Id}\
-' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='${that.Id}Label'>\
-    <div class='modal-dialog'>\
-        <div class='modal-content'>\
-            <div class='modal-header'>\
-                <h4 class='modal-title'>${title}</h4>\
-            </div>\
-            <div class='modal-body'>\
-                <div class='row'>\
-                    <div class='col-xs-12 col-md-12 col-sm-12 col-lg-12'>\
-                        ${body}\
-                    </div>\
-                </div>
-            </div>
-            <div class='modal-footer bg-default'>
-                <div class='col-xs-12 col-sm-12 col-lg-12 modal-buttons'>\
-                    ${buttonshtml}\
-                 </div>
-            </div>
-        </div>
-    </div>
-</div>`;
-            }();
+
             BstrapModal.Delete = function () {
-                var modals = document.getElementsByName("dynamiccustommodal");
-                if (modals.length > 0) document.body.removeChild(modals[0]);
+                $("#modal-title").empty();
+                $("#modal-body").empty();
+                $("#modal-buttons").empty();
             };
             BstrapModal.Close = function () {
                 $(document.getElementById(BstrapModal.Id)).modal('hide');
@@ -172,7 +164,15 @@
             };
             this.Show = function () {
                 BstrapModal.Delete();
-                document.body.appendChild($(GetModalStructure)[0]);
+                BstrapModal.Id = 1;
+                $("#modal-title").append(title);
+                $("#modal-body").append(body);
+                var buttonshtml = `<button type='button' class='btn ${buttons[0].Css}' name='btn1'>${buttons[0].Value}</button>`;
+                for (var i = 1; i < buttons.length; i++) {
+                    buttonshtml += `<div class="filler"></div><button type='button' class='btn ${buttons[i].Css}' name='btn1'>${buttons[i].Value}</button>`;
+                }
+                $("#modal-buttons").append(buttonshtml);
+
                 var btns = document.querySelectorAll(`button[name='btn${BstrapModal.Id}']`);
                 for (var i = 0; i < btns.length; i++) {
                     btns[i].addEventListener("click", buttons[i].Callback || BstrapModal.Close);
@@ -246,12 +246,12 @@
                 }
             }
 
-            if (@Model.CurrentPage< 2) {
+            if (@Model.Page< 2) {
                 $('#previousPage').addClass('disabled')
             }
             
 
-            if (@Model.CurrentPage>=@Model.LastPage) {
+            if (@Model.Page>=@Model.LastPage) {
                 $('#nextPage').addClass('disabled')
             }
 

@@ -11,7 +11,7 @@ import { forgotPassword, login } from 'src/app/store/account/account.actions';
 export class LoginComponent implements OnInit {
   public forgotPassword: boolean;
   public showPasswords: boolean;
-  loginForm = new FormGroup({
+  public loginForm = new FormGroup({
     user: new FormGroup({
       userName: new FormControl('', [
         Validators.required
@@ -22,36 +22,36 @@ export class LoginComponent implements OnInit {
     }),
     rememberMe: new FormControl(false)
   })
-  forgotPasswordForm = new FormGroup({
+  public forgotPasswordForm = new FormGroup({
     userName: new FormControl('', [
       Validators.required
     ])
   })
   public reseted: boolean;
-  get userName() { return this.loginForm.get('user').get('userName') }
-  get password() { return this.loginForm.get('user').get('password') }
-  get userNameRecovery() { return this.forgotPasswordForm.get('userName') }
-  constructor(private store: Store) {
+  public get userName() { return this.loginForm.get('user').get('userName') }
+  public get password() { return this.loginForm.get('user').get('password') }
+  public get userNameRecovery() { return this.forgotPasswordForm.get('userName') }
+  public constructor(private store: Store) {
     this.forgotPassword = false;
     this.reseted = false;
     this.showPasswords = false;
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
 
-  onSubmit() {
+  public onSubmit() {
     this.store.dispatch(login({ ...this.loginForm.value }))
   }
-  onForgotPassword() {
+  public onForgotPassword() {
     this.forgotPassword = !this.forgotPassword;
   }
-  onRecoverySubmit() {
+  public onRecoverySubmit() {
     console.log({ ...this.forgotPasswordForm.value });
     this.store.dispatch(forgotPassword({ ...this.forgotPasswordForm.value }))
     this.reseted = true;
   }
-  showPassword() {
+  public showPassword() {
     this.showPasswords = !this.showPasswords;
   }
 }

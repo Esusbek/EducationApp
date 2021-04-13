@@ -3,6 +3,7 @@ using EducationApp.BusinessLogicLayer.Models.Authors;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
+using EducationApp.DataAccessLayer.FilterModels;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
 using EducationApp.Shared.Exceptions;
@@ -28,7 +29,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         public void AddAuthor(AuthorModel author)
         {
             _validator.ValidateAuthor(author);
-            var dbAuthor = _authorRepository.Get(dbAuthor => dbAuthor.Name == author.Name).FirstOrDefault();
+            var dbAuthor = _authorRepository.Get(new AuthorFilterModel { Name = author.Name}).FirstOrDefault();
             if (dbAuthor is not null)
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.AUTHORALREADYEXISTSERROR);
@@ -59,16 +60,10 @@ namespace EducationApp.BusinessLogicLayer.Services
             dbAuthor.PrintingEditions.Clear();
             _authorRepository.Delete(dbAuthor);
         }
-        public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null,
-            string field = null, bool ascending = true,
-            int page = Constants.DEFAULTPAGE, bool getRemoved = false)
+        public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null, string field = null, bool ascending = true, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
         {
-            Expression<Func<AuthorEntity, bool>> filter = null;
-            if (authorFilter is not null)
-            {
-                filter = author => string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name);
-            }
-            var dbAuthors = _authorRepository.Get(filter, field, ascending, getRemoved, page);
+            
+            var dbAuthors = _authorRepository.Get(authorFilter, field, ascending, getRemoved, page);
             var authors = _mapper.Map<List<AuthorModel>>(dbAuthors);
             return authors;
         }
@@ -86,13 +81,8 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public int GetLastPage(AuthorFilterModel authorFilter = null, bool getRemoved = false)
         {
-            Expression<Func<AuthorEntity, bool>> filter = null;
-            if (authorFilter is not null)
-            {
-                filter = author => string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name);
-            }
-            var authors = _authorRepository.GetAll(filter, getRemoved);
-            var lastPage = (int)Math.Ceiling(authors.Count / (double)Constants.AUTHORPAGESIZE);
+            var authors = _authorRepository.GetAll(authorFilter, getRemoved);
+            int lastPage = (int)Math.Ceiling(authors.Count / (double)Constants.AUTHORPAGESIZE);
             return lastPage;
         }
         public AuthorModel GetAuthor(int id)
@@ -107,7 +97,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public AuthorModel GetAuthorByName(string name)
         {
-            var dbAuthor = _authorRepository.Get(author => author.Name == name).FirstOrDefault();
+            var dbAuthor = _authorRepository.Get(new AuthorFilterModel { Name = name }).FirstOrDefault();
             if (dbAuthor is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);

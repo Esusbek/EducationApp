@@ -8,9 +8,9 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ErrorComponent implements OnInit {
 
   @Input() message;
-  constructor() { }
+  public constructor() { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
 
 }

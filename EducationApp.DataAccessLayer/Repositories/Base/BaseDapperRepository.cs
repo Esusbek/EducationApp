@@ -65,7 +65,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
         {
             using (SqlConnection connection = new(_connectionString))
             {
-                var result = connection.Insert(entity);
+                connection.Insert(entity);
             }
         }
 
@@ -73,14 +73,14 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
         {
             using (SqlConnection connection = new(_connectionString))
             {
-                var result = connection.Insert(entity);
+                connection.Insert(entity);
             }
         }
         public virtual void Update(T entity)
         {
             using (SqlConnection connection = new(_connectionString))
             {
-                var result = connection.Update(entity);
+                connection.Update(entity);
             }
         }
         public virtual void Delete(T entityToDelete)

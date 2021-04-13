@@ -8,7 +8,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
     public class PrintingEditionsViewModel
     {
         public List<PrintingEditionModel> PrintingEditions { get; set; }
-        public int CurrentPage { get; set; }
+        public int Page { get; set; }
         public int LastPage { get; set; }
         public bool GetBook { get; set; }
         public bool GetNewspaper { get; set; }
@@ -18,7 +18,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
         public List<AuthorModel> Authors { get; set; }
         public PrintingEditionsViewModel()
         {
-            CurrentPage = Constants.DEFAULTPAGE;
+            Page = Constants.DEFAULTPAGE;
             GetBook = true;
             GetNewspaper = true;
             GetJournal = true;

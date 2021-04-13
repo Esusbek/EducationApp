@@ -106,8 +106,13 @@ namespace EducationApp.PresentationLayer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
+                endpoints.MapAreaControllerRoute(
+                    name: "AdminArea",
+                    areaName: "Admin",
+                    pattern: "Admin/{controller=Admin}/{action=Login}");
+                endpoints.MapAreaControllerRoute(
                    name: "default",
+                   areaName: "Admin",
                    pattern: "{controller=Admin}/{action=Login}");
                 endpoints.MapControllers();
 

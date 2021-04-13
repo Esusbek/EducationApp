@@ -23,34 +23,12 @@
             <th class="edition-type">
                 <a href="javascript:void(0);" class="table-head">Type</a>
                 <div id="checkboxes">
-
-                    @if (Model.GetBook)
-                    {
-                        <input type="checkbox" checked name="GetBook" id="GetBook" value="true" />
-                    }
-                    else
-                    {
-                        <input type="checkbox" name="GetBook" id="GetBook" value="true" />
-                    }
-                    <label for="GetBook">Book</label>
-                    @if (Model.GetNewspaper)
-                    {
-                        <input type="checkbox" checked name="GetNewspaper" id="GetNewspaper" value="true" />
-                    }
-                    else
-                    {
-                        <input type="checkbox" name="GetNewspaper" id="GetNewspaper" value="true" />
-                    }
-                    <label for="GetNewspaper">Newspaper</label>
-                    @if (Model.GetJournal)
-                    {
-                        <input type="checkbox" checked name="GetJournal" id="GetJournal" value="true" />
-                    }
-                    else
-                    {
-                        <input type="checkbox" name="GetJournal" id="GetJournal" value="true" />
-                    }
-                    <label for="GetJournal">Journal</label>
+                    @Html.CheckBoxFor(model => model.GetBook)
+                    @Html.LabelFor(model => model.GetBook, Enums.PrintingEditionType.Book.ToString())
+                    @Html.CheckBoxFor(model => model.GetNewspaper)
+                    @Html.LabelFor(model => model.GetNewspaper, Enums.PrintingEditionType.Newspaper.ToString())
+                    @Html.CheckBoxFor(model => model.GetJournal)
+                    @Html.LabelFor(model => model.GetJournal, Enums.PrintingEditionType.Journal.ToString())
                 </div>
             </th>
             <th class="edition-authors"><a href="javascript:void(0);" class="table-head">Authors</a></th>
@@ -89,17 +67,17 @@
     <div class="filler"></div>
     @Html.ActionLink("previous page", "PrintingEditions", "Admin", new
     {
-        page = Model.CurrentPage - 1,
+        page = Model.Page - 1,
     ascending = Model.Ascending,
     sortBy = Model.SortBy,
     getBook = Model.GetBook,
     getNewspaper = Model.GetNewspaper,
     getJournal = Model.GetJournal
 }, new { id = "previousPage" })
-    <span>Page @Model.CurrentPage/@Model.LastPage</span>
+    <span>Page @Model.Page/@Model.LastPage</span>
     @Html.ActionLink("next page", "PrintingEditions", "Admin", new
     {
-        page = Model.CurrentPage + 1,
+        page = Model.Page + 1,
     ascending = Model.Ascending,
     sortBy = Model.SortBy,
     getBook = Model.GetBook,
@@ -107,44 +85,35 @@
     getJournal = Model.GetJournal
 }, new { id = "nextPage" })
 </div>
+<div class='modal fade' name='dynamiccustommodal' id='1' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='1Label'>
+    <div class='modal-dialog' style="max-width:700px">
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h4 class='modal-title' id="modal-title"></h4>
+            </div>
+            <div class='modal-body'>
+                <div class='row'>
+                    <div class='col-xs-12 col-md-12 col-sm-12 col-lg-12' id='modal-body'>
+                    </div>
+                </div>
+            </div>
+            <div class='modal-footer bg-default'>
+                <div class='col-xs-12 col-sm-12 col-lg-12 modal-buttons' id='modal-buttons'>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section scripts{
     <script>
         var model = @Html.Raw(Json.Serialize(Model));
         var BstrapModal = function (title, body, buttons) {
-            var GetModalStructure = function () {
-                var that = this;
-                that.Id = BstrapModal.Id = Math.random();
-                var buttonshtml = `<button type='button' class='btn ${buttons[0].Css}' name='btn${that.Id}'>${buttons[0].Value}</button>`;
-                for (var i = 1; i < buttons.length; i++) {
-                    buttonshtml += `<div class="filler"></div><button type='button' class='btn ${buttons[i].Css}' name='btn${that.Id}'>${buttons[i].Value}</button>`;
-                }
-                return `<div class='modal fade' name='dynamiccustommodal' id='${that.Id}\
-' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='${that.Id}Label'>\
-    <div class='modal-dialog' style="max-width:700px">\
-        <div class='modal-content'>\
-            <div class='modal-header'>\
-                <h4 class='modal-title'>${title}</h4>\
-            </div>\
-            <div class='modal-body'>\
-                <div class='row'>\
-                    <div class='col-xs-12 col-md-12 col-sm-12 col-lg-12'>\
-                        ${body}\
-                    </div>\
-                </div>
-            </div>
-            <div class='modal-footer bg-default'>
-                <div class='col-xs-12 col-sm-12 col-lg-12 modal-buttons'>\
-                    ${buttonshtml}\
-                 </div>
-            </div>
-        </div>
-    </div>
-</div>`;
-            }();
+            
             BstrapModal.Delete = function () {
-                var modals = document.getElementsByName("dynamiccustommodal");
-                if (modals.length > 0) document.body.removeChild(modals[0]);
+                $("#modal-title").empty();
+                $("#modal-body").empty();
+                $("#modal-buttons").empty();
             };
             BstrapModal.Close = function () {
                 $(document.getElementById(BstrapModal.Id)).modal('hide');
@@ -152,7 +121,15 @@
             };
             this.Show = function () {
                 BstrapModal.Delete();
-                document.body.appendChild($(GetModalStructure)[0]);
+                BstrapModal.Id = 1;
+                $("#modal-title").append(title);
+                $("#modal-body").append(body);
+                var buttonshtml = `<button type='button' class='btn ${buttons[0].Css}' name='btn1'>${buttons[0].Value}</button>`;
+                for (var i = 1; i < buttons.length; i++) {
+                    buttonshtml += `<div class="filler"></div><button type='button' class='btn ${buttons[i].Css}' name='btn1'>${buttons[i].Value}</button>`;
+                }
+                $("#modal-buttons").append(buttonshtml);
+                
                 var btns = document.querySelectorAll(`button[name='btn${BstrapModal.Id}']`);
                 for (var i = 0; i < btns.length; i++) {
                     btns[i].addEventListener("click", buttons[i].Callback || BstrapModal.Close);
@@ -162,7 +139,6 @@
         };
         function editionModal(id) {
             var edition = model.printingEditions.find(edition => edition.id === +id);
-            console.log(edition);
             var title = `Editing ${edition.title}`;
             var body = `<form action="EditEdition" method="post" id="editionEdit">\
     <input type="hidden" value="${edition.id}" name="id"/>
@@ -194,7 +170,7 @@
             body += `\
     </select>\
     <label for="price">Price</label>\
-    <input type="number" min="0.0" value="${edition.price}" placeholder="0.00" name="price" id="price" step="0.01"/>\
+    <input type="text" value="${edition.price}" name="price" id="price" pattern="^\d+(,\d{1,2})?$"/>\
     <label for="currency">Currency</label>\
     <select id="currency" name="currency">
         <option selected value="1">USD</option>
@@ -245,7 +221,7 @@
             body += `\
     </select>\
     <label for="price">Price</label>\
-    <input type="number" min="0" value="0.00" placeholder="0.00" name="price" id="price" step="0.01"/>\
+    <input type="text" placeholder="0.00" name="price" id="price" pattern="^\d+(,\d{1,2})?$"/>\
     <label for="currency">Currency</label>\
     <select id="currency" name="currency">
         <option selected value="1">USD</option>
@@ -321,10 +297,10 @@
                 }
             }
 
-            if (@Model.CurrentPage< 2) {
+            if (@Model.Page< 2) {
                 $('#previousPage').addClass('disabled')
             }
-            if (@Model.CurrentPage>=@Model.LastPage) {
+            if (@Model.Page>=@Model.LastPage) {
                 $('#nextPage').addClass('disabled')
             }
             var links = document.getElementsByClassName('sort-by');
@@ -333,7 +309,7 @@
                     if ('@Model.Ascending.ToString().ToLower()' === 'true') {
                         links[i].classList.add('ascending-sort');
                     }
-                    else {
+                    if ('@Model.Ascending.ToString().ToLower()' === 'false') {
                         links[i].classList.add('descending-sort');
                     }
                 }
@@ -395,7 +371,7 @@
                         page: '@Constants.DEFAULTPAGE'
                     });
                 }
-                else {
+                if ('@Model.SortBy' !== text) {
                     reloadWithQueryStringVars({
                         getBook: '@Model.GetBook.ToString().ToLower()',
                         getJournal: '@Model.GetJournal.ToString().ToLower()',

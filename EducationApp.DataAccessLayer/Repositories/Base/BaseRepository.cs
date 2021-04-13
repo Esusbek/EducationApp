@@ -27,9 +27,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
         {
             return _dbSet.ToList();
         }
-        public virtual List<T> Get(Expression<Func<T, bool>> filter = null,
-            string field = null, bool ascending = true,
-            bool getRemoved = false)
+        public virtual List<T> Get(Expression<Func<T, bool>> filter = null,string field = null, bool ascending = true,bool getRemoved = false)
         {
             IQueryable<T> query = _dbSet;
             if (!getRemoved)
@@ -40,7 +38,6 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             {
                 query = query.Where(filter);
             }
-            var test = query;
             if (field is not null)
             {
                 query = query.OrderBy(field, ascending);

@@ -7,7 +7,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
     public class UsersViewModel
     {
         public List<UserModel> Users { get; set; }
-        public int CurrentPage { get; set; }
+        public int Page { get; set; }
         public int LastPage { get; set; }
         public string SearchString { get; set; }
         public bool GetBlocked { get; set; }
@@ -17,7 +17,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
         {
             GetUnblocked = true;
             GetBlocked = true;
-            CurrentPage = Constants.DEFAULTPAGE;
+            Page = Constants.DEFAULTPAGE;
             SearchString = "";
         }
     }

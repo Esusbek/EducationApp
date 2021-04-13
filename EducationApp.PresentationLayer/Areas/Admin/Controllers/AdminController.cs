@@ -67,12 +67,12 @@ namespace EducationApp.PresentationLayer.Controllers
         }
 
         [HttpGet]
-        public IActionResult Users([FromQuery] UsersViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult Users([FromQuery] UsersViewModel model)
         {
             return View(new UsersViewModel
             {
-                Users = _userService.GetUsers(model.GetBlocked, model.GetUnblocked, model.SearchString, page),
-                CurrentPage = page,
+                Users = _userService.GetUsers(model.GetBlocked, model.GetUnblocked, model.SearchString, model.Page),
+                Page = model.Page,
                 LastPage = _userService.GetLastPage(model.GetBlocked, model.GetUnblocked, model.SearchString),
                 GetBlocked = model.GetBlocked,
                 GetUnblocked = model.GetUnblocked,
@@ -85,12 +85,12 @@ namespace EducationApp.PresentationLayer.Controllers
             return Ok();
         }
         [HttpGet]
-        public IActionResult PrintingEditions([FromQuery] PrintingEditionsViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult PrintingEditions([FromQuery] PrintingEditionsViewModel model)
         {
             return View(new PrintingEditionsViewModel
             {
                 PrintingEditions = _printingEditionService.GetPrintingEditionsAdmin(model.GetBook, model.GetNewspaper, model.GetJournal, model.SortBy, model.Ascending),
-                CurrentPage = page,
+                Page = model.Page,
                 LastPage = _printingEditionService.GetLastPage(model.GetBook, model.GetNewspaper, model.GetJournal),
                 Ascending = model.Ascending,
                 Authors = _authorService.GetAllAuthors(),
@@ -101,12 +101,12 @@ namespace EducationApp.PresentationLayer.Controllers
             });
         }
         [HttpGet]
-        public IActionResult Orders([FromQuery] OrdersViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult Orders([FromQuery] OrdersViewModel model)
         {
             return View(new OrdersViewModel
             {
-                Orders = _orderService.GetAllOrders(model.GetPaid, model.GetUnpaid, model.SortBy, model.Ascending, page),
-                CurrentPage = page,
+                Orders = _orderService.GetAllOrders(model.GetPaid, model.GetUnpaid, model.SortBy, model.Ascending, model.Page),
+                Page = model.Page,
                 LastPage = _orderService.GetLastPage(model.GetPaid, model.GetUnpaid),
                 GetUnpaid = model.GetUnpaid,
                 GetPaid = model.GetPaid,
@@ -115,12 +115,12 @@ namespace EducationApp.PresentationLayer.Controllers
             });
         }
         [HttpGet]
-        public IActionResult Authors([FromQuery] AuthorsViewModel model, [FromQuery] int page = Constants.DEFAULTPAGE)
+        public IActionResult Authors([FromQuery] AuthorsViewModel model)
         {
             return View(new AuthorsViewModel
             {
-                Authors = _authorService.GetAuthorsFiltered(null, model.SortBy, model.Ascending, page: page),
-                CurrentPage = page,
+                Authors = _authorService.GetAuthorsFiltered(null, model.SortBy, model.Ascending, page: model.Page),
+                Page = model.Page,
                 LastPage = _authorService.GetLastPage(),
                 SortBy = model.SortBy,
                 Ascending = model.Ascending
@@ -155,25 +155,18 @@ namespace EducationApp.PresentationLayer.Controllers
             return View("Error", Constants.VALIDATIONERROR);
         }
         [HttpPost]
-        public IActionResult EditEdition([FromForm] PrintingEditionModel printingEdition, [FromForm] string price)
+        public IActionResult EditEdition([FromForm] PrintingEditionModel printingEdition)
         {
-            decimal priceDecimal = decimal.Parse(price, CultureInfo.InvariantCulture);
-            printingEdition.Price = priceDecimal;
-            ModelState.Clear();
-            if (TryValidateModel(printingEdition))
+            if (!ModelState.IsValid)
             {
-                _printingEditionService.UpdatePrintingEdition(printingEdition);
-                return RedirectToAction("PrintingEditions");
+                return View("Error", Constants.VALIDATIONERROR);
             }
-            
-            return View("Error", Constants.VALIDATIONERROR);
+            _printingEditionService.UpdatePrintingEdition(printingEdition);
+            return RedirectToAction("PrintingEditions");
         }
-        public IActionResult AddEdition([FromForm] PrintingEditionModel printingEdition, [FromForm] string price)
+        public IActionResult AddEdition([FromForm] PrintingEditionModel printingEdition)
         {
-            decimal priceDecimal = decimal.Parse(price, CultureInfo.InvariantCulture);
-            printingEdition.Price = priceDecimal;
-            ModelState.Clear();
-            if (TryValidateModel(printingEdition))
+            if (!ModelState.IsValid)
             {
                 _printingEditionService.AddPrintingEdition(printingEdition);
                 return RedirectToAction("PrintingEditions");

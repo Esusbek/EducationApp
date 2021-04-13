@@ -160,7 +160,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 dbUsers = dbUsers.Where(user => $"{user.FirstName} {user.LastName}".ToLower().Contains(searchString.ToLower())).ToList();
             }
-            var lastPage = (int)Math.Ceiling(dbUsers.Count / (double)Constants.ORDERPAGESIZE);
+            int lastPage = (int)Math.Ceiling(dbUsers.Count / (double)Constants.ORDERPAGESIZE);
             return lastPage;
         }
 
@@ -189,7 +189,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 await _userManager.DeleteAsync(newUser);
                 throw new CustomApiException(HttpStatusCode.Conflict, Constants.FAILEDTOCREATEUSERERROR);
             }
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+            string code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
             var uriBuilder = new UriBuilder
             {
                 Scheme = _urlConfig.Scheme,
@@ -201,7 +201,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             query["userId"] = newUser.Id;
             query["code"] = code;
             uriBuilder.Query = query.ToString();
-            var callbackUrl = uriBuilder.ToString();
+            string callbackUrl = uriBuilder.ToString();
             await _email.SendEmailAsync(new System.Net.Mail.MailAddress(newUser.Email),
                 Constants.DEFAULTEMAILCONFIRMATION,
                 string.Format(Constants.DEFAULTEMAILCONFIRMATIONBODY, callbackUrl));
@@ -246,7 +246,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
             }
-            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            string code = await _userManager.GeneratePasswordResetTokenAsync(user);
             var uriBuilder = new UriBuilder
             {
                 Scheme = _urlConfig.Scheme,
@@ -258,7 +258,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             query["userId"] = user.Id;
             query["code"] = code;
             uriBuilder.Query = query.ToString();
-            var callbackUrl = uriBuilder.ToString();
+            string callbackUrl = uriBuilder.ToString();
             await _email.SendEmailAsync(new System.Net.Mail.MailAddress(user.Email),
                 Constants.DEFAULTPASSWORDRESET,
                 string.Format(Constants.DEFAULTPASSWORDRESETBODY, callbackUrl));

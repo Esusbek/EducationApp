@@ -10,7 +10,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using Dapper;
 using EducationApp.DataAccessLayer.Extensions;
-using Dapper.Contrib.Extensions;
+using EducationApp.DataAccessLayer.FilterModels;
+using EducationApp.Shared.Enums;
 
 namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
 {
@@ -23,12 +24,20 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
 
-        public List<OrderEntity> Get(Expression<Func<OrderEntity, bool>> filter = null,
+        public List<OrderEntity> Get(OrderFilterModel orderFilter = null,
             string field = null, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
         {
             string sql = "select o.*, u.* from Orders o inner join AspNetUsers u on o.UserId=u.Id";
             using (SqlConnection connection = new(_connectionString))
             {
+                Expression<Func<OrderEntity, bool>> filter = null;
+                if (orderFilter is not null)
+                {
+                    filter = order => ((orderFilter.GetPaid && order.Status == Enums.OrderStatusType.Paid)
+                    || (orderFilter.GetUnpaid && order.Status == Enums.OrderStatusType.Unpaid)) &&
+                    (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId == orderFilter.UserId) &&
+                    (orderFilter.PaymentId == default || order.PaymentId == orderFilter.PaymentId);
+                }
                 var orders = connection.Query<OrderEntity, UserEntity, OrderEntity>(sql, (OrderEntity, UserEntity) =>
                 {
                     OrderEntity.User = UserEntity;
@@ -53,8 +62,16 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
             
         }
 
-        public List<OrderEntity> GetAll(Expression<Func<OrderEntity, bool>> filter = null, bool getRemoved = false)
+        public List<OrderEntity> GetAll(OrderFilterModel orderFilter = null, bool getRemoved = false)
         {
+            Expression<Func<OrderEntity, bool>> filter = null;
+            if (orderFilter is not null)
+            {
+                filter = order => ((orderFilter.GetPaid && order.Status == Enums.OrderStatusType.Paid)
+                || (orderFilter.GetUnpaid && order.Status == Enums.OrderStatusType.Unpaid)) &&
+                (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId == orderFilter.UserId) &&
+                (orderFilter.PaymentId == default || order.PaymentId == orderFilter.PaymentId);
+            }
             string sql = "select o.*, u.* from Orders o inner join AspNetUsers u on o.UserId=u.Id";
             using (SqlConnection connection = new(_connectionString))
             {

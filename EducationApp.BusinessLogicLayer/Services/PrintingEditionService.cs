@@ -3,6 +3,7 @@ using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
+using EducationApp.DataAccessLayer.FilterModels;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
 using EducationApp.Shared.Enums;
@@ -34,7 +35,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             _validator.ValidatePrintingEdition(printingEdition);
             var dbPrintingEdition = _mapper.Map<PrintingEditionEntity>(printingEdition);
             dbPrintingEdition.Status = Enums.PrintingEditionStatusType.InStock;
-            var authors = _authorRepository.GetAll(author => printingEdition.Authors.Contains(author.Name));
+            var authors = _authorRepository.GetAll(new AuthorFilterModel { EditionAuthors=printingEdition.Authors});
             dbPrintingEdition.Authors = new List<AuthorEntity>(authors);
             _printingEditionRepository.Insert(dbPrintingEdition);
         }
@@ -47,7 +48,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
             }
             _mapper.Map(printingEdition, dbPrintingEdition);
-            var authors = _authorRepository.GetAll(author => printingEdition.Authors.Contains(author.Name));
+            var authors = _authorRepository.GetAll(new AuthorFilterModel { EditionAuthors = printingEdition.Authors });
             dbPrintingEdition.Authors.Clear();
             var dbAuthors = dbPrintingEdition.Authors.ToList();
             dbAuthors.AddRange(authors);
@@ -65,13 +66,14 @@ namespace EducationApp.BusinessLogicLayer.Services
             _printingEditionRepository.Delete(dbPrintingEdition);
 
         }
-        public List<PrintingEditionModel> GetPrintingEditionsAdmin(bool getBook = true, bool getNewspaper = true, bool getJournal = true,
-            string field = Constants.DEFAULTEDITIONSORT, bool orderAsc = false, int page = Constants.DEFAULTPAGE,
-            bool getRemoved = false)
+        public List<PrintingEditionModel> GetPrintingEditionsAdmin(bool getBook = true, bool getNewspaper = true, bool getJournal = true, string field = Constants.DEFAULTEDITIONSORT, bool orderAsc = false, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
         {
-            Expression<Func<PrintingEditionEntity, bool>> filter = edition => (getBook && edition.Type == Enums.PrintingEditionType.Book)
-            || (getNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
-            || (getJournal && edition.Type == Enums.PrintingEditionType.Journal);
+            var filter = new PrintingEditionFilterModel
+            {
+                GetBook = getBook,
+                GetJournal = getJournal,
+                GetNewspaper = getNewspaper
+            };
             var dbPrintingEditions = _printingEditionRepository.Get(filter, field, orderAsc, getRemoved, page, Constants.ADMINPRINTINGEDITIONPAGESIZE).ToList();
             var printingEditions = new List<PrintingEditionModel>();
             foreach (var printingEdition in dbPrintingEditions)
@@ -82,21 +84,9 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             return printingEditions;
         }
-        public PrintingEditionResponseModel GetPrintingEditionsFiltered(PrintingEditionFilterModel printingEditionFilter = null,
-            string field = Constants.DEFAULTEDITIONSORT, bool orderAsc = false, int page = Constants.DEFAULTPAGE,
-            bool getRemoved = false, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
+        public PrintingEditionResponseModel GetPrintingEditionsFiltered(PrintingEditionFilterModel printingEditionFilter = null, string field = Constants.DEFAULTEDITIONSORT, bool orderAsc = false, int page = Constants.DEFAULTPAGE, bool getRemoved = false, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
-            Expression<Func<PrintingEditionEntity, bool>> filter = null;
-
-            if (printingEditionFilter is not null)
-            {
-                filter = edition => (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
-                (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
-                (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
-                (printingEditionFilter.Type == default || printingEditionFilter.Type.Contains(edition.Type));
-            }
-
-            var dbPrintingEditions = _printingEditionRepository.Get(filter, field, orderAsc, getRemoved, page, pageSize).ToList();
+            var dbPrintingEditions = _printingEditionRepository.Get(printingEditionFilter, field, orderAsc, getRemoved, page, pageSize).ToList();
             var printingEditions = new List<PrintingEditionModel>();
             foreach (var printingEdition in dbPrintingEditions)
             {
@@ -114,25 +104,23 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         private PrintingEditionsInfoModel GetInfo(PrintingEditionFilterModel printingEditionFilter = null, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
-            Expression<Func<PrintingEditionEntity, bool>> filter = null;
-            if (printingEditionFilter is not null)
+            
+            var dbPrintingEditions = _printingEditionRepository.GetAll(printingEditionFilter).ToList();
+            int lastPage = (int)Math.Ceiling(dbPrintingEditions.Count / (double)pageSize);
+            var filter = new PrintingEditionFilterModel
             {
-                filter = edition => (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
-                (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
-                (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
-                (printingEditionFilter.Type == default || printingEditionFilter.Type.Contains(edition.Type));
-            }
-            var dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
-            var lastPage = (int)Math.Ceiling(dbPrintingEditions.Count / (double)pageSize);
-            if (printingEditionFilter is not null)
-            {
-                filter = edition => (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
-                (printingEditionFilter.Type == default || printingEditionFilter.Type.Contains(edition.Type));
-            }
+                Title = printingEditionFilter.Title,
+                Type = printingEditionFilter.Type
+            };
             dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
-            var min = dbPrintingEditions.Aggregate((currentMin, x) => (currentMin == null || x.Price < currentMin.Price ? x : currentMin)).Price;
-            var max = dbPrintingEditions.Aggregate((currentMax, x) => (currentMax == null || x.Price > currentMax.Price ? x : currentMax)).Price;
 
+            decimal min = 0;
+            decimal max = 0;
+            if(dbPrintingEditions.Any())
+            {
+                min = dbPrintingEditions.Aggregate((currentMin, x) => (currentMin == null || x.Price < currentMin.Price ? x : currentMin)).Price;
+                max = dbPrintingEditions.Aggregate((currentMax, x) => (currentMax == null || x.Price > currentMax.Price ? x : currentMax)).Price;
+            }
             return new PrintingEditionsInfoModel
             {
                 MaxPrice = max,
@@ -142,11 +130,14 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public int GetLastPage(bool getBook = true, bool getNewspaper = true, bool getJournal = true)
         {
-            Expression<Func<PrintingEditionEntity, bool>> filter = edition => (getBook && edition.Type == Enums.PrintingEditionType.Book)
-            || (getNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
-            || (getJournal && edition.Type == Enums.PrintingEditionType.Journal);
+            var filter = new PrintingEditionFilterModel
+            {
+                GetBook = getBook,
+                GetJournal = getJournal,
+                GetNewspaper = getNewspaper
+            };
             var dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
-            var lastPage = (int)Math.Ceiling(dbPrintingEditions.Count / (double)Constants.ADMINPRINTINGEDITIONPAGESIZE);
+            int lastPage = (int)Math.Ceiling(dbPrintingEditions.Count / (double)Constants.ADMINPRINTINGEDITIONPAGESIZE);
 
             return lastPage;
         }
@@ -161,19 +152,21 @@ namespace EducationApp.BusinessLogicLayer.Services
                 Info = info
             };
         }
-        public List<PrintingEditionEntity> GetPrintingEditionsRange(Expression<Func<PrintingEditionEntity, bool>> filter = null, bool getRemoved = false)
+        public List<PrintingEditionEntity> GetPrintingEditionsRange(PrintingEditionFilterModel printingEditionFilter = null, bool getRemoved = false)
         {
-            var dbPrintingEditions = _printingEditionRepository.GetAll(filter, getRemoved);
+            var dbPrintingEditions = _printingEditionRepository.GetAll(printingEditionFilter, getRemoved);
             return dbPrintingEditions.ToList();
         }
         public PrintingEditionModel GetPrintingEdition(int id)
         {
-            var result = _mapper.Map<PrintingEditionModel>(_printingEditionRepository.GetById(id));
+            var edition = _printingEditionRepository.GetById(id);
+            var result = _mapper.Map<PrintingEditionModel>(edition);
             return result;
         }
         public PrintingEditionModel GetPrintingEditionByTitle(string title)
         {
-            var result = _mapper.Map<PrintingEditionModel>(_printingEditionRepository.Get(edition => edition.Title == title).First());
+            var edition = _printingEditionRepository.Get(new PrintingEditionFilterModel { Title = title}).FirstOrDefault();
+            var result = _mapper.Map<PrintingEditionModel>(edition);
             return result;
         }
     }

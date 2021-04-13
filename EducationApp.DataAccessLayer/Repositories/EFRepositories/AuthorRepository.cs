@@ -1,5 +1,6 @@
 ﻿using EducationApp.DataAccessLayer.AppContext;
 using EducationApp.DataAccessLayer.Entities;
+using EducationApp.DataAccessLayer.FilterModels;
 using EducationApp.DataAccessLayer.Repositories.Base;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
@@ -16,14 +17,26 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             : base(dbContext)
         {
         }
-        public List<AuthorEntity> Get(Expression<Func<AuthorEntity, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
+        public List<AuthorEntity> Get(AuthorFilterModel authorFilter = null, string field = null, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
         {
+            Expression<Func<AuthorEntity, bool>> filter = null;
+            if (authorFilter is not null)
+            {
+                filter = author => (string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name)) &&
+                (!authorFilter.EditionAuthors.Any() || authorFilter.EditionAuthors.Contains(author.Name));
+            }
             return base.Get(filter, field, ascending, getRemoved)
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.AUTHORPAGESIZE)
                 .Take(Constants.AUTHORPAGESIZE).ToList();
         }
-        public List<AuthorEntity> GetAll(Expression<Func<AuthorEntity, bool>> filter = null, bool getRemoved = false)
+        public List<AuthorEntity> GetAll(AuthorFilterModel authorFilter = null, bool getRemoved = false)
         {
+            Expression<Func<AuthorEntity, bool>> filter = null;
+            if (authorFilter is not null)
+            {
+                filter = author => (string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name)) &&
+                (!authorFilter.EditionAuthors.Any() || authorFilter.EditionAuthors.Contains(author.Name));
+            }
             return base.Get(filter, getRemoved: getRemoved);
         }
 

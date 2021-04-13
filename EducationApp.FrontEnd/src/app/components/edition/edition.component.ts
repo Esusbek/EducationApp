@@ -25,9 +25,9 @@ export class EditionComponent implements OnInit {
   public selectedQuantity: number;
   public currentBook: PrintingEditionModel;
   public id: number;
-  public Currency = Currency;
+  public currency = Currency;
 
-  constructor(private store: Store<{ Books: PrintingEditionState }>, private route: ActivatedRoute, private modalService: NgbModal, private router: Router) {
+  public constructor(private store: Store<{ Books: PrintingEditionState }>, private route: ActivatedRoute, private modalService: NgbModal, private router: Router) {
     store.select('Books').subscribe(value => {
       this.books = value.books;
     });
@@ -43,10 +43,10 @@ export class EditionComponent implements OnInit {
       this.router.navigate(['/book-list']);
     }
   }
-  ngOnInit(): void {
+  public ngOnInit(): void {
 
   }
-  addToCart() {
+  public addToCart() {
     this.store.dispatch(addToCart({
       amount: this.selectedQuantity, subTotal: this.currentBook.price * this.selectedQuantity,
       printingEditionId: this.currentBook.id, price: this.currentBook.price, currency: this.currentBook.currency,
@@ -54,7 +54,7 @@ export class EditionComponent implements OnInit {
     }))
     this.modalService.open(CartConfirmComponent);
   }
-  getImage(type: number): string {
+  public getImage(type: number): string {
     return `assets/img/${PrintingEditionType[type]}.png`
   }
 }

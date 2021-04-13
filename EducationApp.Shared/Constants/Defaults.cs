@@ -28,5 +28,6 @@
         public const string ROLECLAIMNAME = "role";
         public const string MAPPROFILEASSEMBLYNAME = "EducationApp.BusinessLogicLayer";
         public const int ORDERBYPARAMCOUNT = 2;
+        public const string DEFAULTSORTORDER = "asc";
     }
 }

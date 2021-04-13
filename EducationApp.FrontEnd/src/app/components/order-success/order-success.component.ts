@@ -9,9 +9,9 @@ import { payOrder } from 'src/app/store/cart/cart.actions';
 })
 export class OrderSuccessComponent implements OnInit {
 
-  constructor(private store: Store) { }
+  public constructor(private store: Store) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.store.dispatch(payOrder());
   }
 

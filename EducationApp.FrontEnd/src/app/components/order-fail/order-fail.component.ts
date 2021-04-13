@@ -7,9 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OrderFailComponent implements OnInit {
 
-  constructor() { }
+  public constructor() { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
 
 }
