@@ -47,7 +47,7 @@
                                 <span class="slider round"></span>
                             </label>
                         }
-                        else
+                        @if (!user.IsRemoved)
                         {
                             <label class="switch">
                                 <input class="ban-switch" type="checkbox" checked id=@user.Id>
@@ -55,7 +55,7 @@
                             </label>
                         }
                     }
-                    else
+                    @if (user.UserName == User.Identity.Name)
                     {
                         <label class="switch">
                             <input class="ban-switch-admin" type="checkbox" checked id=@user.Id>
@@ -68,11 +68,11 @@
                     {
                         <button class="edit-open" onclick="userModal('@user.Id')"></button>
                     }
-                    else
+                    @if (user.UserName == User.Identity.Name)
                     {
-                        <button class="edit-open"  onclick="adminEdit()"></button>
+                        <button class="edit-open" onclick="adminEdit()"></button>
                     }
-                    
+
                 </td>
             </tr>
         }

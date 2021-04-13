@@ -48,7 +48,7 @@
                     </div>
                 </div>
             }
-            else
+            @if (!User.Identity.IsAuthenticated)
             {
                 <div class="links">
                     <a href="@Url.Action("Login", "Admin")">Login</a>
