@@ -167,14 +167,14 @@ namespace EducationApp.BusinessLogicLayer.Services
             int lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
             return lastPage;
         }
-        public List<OrderModel> GetAllOrders(bool getPaid = true, bool getUnpaid = true, string field = null, bool ascending = true, int page = Constants.DEFAULTPAGE, bool getRemoved = true)
+        public List<OrderModel> GetAllOrders(bool getPaid = true, bool getUnpaid = true, string field = null, string ascending = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = true)
         {
             var filter = new OrderFilterModel
             {
                 GetPaid = getPaid,
                 GetUnpaid = getUnpaid
             };
-            var dbOrders = _orderRepository.Get(filter, field, ascending, getRemoved, page);
+            var dbOrders = _orderRepository.Get(filter, field, ascending == Constants.DEFAULTSORTORDER, getRemoved, page);
             var orders = new List<OrderModel>();
             var orderIds = dbOrders.Select(order => order.Id).ToList();
             var allItems = _itemRepository.Get(new OrderItemFilterModel { OrderIds = orderIds});

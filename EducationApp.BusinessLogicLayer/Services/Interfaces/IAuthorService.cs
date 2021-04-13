@@ -10,7 +10,7 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public void AddAuthor(AuthorModel author);
         public void UpdateAuthor(AuthorModel author);
         public void DeleteAuthor(AuthorModel author);
-        public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null, string field = null, bool ascending = true, int page = Constants.DEFAULTPAGE, bool getRemoved = false);
+        public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null, string field = null, string ascending = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = false);
         public int GetLastPage(AuthorFilterModel authorFilter = null, bool getRemoved = false);
         public List<AuthorModel> GetAuthors(int page = Constants.DEFAULTPAGE);
         public List<AuthorModel> GetAllAuthors();

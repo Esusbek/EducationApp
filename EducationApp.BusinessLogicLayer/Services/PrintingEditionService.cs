@@ -66,7 +66,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             _printingEditionRepository.Delete(dbPrintingEdition);
 
         }
-        public List<PrintingEditionModel> GetPrintingEditionsAdmin(bool getBook = true, bool getNewspaper = true, bool getJournal = true, string field = Constants.DEFAULTEDITIONSORT, bool orderAsc = false, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
+        public List<PrintingEditionModel> GetPrintingEditionsAdmin(bool getBook = true, bool getNewspaper = true, bool getJournal = true, string field = Constants.DEFAULTEDITIONSORT, string orderAsc = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
         {
             var filter = new PrintingEditionFilterModel
             {
@@ -74,7 +74,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 GetJournal = getJournal,
                 GetNewspaper = getNewspaper
             };
-            var dbPrintingEditions = _printingEditionRepository.Get(filter, field, orderAsc, getRemoved, page, Constants.ADMINPRINTINGEDITIONPAGESIZE).ToList();
+            var dbPrintingEditions = _printingEditionRepository.Get(filter, field, orderAsc == Constants.DEFAULTSORTORDER, getRemoved, page, Constants.ADMINPRINTINGEDITIONPAGESIZE).ToList();
             var printingEditions = new List<PrintingEditionModel>();
             foreach (var printingEdition in dbPrintingEditions)
             {

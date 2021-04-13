@@ -15,38 +15,16 @@
             <th><a href="javascript:void(0);" class="table-head">Email</a></th>
             <th>
                 <a href="javascript:void(0);" class="table-head sort-by descending-sort">Name</a>
-                @if (string.IsNullOrWhiteSpace(Model.SearchString))
-                {
-                    <input type="text" placeholder="Search name" id="searchString" value="" />
-                }
-                else
-                {
-                    <input type="text" placeholder="Search name" id="searchString" value=@Model.SearchString />
-                }
+                @Html.TextBoxFor(model=>model.SearchString)
 
             </th>
             <th>
                 <a href="javascript:void(0);" class="table-head">Status</a>
                 <div id="checkboxes">
-
-                    @if (Model.GetBlocked)
-                    {
-                        <input type="checkbox" checked name="GetBlocked" id="GetBlocked" />
-                    }
-                    else
-                    {
-                        <input type="checkbox" name="GetBlocked" id="GetBlocked" />
-                    }
-                    <label for="GetBlocked">Blocked</label>
-                    @if (Model.GetUnblocked)
-                    {
-                        <input type="checkbox" checked name="GetUnblocked" id="GetUnblocked" />
-                    }
-                    else
-                    {
-                        <input type="checkbox" name="GetUnblocked" id="GetUnblocked" />
-                    }
-                    <label for="GetUnblocked">Unblocked</label>
+                    @Html.CheckBoxFor(model => model.GetBlocked)
+                    @Html.LabelFor(model => model.GetBlocked, "Blocked")
+                    @Html.CheckBoxFor(model => model.GetUnblocked)
+                    @Html.LabelFor(model => model.GetUnblocked, "Unblocked")
                 </div>
             </th>
             <th></th>
@@ -241,7 +219,8 @@
                     }
                     newUrl = newUrl.substring(0, newUrl.length - 1);
                     window.location.href = newUrl;
-                } else {
+                }
+                if (!newQueryVars) {
                     window.location.href = location.href;
                 }
             }
@@ -292,15 +271,13 @@
                 link.preventDefault();
                 if ($(this).hasClass('disabled'))
                     return false;
-                else
-                    window.location.href = $(this).attr('href');
+                window.location.href = $(this).attr('href');
             });
             $('#nextPage').click(function (link) {
                 link.preventDefault();
                 if ($(this).hasClass('disabled'))
                     return false;
-                else
-                    window.location.href = $(this).attr('href');
+                window.location.href = $(this).attr('href');
             });
 
         });

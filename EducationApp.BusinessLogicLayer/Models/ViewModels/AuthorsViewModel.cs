@@ -10,12 +10,12 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
         public int Page { get; set; }
         public int LastPage { get; set; }
         public string SortBy { get; set; }
-        public bool Ascending { get; set; }
+        public string Ascending { get; set; }
         public AuthorsViewModel()
         {
             Page = Constants.DEFAULTPAGE;
             SortBy = Constants.DEFAULTAUTHORSORT;
-            Ascending = true;
+            Ascending = Constants.DEFAULTSORTORDER;
         }
     }
 }

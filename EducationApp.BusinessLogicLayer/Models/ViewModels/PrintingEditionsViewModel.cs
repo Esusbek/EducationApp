@@ -14,7 +14,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
         public bool GetNewspaper { get; set; }
         public bool GetJournal { get; set; }
         public string SortBy { get; set; }
-        public bool Ascending { get; set; }
+        public string Ascending { get; set; }
         public List<AuthorModel> Authors { get; set; }
         public PrintingEditionsViewModel()
         {
@@ -23,7 +23,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
             GetNewspaper = true;
             GetJournal = true;
             SortBy = Constants.DEFAULTEDITIONSORT;
-            Ascending = true;
+            Ascending = Constants.DEFAULTSORTORDER;
             Authors = new List<AuthorModel>();
         }
     }

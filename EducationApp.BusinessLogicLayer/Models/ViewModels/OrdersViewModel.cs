@@ -12,7 +12,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
         public bool GetPaid { get; set; }
         public bool GetUnpaid { get; set; }
         public string SortBy { get; set; }
-        public bool Ascending { get; set; }
+        public string Ascending { get; set; }
 
         public OrdersViewModel()
         {
@@ -20,7 +20,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
             GetPaid = true;
             GetUnpaid = true;
             SortBy = Constants.DEFAULTORDERSORT;
-            Ascending = true;
+            Ascending = Constants.DEFAULTSORTORDER;
         }
     }
 }

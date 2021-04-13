@@ -204,7 +204,8 @@
                     }
                     newUrl = newUrl.substring(0, newUrl.length - 1);
                     window.location.href = newUrl;
-                } else {
+                }
+                if (!newQueryVars) {
                     window.location.href = location.href;
                 }
             }
@@ -218,10 +219,10 @@
             var links = document.getElementsByClassName('sort-by');
             for (var i = 0; i < links.length; i++) {
                 if (links[i].innerHTML === '@Model.SortBy') {
-                    if ('@Model.Ascending.ToString().ToLower()' === 'true') {
+                    if ('@Model.Ascending' === 'asc') {
                         links[i].classList.add('ascending-sort');
                     }
-                    else {
+                    if ('@Model.Ascending' === 'desc') {
                         links[i].classList.add('descending-sort');
                     }
                 }
@@ -230,29 +231,30 @@
                 link.preventDefault();
                 if ($(this).hasClass('disabled'))
                     return false;
-                else
-                    window.location.href = $(this).attr('href');
+                window.location.href = $(this).attr('href');
             });
             $('#nextPage').click(function (link) {
                 link.preventDefault();
                 if ($(this).hasClass('disabled'))
                     return false;
-                else
-                    window.location.href = $(this).attr('href');
+                window.location.href = $(this).attr('href');
             });
             $('.sort-by').click(function (link) {
                 var text = $(link.target).text();
+                var ascending = 'asc';
+                if ('@Model.Ascending' === '@Constants.DEFAULTSORTORDER')
+                    ascending = 'desc';
                 if ('@Model.SortBy' === text) {
                     reloadWithQueryStringVars({
                         sortBy: text,
-                        ascending: '@((!Model.Ascending).ToString().ToLower())',
+                        ascending: ascending,
                         page: '@Constants.DEFAULTPAGE'
                     });
                 }
-                else {
+                if ('@Model.SortBy' !== text) {
                     reloadWithQueryStringVars({
                         sortBy: text,
-                        ascending: 'true',
+                        ascending: ascending,
                         page: '@Constants.DEFAULTPAGE'
                     });
                 }

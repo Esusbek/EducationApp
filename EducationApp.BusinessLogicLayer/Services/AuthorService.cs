@@ -60,10 +60,10 @@ namespace EducationApp.BusinessLogicLayer.Services
             dbAuthor.PrintingEditions.Clear();
             _authorRepository.Delete(dbAuthor);
         }
-        public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null, string field = null, bool ascending = true, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
+        public List<AuthorModel> GetAuthorsFiltered(AuthorFilterModel authorFilter = null, string field = null, string ascending = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
         {
             
-            var dbAuthors = _authorRepository.Get(authorFilter, field, ascending, getRemoved, page);
+            var dbAuthors = _authorRepository.Get(authorFilter, field, ascending == Constants.DEFAULTSORTORDER, getRemoved, page);
             var authors = _mapper.Map<List<AuthorModel>>(dbAuthors);
             return authors;
         }
