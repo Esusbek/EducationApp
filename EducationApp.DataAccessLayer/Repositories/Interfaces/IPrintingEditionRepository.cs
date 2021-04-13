@@ -9,6 +9,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Interfaces
     public interface IPrintingEditionRepository : IBaseRepository<PrintingEditionEntity>
     {
         public List<PrintingEditionEntity> Get(PrintingEditionFilterModel printingEditionFilter = null,string field = null, bool ascending = true,bool getRemoved = false,int page = Constants.DEFAULTPAGE, int pageSize = Constants.PRINTINGEDITIONPAGESIZE);
+        public PrintingEditionEntity GetOne(PrintingEditionFilterModel printingEditionFilter = null, string field = null, bool ascending = true, bool getRemoved = false);
         public List<PrintingEditionEntity> GetAll(PrintingEditionFilterModel printingEditionFilter = null,bool getRemoved = false);
         public void Update(PrintingEditionEntity printingEdition, AuthorEntity author = null);
     }

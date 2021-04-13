@@ -36,6 +36,22 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * pageSize)
                 .Take(pageSize).ToList();
         }
+        public PrintingEditionEntity GetOne(PrintingEditionFilterModel printingEditionFilter = null, string field = null, bool ascending = true, bool getRemoved = false)
+        {
+            Expression<Func<PrintingEditionEntity, bool>> filter = null;
+            if (printingEditionFilter is not null)
+            {
+                filter = edition => ((printingEditionFilter.GetBook && edition.Type == Enums.PrintingEditionType.Book)
+                || (printingEditionFilter.GetNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
+                || (printingEditionFilter.GetJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
+                (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
+                (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
+                (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
+                (!printingEditionFilter.Type.Any() || printingEditionFilter.Type.Contains(edition.Type)) &&
+                (!printingEditionFilter.EditionIds.Any() || printingEditionFilter.EditionIds.Contains(edition.Id));
+            }
+            return base.GetOne(filter, field, ascending, getRemoved);
+        }
         public List<PrintingEditionEntity> GetAll(PrintingEditionFilterModel printingEditionFilter = null,bool getRemoved = false)
         {
             Expression<Func<PrintingEditionEntity, bool>> filter = null;

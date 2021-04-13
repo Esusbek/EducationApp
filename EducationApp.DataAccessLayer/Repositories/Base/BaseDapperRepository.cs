@@ -37,9 +37,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
                 return result.ToList();
             }
         }
-        public virtual List<T> Get(Expression<Func<T, bool>> filter = null,
-            string field = null, bool ascending = true,
-            bool getRemoved = false)
+        public virtual List<T> Get(Expression<Func<T, bool>> filter = null,string field = null, bool ascending = true,bool getRemoved = false)
         {
             using (SqlConnection connection = new(_connectionString))
             {
@@ -60,7 +58,27 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
                 return query.ToList();
             }
         }
-        
+        public virtual T GetOne(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
+        {
+            using (SqlConnection connection = new(_connectionString))
+            {
+                var query = connection.GetAll<T>().AsQueryable();
+                if (!getRemoved)
+                {
+                    query = query.Where(entity => entity.IsRemoved == false);
+                }
+                if (filter is not null)
+                {
+                    query = query.Where(filter);
+                }
+
+                if (field is not null)
+                {
+                    query = query.OrderBy(field, ascending);
+                }
+                return query.FirstOrDefault();
+            }
+        }
         public virtual void Insert(T entity)
         {
             using (SqlConnection connection = new(_connectionString))

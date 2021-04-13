@@ -44,6 +44,23 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             }
             return query.ToList();
         }
+        public virtual T GetOne(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
+        {
+            IQueryable<T> query = _dbSet;
+            if (!getRemoved)
+            {
+                query = query.Where(entity => entity.IsRemoved == false);
+            }
+            if (filter is not null)
+            {
+                query = query.Where(filter);
+            }
+            if (field is not null)
+            {
+                query = query.OrderBy(field, ascending);
+            }
+            return query.FirstOrDefault();
+        }
         public virtual void Insert(T entity)
         {
             _dbSet.Add(entity);

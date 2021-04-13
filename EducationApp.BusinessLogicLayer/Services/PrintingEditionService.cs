@@ -165,7 +165,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public PrintingEditionModel GetPrintingEditionByTitle(string title)
         {
-            var edition = _printingEditionRepository.Get(new PrintingEditionFilterModel { Title = title}).FirstOrDefault();
+            var edition = _printingEditionRepository.GetOne(new PrintingEditionFilterModel { Title = title});
             var result = _mapper.Map<PrintingEditionModel>(edition);
             return result;
         }
