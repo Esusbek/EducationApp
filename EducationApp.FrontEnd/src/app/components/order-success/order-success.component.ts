@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { payOrder } from 'src/app/store/cart/cart.actions';
+import { Store } from '@ngxs/store';
+import { payOrder } from 'src/app/store-ngxs/cart/cart.actions';
 
 @Component({
   selector: 'app-order-success',
@@ -12,7 +12,7 @@ export class OrderSuccessComponent implements OnInit {
   public constructor(private store: Store) { }
 
   public ngOnInit(): void {
-    this.store.dispatch(payOrder());
+    this.store.dispatch(new payOrder());
   }
 
 }

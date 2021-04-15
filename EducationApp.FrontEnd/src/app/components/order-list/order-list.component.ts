@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store } from '@ngxs/store';
 import { OrderModel } from 'src/app/models/cart.models';
 import { PrintingEditionModel } from 'src/app/models/printing-edition.models';
 import { Defaults } from 'src/app/shared/consts';
 import { OrderStatusType, PrintingEditionType } from 'src/app/shared/enums';
-import { checkoutExisting, getOrders } from 'src/app/store/cart/cart.actions';
-import { CartState } from 'src/app/store/cart/cart.state';
-import { PrintingEditionState } from 'src/app/store/printing-edition/printing-edition.state';
+import { checkoutExisting, getOrders } from 'src/app/store-ngxs/cart/cart.actions';
+import { CartState } from 'src/app/store-ngxs/cart/cart.state';
 
 @Component({
   selector: 'app-order-list',
@@ -20,11 +19,9 @@ export class OrderListComponent implements OnInit {
   public lastPage: number;
   public PrintingEditionType;
   public OrderStatusType;
-  public constructor(private store: Store<{ Cart: CartState, Books: PrintingEditionState }>) {
-    store.select('Cart').subscribe(value => {
-      this.orders = value.orders,
-        this.lastPage = value.lastPage
-    });
+  public constructor(private store: Store) {
+    this.store.select(CartState.orders).subscribe(value => this.orders = value);
+    this.store.select(CartState.lastPage).subscribe(value => this.lastPage = value);
     this.OrderStatusType = OrderStatusType;
     this.PrintingEditionType = PrintingEditionType;
   }
@@ -34,10 +31,10 @@ export class OrderListComponent implements OnInit {
     this.getOrders();
   }
   public getOrders(): void {
-    this.store.dispatch(getOrders({ page: this.page }))
+    this.store.dispatch(new getOrders(this.page))
   }
   public payOrder(order: OrderModel) {
-    this.store.dispatch(checkoutExisting({ order }));
+    this.store.dispatch(new checkoutExisting(order));
   }
   public hasPreviousPage() {
     return this.page > Defaults.defaultPage;

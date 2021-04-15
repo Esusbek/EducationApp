@@ -1,11 +1,11 @@
 import { HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { Store } from "@ngrx/store";
+import { Store } from "@ngxs/store";
 import { EMPTY, Observable, Subject, throwError } from "rxjs";
 import { catchError, switchMap, tap } from "rxjs/operators";
 import { AccountService } from "src/app/services/account.service";
-import { refreshTokens } from "src/app/store/account/account.actions";
+import { refreshTokens } from "src/app/store-ngxs/account/account.actions";
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -40,7 +40,7 @@ export class TokenInterceptor implements HttpInterceptor {
             this.refreshTokenInProgress = true;
             return this.auth.refreshToken().pipe(
                 tap((tokens) => {
-                    this.store.dispatch(refreshTokens(tokens));
+                    this.store.dispatch(new refreshTokens(tokens));
                     this.refreshTokenInProgress = false;
                     this.tokenRefreshedSource.next();
                 }),

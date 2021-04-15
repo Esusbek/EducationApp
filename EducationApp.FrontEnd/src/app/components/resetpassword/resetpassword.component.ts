@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { resetPassword } from 'src/app/store/account/account.actions';
+import { Store } from '@ngxs/store';
+import { resetPassword } from 'src/app/store-ngxs/account/account.actions';
 import { passwordMatchValidator } from 'src/app/validators/password-match.directive';
 
 @Component({
@@ -32,6 +32,6 @@ export class ResetPasswordComponent implements OnInit {
       })
   }
   public onSubmit() {
-    this.store.dispatch(resetPassword({ payload: { code: this.code, userId: this.id, password: this.resetPasswordForm.value.password } }));
+    this.store.dispatch(new resetPassword({ code: this.code, userId: this.id, password: this.resetPasswordForm.value.password }));
   }
 }

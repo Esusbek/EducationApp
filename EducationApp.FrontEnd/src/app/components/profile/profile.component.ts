@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
+import { Store } from '@ngxs/store';
 import { UserModel } from 'src/app/models/profile.models';
 import { AccountService } from 'src/app/services/account.service';
 import { getUserId } from 'src/app/shared/methods';
-import { changePassword, editProfile, getInfo } from 'src/app/store/profile/profile.actions';
-import { ProfileState } from 'src/app/store/profile/profile.state';
+import { changePassword, editProfile, getInfo } from 'src/app/store-ngxs/profile/profile.actions';
+import { ProfileState } from 'src/app/store-ngxs/profile/profile.state';
 import { passwordMatchValidator } from 'src/app/validators/password-match.directive';
 
 @Component({
@@ -44,11 +44,11 @@ export class ProfileComponent implements OnInit {
       Validators.required
     ])
   }, { validators: passwordMatchValidator })
-  public constructor(private store: Store<{ Profile: ProfileState }>, private auth: AccountService) {
-    store.select('Profile').subscribe(val => this.profileForm.controls['userName'].setValue(val.user.userName));
-    store.select('Profile').subscribe(val => this.profileForm.controls['firstName'].setValue(val.user.firstName));
-    store.select('Profile').subscribe(val => this.profileForm.controls['lastName'].setValue(val.user.lastName));
-    store.select('Profile').subscribe(val => this.profileForm.controls['email'].setValue(val.user.email));
+  public constructor(private store: Store, private auth: AccountService) {
+    this.store.select(ProfileState.user).subscribe(value => this.profileForm.controls['userName'].setValue(value.userName));
+    this.store.select(ProfileState.user).subscribe(value => this.profileForm.controls['firstName'].setValue(value.firstName));
+    this.store.select(ProfileState.user).subscribe(value => this.profileForm.controls['lastName'].setValue(value.lastName));
+    this.store.select(ProfileState.user).subscribe(value => this.profileForm.controls['email'].setValue(value.email));
     this.profileForm.controls['userName'].disable();
     this.profileForm.controls['firstName'].disable();
     this.profileForm.controls['lastName'].disable();
@@ -59,7 +59,7 @@ export class ProfileComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.store.dispatch(getInfo());
+    this.store.dispatch(new getInfo());
 
   }
   public editStart() {
@@ -76,14 +76,14 @@ export class ProfileComponent implements OnInit {
     this.isEditing = false;
     this.profileForm.controls['firstName'].disable();
     this.profileForm.controls['lastName'].disable();
-    this.store.dispatch(editProfile({ ...this.profileForm.value, id: getUserId() }));
+    this.store.dispatch(new editProfile({ ...this.profileForm.value, id: getUserId() }));
   }
   public changingPassword() {
     this.isChangingPassword = !this.isChangingPassword;
   }
   public onChangePassword() {
     this.isChangingPassword = false;
-    this.store.dispatch(changePassword({
+    this.store.dispatch(new changePassword({
       user: { id: getUserId() },
       newPassword: this.changePasswordForm.value.password,
       currentPassword: this.changePasswordForm.value.currentPassword

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { forgotPassword, login } from 'src/app/store/account/account.actions';
+import { Store } from '@ngxs/store';
+import { forgotPassword, login } from 'src/app/store-ngxs/account/account.actions';
 
 @Component({
   selector: 'app-login',
@@ -41,14 +41,13 @@ export class LoginComponent implements OnInit {
   }
 
   public onSubmit() {
-    this.store.dispatch(login({ ...this.loginForm.value }))
+    this.store.dispatch(new login({ ...this.loginForm.value }))
   }
   public onForgotPassword() {
     this.forgotPassword = !this.forgotPassword;
   }
   public onRecoverySubmit() {
-    console.log({ ...this.forgotPasswordForm.value });
-    this.store.dispatch(forgotPassword({ ...this.forgotPasswordForm.value }))
+    this.store.dispatch(new forgotPassword({ ...this.forgotPasswordForm.value }))
     this.reseted = true;
   }
   public showPassword() {

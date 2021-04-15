@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { EmailActivationModel, LoginCredentials, LoginResult, RegisterModel, ResetPasswordModel } from 'src/app/models/account.models';
@@ -15,7 +14,7 @@ import { environment } from 'src/environments/environment';
 })
 export class AccountService {
 
-  constructor(private http: HttpClient, public jwtHelper: JwtHelperService, private store: Store, private modalService: NgbModal) { }
+  constructor(private http: HttpClient, public jwtHelper: JwtHelperService, private modalService: NgbModal) { }
   public isAuthenticated(): boolean {
     const token = localStorage.getItem('accessToken');
     return !!token;

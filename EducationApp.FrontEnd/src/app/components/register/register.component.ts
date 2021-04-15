@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { register } from 'src/app/store/account/account.actions';
-import { AccountState } from 'src/app/store/account/account.state';
+import { Store } from '@ngxs/store';
+import { register } from 'src/app/store-ngxs/account/account.actions';
+import { AccountState } from 'src/app/store-ngxs/account/account.state';
 import { passwordMatchValidator } from 'src/app/validators/password-match.directive';
 
 @Component({
@@ -43,13 +43,13 @@ export class RegisterComponent implements OnInit {
   public get password() { return this.registerForm.get('password') }
   public get passwordConfirm() { return this.registerForm.get('passwordConfirm') }
 
-  public constructor(private store: Store<{ Account: AccountState }>) {
-    store.select('Account').subscribe(value => this.isRegistered = value.isRegistered);
+  public constructor(private store: Store) {
+    this.store.select(AccountState.isRegistered).subscribe(value => this.isRegistered = value);
   }
 
   public ngOnInit(): void {
   }
   public onSubmit() {
-    this.store.dispatch(register({ user: this.registerForm.value }));
+    this.store.dispatch(new register({ ...this.registerForm.value }));
   }
 }

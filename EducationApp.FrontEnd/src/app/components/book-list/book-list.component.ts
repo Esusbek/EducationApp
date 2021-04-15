@@ -2,13 +2,13 @@ import { Options } from "@angular-slider/ngx-slider";
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from "@angular/router";
-import { Store } from '@ngrx/store';
+import { Store } from '@ngxs/store';
 import { Subscription } from "rxjs";
 import { PrintingEditionInfoModel, PrintingEditionModel } from 'src/app/models/printing-edition.models';
 import { Defaults } from "src/app/shared/consts";
 import { Currency, PrintingEditionType } from 'src/app/shared/enums';
-import { getBooks, getFiltered } from 'src/app/store/printing-edition/printing-edition.actions';
-import { PrintingEditionState } from "src/app/store/printing-edition/printing-edition.state";
+import { getBooks, getFiltered } from 'src/app/store-ngxs/printing-edition/printing-edition.actions';
+import { PrintingEditionState } from "src/app/store-ngxs/printing-edition/printing-edition.state";
 
 @Component({
   selector: 'app-book-list',
@@ -40,12 +40,9 @@ export class BookListComponent implements OnInit {
     order: new FormControl("false")
   })
 
-
-  public constructor(private store: Store<{ Books: PrintingEditionState }>, private formBuilder: FormBuilder, private router: Router) {
-    store.select('Books').subscribe(value => {
-      this.books = value.books;
-      this.info = value.info;
-    });
+  public constructor(private store: Store, private formBuilder: FormBuilder, private router: Router) {
+    this.store.select(PrintingEditionState.books).subscribe(value => this.books = value);
+    this.store.select(PrintingEditionState.info).subscribe(value => this.info = value);
     this.options = {
       floor: 0,
       ceil: 100,
@@ -81,7 +78,7 @@ export class BookListComponent implements OnInit {
         { emitEvent: false }
       );
     });
-    this.store.dispatch(getBooks({ page: this.page }))
+    this.store.dispatch(new getBooks(this.page))
     this.updateInfo();
   }
   public getImage(type: number): string {
@@ -109,7 +106,7 @@ export class BookListComponent implements OnInit {
       title: this.filterForm.value.searchControl || "",
       type: checkboxControl.value.filter(value => !!value)
     }
-    this.store.dispatch(getFiltered({ filter: formValue, orderAsc: this.orderForm.value.order, page: this.page }));
+    this.store.dispatch(new getFiltered({ filter: formValue, orderAsc: this.orderForm.value.order, page: this.page }));
   }
   public updateSliderLow(event) {
     this.minValue = event.target.value;
