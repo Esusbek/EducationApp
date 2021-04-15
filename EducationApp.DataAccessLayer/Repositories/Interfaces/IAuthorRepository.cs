@@ -2,9 +2,7 @@
 using EducationApp.DataAccessLayer.FilterModels;
 using EducationApp.DataAccessLayer.Repositories.Base.BaseInterface;
 using EducationApp.Shared.Constants;
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace EducationApp.DataAccessLayer.Repositories.Interfaces
 {

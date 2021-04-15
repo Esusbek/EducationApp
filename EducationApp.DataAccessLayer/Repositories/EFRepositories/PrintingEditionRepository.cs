@@ -18,7 +18,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             : base(dbContext)
         {
         }
-        public List<PrintingEditionEntity> Get(PrintingEditionFilterModel printingEditionFilter = null,string field = null, bool ascending = true,bool getRemoved = false,int page = Constants.DEFAULTPAGE, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
+        public List<PrintingEditionEntity> Get(PrintingEditionFilterModel printingEditionFilter = null, string field = null, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
             if (printingEditionFilter is not null)
@@ -52,7 +52,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             }
             return base.GetOne(filter, field, ascending, getRemoved);
         }
-        public List<PrintingEditionEntity> GetAll(PrintingEditionFilterModel printingEditionFilter = null,bool getRemoved = false)
+        public List<PrintingEditionEntity> GetAll(PrintingEditionFilterModel printingEditionFilter = null, bool getRemoved = false)
         {
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
             if (printingEditionFilter is not null)

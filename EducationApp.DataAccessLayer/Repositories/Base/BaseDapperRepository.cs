@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
-using Dapper;
 
 namespace EducationApp.DataAccessLayer.Repositories.Base
 {
@@ -37,7 +36,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
                 return result.ToList();
             }
         }
-        public virtual List<T> Get(Expression<Func<T, bool>> filter = null,string field = null, bool ascending = true,bool getRemoved = false)
+        public virtual List<T> Get(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
         {
             using (SqlConnection connection = new(_connectionString))
             {

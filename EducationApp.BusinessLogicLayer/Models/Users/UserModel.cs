@@ -1,5 +1,4 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Base;
-using System.ComponentModel.DataAnnotations;
 
 namespace EducationApp.BusinessLogicLayer.Models.Users
 {

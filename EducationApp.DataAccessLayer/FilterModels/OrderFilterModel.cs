@@ -1,7 +1,4 @@
-﻿using EducationApp.Shared.Enums;
-using System.Collections.Generic;
-
-namespace EducationApp.DataAccessLayer.FilterModels
+﻿namespace EducationApp.DataAccessLayer.FilterModels
 {
     public class OrderFilterModel
     {

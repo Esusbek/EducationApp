@@ -9,7 +9,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base.BaseInterface
     {
         public T GetById(int id);
         public List<T> GetAll();
-        public List<T> Get(Expression<Func<T, bool>> filter = null,string field = null, bool ascending = true,bool getRemoved = false);
+        public List<T> Get(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false);
         public T GetOne(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false);
         public void Insert(T entity);
         public void InsertRange(IEnumerable<T> entity);

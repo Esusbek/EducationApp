@@ -15,7 +15,6 @@ using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -50,7 +49,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDINTENTIDERROR);
             }
-            var payment = _paymentRepository.Get(new PaymentFilterModel { TransactionId = paymentIntentId}).FirstOrDefault();
+            var payment = _paymentRepository.Get(new PaymentFilterModel { TransactionId = paymentIntentId }).FirstOrDefault();
             var filter = new OrderFilterModel
             {
                 PaymentId = payment.Id
@@ -84,7 +83,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             var items = new List<SessionLineItemOptions>();
             var editionIds = order.CurrentItems.Select(item => item.PrintingEditionId).ToList();
-            var printingEditions = _printingEditionService.GetPrintingEditionsRange(new PrintingEditionFilterModel { EditionIds = editionIds});
+            var printingEditions = _printingEditionService.GetPrintingEditionsRange(new PrintingEditionFilterModel { EditionIds = editionIds });
             var dbItems = _mapper.Map<List<OrderItemEntity>>(order.CurrentItems);
             dbItems.ForEach(item => item.OrderId = dbOrder.Id);
             foreach (var item in dbItems)
@@ -177,7 +176,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbOrders = _orderRepository.Get(filter, field, ascending == Constants.DEFAULTSORTORDER, getRemoved, page);
             var orders = new List<OrderModel>();
             var orderIds = dbOrders.Select(order => order.Id).ToList();
-            var allItems = _itemRepository.Get(new OrderItemFilterModel { OrderIds = orderIds});
+            var allItems = _itemRepository.Get(new OrderItemFilterModel { OrderIds = orderIds });
             foreach (var order in dbOrders)
             {
                 var mappedOrder = _mapper.Map<OrderModel>(order);
@@ -191,8 +190,9 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public OrderResponseModel GetUserOrders(UserModel user, int page = Constants.DEFAULTPAGE)
         {
-            var filter = new OrderFilterModel { 
-                UserId=user.Id
+            var filter = new OrderFilterModel
+            {
+                UserId = user.Id
             };
             var dbOrders = _orderRepository.Get(filter, page: page).ToList();
             var orders = new List<OrderModel>();

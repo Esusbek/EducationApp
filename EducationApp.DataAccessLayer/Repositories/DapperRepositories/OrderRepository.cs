@@ -1,17 +1,17 @@
-﻿using EducationApp.DataAccessLayer.Entities;
+﻿using Dapper;
+using EducationApp.DataAccessLayer.Entities;
+using EducationApp.DataAccessLayer.Extensions;
+using EducationApp.DataAccessLayer.FilterModels;
 using EducationApp.DataAccessLayer.Repositories.Base;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using EducationApp.Shared.Constants;
+using EducationApp.Shared.Enums;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Dapper;
-using EducationApp.DataAccessLayer.Extensions;
-using EducationApp.DataAccessLayer.FilterModels;
-using EducationApp.Shared.Enums;
 
 namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
 {
@@ -59,7 +59,7 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE)
                 .Take(Constants.ORDERPAGESIZE).ToList();
             }
-            
+
         }
 
         public List<OrderEntity> GetAll(OrderFilterModel orderFilter = null, bool getRemoved = false)

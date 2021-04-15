@@ -2,9 +2,7 @@
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.DataAccessLayer.FilterModels;
 using EducationApp.Shared.Constants;
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace EducationApp.BusinessLogicLayer.Services.Interfaces
 {

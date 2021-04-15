@@ -6,7 +6,6 @@ using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 using System.Threading.Tasks;
 
 namespace EducationApp.PresentationLayer.Controllers
