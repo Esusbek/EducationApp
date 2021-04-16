@@ -1,4 +1,5 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Authors;
+using EducationApp.BusinessLogicLayer.Models.ViewModels;
 using EducationApp.DataAccessLayer.FilterModels;
 using EducationApp.Shared.Constants;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
 {
     public interface IAuthorService
     {
+        public AuthorsViewModel GetViewModel(AuthorsViewModel model);
         public void AddAuthor(AuthorModel author);
         public void UpdateAuthor(AuthorModel author);
         public void DeleteAuthor(AuthorModel author);

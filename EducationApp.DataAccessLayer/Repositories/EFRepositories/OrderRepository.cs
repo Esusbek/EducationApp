@@ -20,6 +20,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
         }
         public List<OrderEntity> Get(OrderFilterModel orderFilter = null, string field = null, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
         {
+            page = page < Constants.DEFAULTPAGE ? Constants.DEFAULTPAGE : page;
             Expression<Func<OrderEntity, bool>> filter = null;
             if (orderFilter is not null)
             {

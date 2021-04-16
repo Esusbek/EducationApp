@@ -1,4 +1,6 @@
 ﻿using Api.Forex.Sharp;
+using Api.Forex.Sharp.Models;
+using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.Shared.Configs;
 using EducationApp.Shared.Constants;
 using Microsoft.Extensions.Options;
@@ -8,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace EducationApp.BusinessLogicLayer.Providers
 {
-    public class CurrencyConvertionProvider : Interfaces.ICurrencyConvertionProvider
+    public class CurrencyConvertionProvider : ICurrencyConvertionProvider
     {
         private readonly string _apiKey;
-        private Api.Forex.Sharp.Models.ApiForexRates _rates;
-        private DateTime _lastFetched;
+        private ApiForexRates _rates;
+        private DateTime _lastFetchedAt;
         public CurrencyConvertionProvider(IOptions<CurrencyConvertConfig> config)
         {
             _apiKey = config.Value.ApiKey;
-            _lastFetched = DateTime.MinValue;
+            _lastFetchedAt = DateTime.MinValue;
 
         }
 
@@ -32,10 +34,10 @@ namespace EducationApp.BusinessLogicLayer.Providers
 
         private async Task GetRatesAsync()
         {
-            if ((DateTime.UtcNow - _lastFetched).TotalDays > Constants.DEFAULTDAYSPERRATEREFRESH)
+            if ((DateTime.UtcNow - _lastFetchedAt).TotalDays > Constants.DEFAULTDAYSPERRATEREFRESH)
             {
                 _rates = await ApiForex.GetRate(_apiKey);
-                _lastFetched = DateTime.UtcNow;
+                _lastFetchedAt = DateTime.UtcNow;
             }
         }
     }

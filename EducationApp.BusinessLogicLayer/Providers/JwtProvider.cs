@@ -24,11 +24,13 @@ namespace EducationApp.BusinessLogicLayer.Providers
         private readonly JwtConfig _config;
         private readonly SymmetricSecurityKey _key;
         private readonly UserManager<UserEntity> _userManager;
+        private readonly JwtSecurityTokenHandler _tokenHandler;
         public JwtProvider(IOptions<JwtConfig> config, UserManager<UserEntity> userManager)
         {
             _config = config.Value;
             _userManager = userManager;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.Key));
+            _tokenHandler = new JwtSecurityTokenHandler();
         }
         public async Task<TokensModel> GenerateTokenAsync(string userName, string userId, IList<string> userRoles)
         {
@@ -42,16 +44,16 @@ namespace EducationApp.BusinessLogicLayer.Providers
                 claims.Add(new Claim(Constants.ROLECLAIMNAME, role));
             }
             var timeNow = DateTime.UtcNow;
-            var shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Aud)?.Value);
+            bool shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Aud)?.Value);
             var jwtToken = new JwtSecurityToken(
                 _config.Issuer,
                 shouldAddAudienceClaim ? _config.Audience : string.Empty,
                 claims,
                 expires: timeNow.AddMinutes(_config.AccessLifetime),
                 signingCredentials: new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature));
-            var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            string accessToken = _tokenHandler.WriteToken(jwtToken);
 
-            var refreshToken = GenerateRefreshTokenString();
+            string refreshToken = GenerateRefreshTokenString();
             var user = await _userManager.FindByNameAsync(userName);
             user.RefreshToken = refreshToken;
             await _userManager.UpdateAsync(user);
@@ -75,7 +77,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDTOKENERROR);
             }
-            var id = jwtToken.Claims.FirstOrDefault(claim => claim.Type.Equals(Constants.IDCLAIMNAME)).Value;
+            string id = jwtToken.Claims.FirstOrDefault(claim => claim.Type.Equals(Constants.IDCLAIMNAME)).Value;
             var user = await _userManager.FindByIdAsync(id);
             if (user is null)
             {
@@ -95,7 +97,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDTOKENERROR);
             }
-            var principal = new JwtSecurityTokenHandler()
+            var principal = _tokenHandler
                 .ValidateToken(token,
                     new TokenValidationParameters
                     {
@@ -114,7 +116,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
 
         private static string GenerateRefreshTokenString()
         {
-            var randomNumber = new byte[Constants.DEFAULTREFRESHTOKENLENGTH];
+            byte[] randomNumber = new byte[Constants.DEFAULTREFRESHTOKENLENGTH];
             using var randomNumberGenerator = RandomNumberGenerator.Create();
             randomNumberGenerator.GetBytes(randomNumber);
             return Convert.ToBase64String(randomNumber);

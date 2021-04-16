@@ -10,7 +10,7 @@
         {
             GetPaid = true;
             GetUnpaid = true;
-            UserId = "";
+            UserId = string.Empty;
             PaymentId = default;
         }
     }

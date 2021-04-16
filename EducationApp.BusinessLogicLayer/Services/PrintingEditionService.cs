@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using EducationApp.BusinessLogicLayer.Models.Authors;
 using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+using EducationApp.BusinessLogicLayer.Models.ViewModels;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
@@ -29,12 +31,28 @@ namespace EducationApp.BusinessLogicLayer.Services
             _mapper = mapper;
             _validator = validationProvider;
         }
+        public PrintingEditionsViewModel GetViewModel(PrintingEditionsViewModel model)
+        {
+            return new PrintingEditionsViewModel
+            {
+                PrintingEditions = GetPrintingEditionsAdmin(model.IsBook, model.IsNewspaper, model.IsJournal, model.SortBy, model.Ascending),
+                Page = model.Page,
+                LastPage = GetLastPage(model.IsBook, model.IsNewspaper, model.IsJournal),
+                Ascending = model.Ascending,
+                Authors = GetAllAuthors(),
+                IsBook = model.IsBook,
+                IsJournal = model.IsJournal,
+                IsNewspaper = model.IsNewspaper,
+                SortBy = model.SortBy
+            };
+        }
         public void AddPrintingEdition(PrintingEditionModel printingEdition)
         {
             _validator.ValidatePrintingEdition(printingEdition);
             var dbPrintingEdition = _mapper.Map<PrintingEditionEntity>(printingEdition);
             dbPrintingEdition.Status = Enums.PrintingEditionStatusType.InStock;
-            var authors = _authorRepository.GetAll(new AuthorFilterModel { EditionAuthors = printingEdition.Authors });
+            var authorFilter = new AuthorFilterModel { EditionAuthors = printingEdition.Authors };
+            var authors = _authorRepository.GetAll(authorFilter);
             dbPrintingEdition.Authors = new List<AuthorEntity>(authors);
             _printingEditionRepository.Insert(dbPrintingEdition);
         }
@@ -47,7 +65,8 @@ namespace EducationApp.BusinessLogicLayer.Services
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
             }
             _mapper.Map(printingEdition, dbPrintingEdition);
-            var authors = _authorRepository.GetAll(new AuthorFilterModel { EditionAuthors = printingEdition.Authors });
+            var authorFilter = new AuthorFilterModel { EditionAuthors = printingEdition.Authors };
+            var authors = _authorRepository.GetAll(authorFilter);
             dbPrintingEdition.Authors.Clear();
             var dbAuthors = dbPrintingEdition.Authors.ToList();
             dbAuthors.AddRange(authors);
@@ -65,13 +84,13 @@ namespace EducationApp.BusinessLogicLayer.Services
             _printingEditionRepository.Delete(dbPrintingEdition);
 
         }
-        public List<PrintingEditionModel> GetPrintingEditionsAdmin(bool getBook = true, bool getNewspaper = true, bool getJournal = true, string field = Constants.DEFAULTEDITIONSORT, string orderAsc = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
+        public List<PrintingEditionModel> GetPrintingEditionsAdmin(bool isBook = true, bool isNewspaper = true, bool isJournal = true, string field = Constants.DEFAULTEDITIONSORT, string orderAsc = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
         {
             var filter = new PrintingEditionFilterModel
             {
-                GetBook = getBook,
-                GetJournal = getJournal,
-                GetNewspaper = getNewspaper
+                IsBook = isBook,
+                IsJournal = isJournal,
+                IsNewspaper = isNewspaper
             };
             var dbPrintingEditions = _printingEditionRepository.Get(filter, field, orderAsc == Constants.DEFAULTSORTORDER, getRemoved, page, Constants.ADMINPRINTINGEDITIONPAGESIZE).ToList();
             var printingEditions = new List<PrintingEditionModel>();
@@ -113,8 +132,8 @@ namespace EducationApp.BusinessLogicLayer.Services
             };
             dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
 
-            decimal min = 0;
-            decimal max = 0;
+            decimal min = default;
+            decimal max = default;
             if (dbPrintingEditions.Any())
             {
                 min = dbPrintingEditions.Aggregate((currentMin, x) => (currentMin == null || x.Price < currentMin.Price ? x : currentMin)).Price;
@@ -127,13 +146,13 @@ namespace EducationApp.BusinessLogicLayer.Services
                 LastPage = lastPage
             };
         }
-        public int GetLastPage(bool getBook = true, bool getNewspaper = true, bool getJournal = true)
+        public int GetLastPage(bool isBook = true, bool isNewspaper = true, bool isJournal = true)
         {
             var filter = new PrintingEditionFilterModel
             {
-                GetBook = getBook,
-                GetJournal = getJournal,
-                GetNewspaper = getNewspaper
+                IsBook = isBook,
+                IsJournal = isJournal,
+                IsNewspaper = isNewspaper
             };
             var dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
             int lastPage = (int)Math.Ceiling(dbPrintingEditions.Count / (double)Constants.ADMINPRINTINGEDITIONPAGESIZE);
@@ -164,9 +183,16 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public PrintingEditionModel GetPrintingEditionByTitle(string title)
         {
-            var edition = _printingEditionRepository.GetOne(new PrintingEditionFilterModel { Title = title });
+            var editionFilter = new PrintingEditionFilterModel { Title = title };
+            var edition = _printingEditionRepository.GetOne(editionFilter);
             var result = _mapper.Map<PrintingEditionModel>(edition);
             return result;
+        }
+        private List<AuthorModel> GetAllAuthors()
+        {
+            var dbAuthors = _authorRepository.GetAll();
+            var authors = _mapper.Map<List<AuthorModel>>(dbAuthors);
+            return authors;
         }
     }
 }

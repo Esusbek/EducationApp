@@ -2,6 +2,7 @@
 using EducationApp.BusinessLogicLayer.Models.Orders;
 using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
 using EducationApp.BusinessLogicLayer.Models.Users;
+using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.Shared.Constants;
 using EducationApp.Shared.Exceptions;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace EducationApp.BusinessLogicLayer.Providers
 {
-    public class ValidationProvider : Interfaces.IValidationProvider
+    public class ValidationProvider : IValidationProvider
     {
 
         private readonly ProfanityFilter.ProfanityFilter _censor;

@@ -8,7 +8,7 @@ namespace EducationApp.DataAccessLayer.FilterModels
         public List<string> EditionAuthors { get; set; }
         public AuthorFilterModel()
         {
-            Name = "";
+            Name = string.Empty;
             EditionAuthors = new List<string>();
         }
     }

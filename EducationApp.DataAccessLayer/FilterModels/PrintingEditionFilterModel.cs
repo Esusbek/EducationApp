@@ -9,19 +9,19 @@ namespace EducationApp.DataAccessLayer.FilterModels
         public decimal LowPrice { get; set; }
         public decimal HighPrice { get; set; }
         public List<Enums.PrintingEditionType> Type { get; set; }
-        public bool GetBook { get; set; }
-        public bool GetNewspaper { get; set; }
-        public bool GetJournal { get; set; }
+        public bool IsBook { get; set; }
+        public bool IsNewspaper { get; set; }
+        public bool IsJournal { get; set; }
         public List<int> EditionIds { get; set; }
         public PrintingEditionFilterModel()
         {
-            Title = "";
+            Title = string.Empty;
             LowPrice = default;
             HighPrice = default;
             Type = new List<Enums.PrintingEditionType>();
-            GetBook = true;
-            GetNewspaper = true;
-            GetJournal = true;
+            IsBook = true;
+            IsNewspaper = true;
+            IsJournal = true;
             EditionIds = new List<int>();
         }
     }

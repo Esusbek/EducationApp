@@ -20,12 +20,13 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
         }
         public List<PrintingEditionEntity> Get(PrintingEditionFilterModel printingEditionFilter = null, string field = null, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
+            page = page < Constants.DEFAULTPAGE ? Constants.DEFAULTPAGE : page;
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
             if (printingEditionFilter is not null)
             {
-                filter = edition => ((printingEditionFilter.GetBook && edition.Type == Enums.PrintingEditionType.Book)
-                || (printingEditionFilter.GetNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
-                || (printingEditionFilter.GetJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
+                filter = edition => ((printingEditionFilter.IsBook && edition.Type == Enums.PrintingEditionType.Book)
+                || (printingEditionFilter.IsNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
+                || (printingEditionFilter.IsJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
                 (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
                 (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
                 (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
@@ -41,9 +42,9 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
             if (printingEditionFilter is not null)
             {
-                filter = edition => ((printingEditionFilter.GetBook && edition.Type == Enums.PrintingEditionType.Book)
-                || (printingEditionFilter.GetNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
-                || (printingEditionFilter.GetJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
+                filter = edition => ((printingEditionFilter.IsBook && edition.Type == Enums.PrintingEditionType.Book)
+                || (printingEditionFilter.IsNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
+                || (printingEditionFilter.IsJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
                 (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
                 (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
                 (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
@@ -57,9 +58,9 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             Expression<Func<PrintingEditionEntity, bool>> filter = null;
             if (printingEditionFilter is not null)
             {
-                filter = edition => ((printingEditionFilter.GetBook && edition.Type == Enums.PrintingEditionType.Book)
-                || (printingEditionFilter.GetNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
-                || (printingEditionFilter.GetJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
+                filter = edition => ((printingEditionFilter.IsBook && edition.Type == Enums.PrintingEditionType.Book)
+                || (printingEditionFilter.IsNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
+                || (printingEditionFilter.IsJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
                 (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
                 (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
                 (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&

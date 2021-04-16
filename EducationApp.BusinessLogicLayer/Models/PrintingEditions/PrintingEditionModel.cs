@@ -1,11 +1,12 @@
-﻿using EducationApp.Shared.Enums;
+﻿using EducationApp.BusinessLogicLayer.Models.Base;
+using EducationApp.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace EducationApp.BusinessLogicLayer.Models.PrintingEditions
 {
-    public class PrintingEditionModel : Base.BaseModel
+    public class PrintingEditionModel : BaseModel
     {
         [Required]
         public string Title { get; set; }

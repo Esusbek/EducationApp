@@ -1,5 +1,6 @@
 ﻿using EducationApp.BusinessLogicLayer.Models;
 using EducationApp.BusinessLogicLayer.Models.Users;
+using EducationApp.BusinessLogicLayer.Models.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,6 +8,7 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
 {
     public interface IUserService
     {
+        public UsersViewModel GetViewModel(UsersViewModel model);
         public Task RegisterAsync(UserModel user);
         public Task<UserModel> UpdateAsync(UserModel user);
         public Task<TokensModel> LoginAsync(UserModel user, bool rememberMe);

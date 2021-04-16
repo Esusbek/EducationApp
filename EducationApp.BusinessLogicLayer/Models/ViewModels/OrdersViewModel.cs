@@ -9,16 +9,16 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
         public List<OrderModel> Orders { get; set; }
         public int Page { get; set; }
         public int LastPage { get; set; }
-        public bool GetPaid { get; set; }
-        public bool GetUnpaid { get; set; }
+        public bool IsPaid { get; set; }
+        public bool IsUnpaid { get; set; }
         public string SortBy { get; set; }
         public string Ascending { get; set; }
 
         public OrdersViewModel()
         {
             Page = Constants.DEFAULTPAGE;
-            GetPaid = true;
-            GetUnpaid = true;
+            IsPaid = true;
+            IsUnpaid = true;
             SortBy = Constants.DEFAULTORDERSORT;
             Ascending = Constants.DEFAULTSORTORDER;
         }

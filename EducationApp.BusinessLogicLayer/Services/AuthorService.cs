@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EducationApp.BusinessLogicLayer.Models.Authors;
+using EducationApp.BusinessLogicLayer.Models.ViewModels;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
@@ -25,10 +26,22 @@ namespace EducationApp.BusinessLogicLayer.Services
             _mapper = mapper;
             _validator = validationProvider;
         }
+        public AuthorsViewModel GetViewModel(AuthorsViewModel model)
+        {
+            return new AuthorsViewModel
+            {
+                Authors = GetAuthorsFiltered(null, model.SortBy, model.Ascending, page: model.Page),
+                Page = model.Page,
+                LastPage = GetLastPage(),
+                SortBy = model.SortBy,
+                Ascending = model.Ascending
+            };
+        }
         public void AddAuthor(AuthorModel author)
         {
             _validator.ValidateAuthor(author);
-            var dbAuthor = _authorRepository.Get(new AuthorFilterModel { Name = author.Name }).FirstOrDefault();
+            var authorFilter = new AuthorFilterModel { Name = author.Name };
+            var dbAuthor = _authorRepository.Get(authorFilter).FirstOrDefault();
             if (dbAuthor is not null)
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.AUTHORALREADYEXISTSERROR);
@@ -96,7 +109,8 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public AuthorModel GetAuthorByName(string name)
         {
-            var dbAuthor = _authorRepository.Get(new AuthorFilterModel { Name = name }).FirstOrDefault();
+            var authorFilter = new AuthorFilterModel { Name = name };
+            var dbAuthor = _authorRepository.Get(authorFilter).FirstOrDefault();
             if (dbAuthor is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);

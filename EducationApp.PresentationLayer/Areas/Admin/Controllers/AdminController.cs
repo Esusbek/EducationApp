@@ -68,15 +68,7 @@ namespace EducationApp.PresentationLayer.Controllers
         [HttpGet]
         public IActionResult Users([FromQuery] UsersViewModel model)
         {
-            return View(new UsersViewModel
-            {
-                Users = _userService.GetUsers(model.GetBlocked, model.GetUnblocked, model.SearchString, model.Page),
-                Page = model.Page,
-                LastPage = _userService.GetLastPage(model.GetBlocked, model.GetUnblocked, model.SearchString),
-                GetBlocked = model.GetBlocked,
-                GetUnblocked = model.GetUnblocked,
-                SearchString = string.IsNullOrWhiteSpace(model.SearchString) ? "" : model.SearchString
-            });
+            return View(_userService.GetViewModel(model));
         }
         public async Task<IActionResult> Ban(string userId)
         {
@@ -86,44 +78,17 @@ namespace EducationApp.PresentationLayer.Controllers
         [HttpGet]
         public IActionResult PrintingEditions([FromQuery] PrintingEditionsViewModel model)
         {
-            return View(new PrintingEditionsViewModel
-            {
-                PrintingEditions = _printingEditionService.GetPrintingEditionsAdmin(model.GetBook, model.GetNewspaper, model.GetJournal, model.SortBy, model.Ascending),
-                Page = model.Page,
-                LastPage = _printingEditionService.GetLastPage(model.GetBook, model.GetNewspaper, model.GetJournal),
-                Ascending = model.Ascending,
-                Authors = _authorService.GetAllAuthors(),
-                GetBook = model.GetBook,
-                GetJournal = model.GetJournal,
-                GetNewspaper = model.GetNewspaper,
-                SortBy = model.SortBy
-            });
+            return View(_printingEditionService.GetViewModel(model));
         }
         [HttpGet]
         public IActionResult Orders([FromQuery] OrdersViewModel model)
         {
-            return View(new OrdersViewModel
-            {
-                Orders = _orderService.GetAllOrders(model.GetPaid, model.GetUnpaid, model.SortBy, model.Ascending, model.Page),
-                Page = model.Page,
-                LastPage = _orderService.GetLastPage(model.GetPaid, model.GetUnpaid),
-                GetUnpaid = model.GetUnpaid,
-                GetPaid = model.GetPaid,
-                SortBy = model.SortBy,
-                Ascending = model.Ascending
-            });
+            return View(_orderService.GetViewModel(model));
         }
         [HttpGet]
         public IActionResult Authors([FromQuery] AuthorsViewModel model)
         {
-            return View(new AuthorsViewModel
-            {
-                Authors = _authorService.GetAuthorsFiltered(null, model.SortBy, model.Ascending, page: model.Page),
-                Page = model.Page,
-                LastPage = _authorService.GetLastPage(),
-                SortBy = model.SortBy,
-                Ascending = model.Ascending
-            });
+            return View(_authorService.GetViewModel(model));
         }
         [HttpPost]
         public IActionResult EditAuthor(AuthorModel author)

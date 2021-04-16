@@ -5,7 +5,7 @@
         public string TransactionId { get; set; }
         public PaymentFilterModel()
         {
-            TransactionId = "";
+            TransactionId = string.Empty;
         }
     }
 }
