@@ -43,7 +43,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId == orderFilter.UserId) &&
                 (orderFilter.PaymentId == default || order.PaymentId == orderFilter.PaymentId);
             }
-            return base.Get(filter, getRemoved: getRemoved);
+            return base.Get(filter, getRemoved: getRemoved).ToList();
         }
     }
 }

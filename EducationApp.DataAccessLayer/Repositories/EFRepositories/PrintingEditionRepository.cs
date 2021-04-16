@@ -67,7 +67,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 (!printingEditionFilter.Type.Any() || printingEditionFilter.Type.Contains(edition.Type)) &&
                 (!printingEditionFilter.EditionIds.Any() || printingEditionFilter.EditionIds.Contains(edition.Id));
             }
-            return base.Get(filter, getRemoved: getRemoved);
+            return base.Get(filter, getRemoved: getRemoved).ToList();
         }
         public void Update(PrintingEditionEntity printingEdition, AuthorEntity author = null)
         {

@@ -23,7 +23,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             {
                 filter = item => !orderItemFilterModel.OrderIds.Any() || orderItemFilterModel.OrderIds.Contains(item.OrderId);
             }
-            return base.Get(filter);
+            return base.Get(filter).ToList();
         }
     }
 }

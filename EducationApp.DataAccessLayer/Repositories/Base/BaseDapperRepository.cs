@@ -1,7 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 using EducationApp.DataAccessLayer.Entities.Base;
 using EducationApp.DataAccessLayer.Extensions;
-using EducationApp.DataAccessLayer.Repositories.Base.BaseInterface;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +12,7 @@ using System.Linq.Expressions;
 
 namespace EducationApp.DataAccessLayer.Repositories.Base
 {
-    public class BaseDapperRepository<T> : IBaseDapperRepository<T> where T : BaseEntity
+    public class BaseDapperRepository<T> where T : BaseEntity
     {
         private readonly string _connectionString;
         public BaseDapperRepository(IConfiguration config)
@@ -32,7 +31,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             var result = connection.GetAll<T>();
             return result.ToList();
         }
-        public virtual List<T> Get(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
+        protected virtual List<T> Get(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
         {
             using SqlConnection connection = new(_connectionString);
             var query = connection.GetAll<T>().AsQueryable();
@@ -51,7 +50,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             }
             return query.ToList();
         }
-        public virtual T GetOne(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
+        protected virtual T GetOne(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
         {
             using SqlConnection connection = new(_connectionString);
             var query = connection.GetAll<T>().AsQueryable();

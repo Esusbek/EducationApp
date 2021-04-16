@@ -26,7 +26,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 filter = author => (string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name)) &&
                 (!authorFilter.EditionAuthors.Any() || authorFilter.EditionAuthors.Contains(author.Name));
             }
-            
+
             return base.Get(filter, field, ascending, getRemoved)
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.AUTHORPAGESIZE)
                 .Take(Constants.AUTHORPAGESIZE).ToList();
@@ -39,7 +39,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 filter = author => (string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name)) &&
                 (!authorFilter.EditionAuthors.Any() || authorFilter.EditionAuthors.Contains(author.Name));
             }
-            return base.Get(filter, getRemoved: getRemoved);
+            return base.Get(filter, getRemoved: getRemoved).ToList();
         }
 
         public void Update(AuthorEntity author, PrintingEditionEntity printingEdition = null)

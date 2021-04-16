@@ -12,7 +12,6 @@ using EducationApp.Shared.Constants;
 using EducationApp.Shared.Enums;
 using EducationApp.Shared.Exceptions;
 using Microsoft.Extensions.Options;
-using Stripe;
 using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
