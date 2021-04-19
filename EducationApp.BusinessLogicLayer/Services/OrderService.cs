@@ -166,6 +166,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 UserId = userId
             };
+
             var dbOrders = _orderRepository.GetAll(filter).ToList();
             int lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
             return lastPage;
@@ -210,6 +211,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 UserId = user.Id
             };
+
             var dbOrders = _orderRepository.Get(filter, page: page).ToList();
             var orders = new List<OrderModel>();
             var orderIds = dbOrders.Select(order => order.Id).ToList();

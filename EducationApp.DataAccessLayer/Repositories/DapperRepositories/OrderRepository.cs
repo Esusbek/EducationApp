@@ -29,7 +29,7 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
             string paidFilter = orderFilter.GetPaid ? $"o.Status={(int)Enums.OrderStatusType.Paid}" : string.Empty;
             string unpaidFilter = orderFilter.GetUnpaid ? $"o.Status={(int)Enums.OrderStatusType.Unpaid}" : string.Empty;
             string paymentIdFilter = !(orderFilter.PaymentId == default) ? $"o.PaymentId={orderFilter.PaymentId}" : string.Empty;
-            string userIdFilter = !string.IsNullOrWhiteSpace(orderFilter.UserId) ? $"o.UserId={orderFilter.UserId}" : string.Empty;
+            string userIdFilter = !string.IsNullOrWhiteSpace(orderFilter.UserId) ? $"o.UserId='{orderFilter.UserId}'" : string.Empty;
             string removedFilter = getRemoved ? "1" : "0";
             string filterString = $"where o.IsRemoved={removedFilter}";
             if (!string.IsNullOrWhiteSpace(paidFilter) || !string.IsNullOrWhiteSpace(unpaidFilter))
@@ -84,7 +84,7 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
             string paidFilter = orderFilter.GetPaid ? $"o.Status={(int)Enums.OrderStatusType.Paid}" : string.Empty;
             string unpaidFilter = orderFilter.GetUnpaid ? $"o.Status={(int)Enums.OrderStatusType.Unpaid}" : string.Empty;
             string paymentIdFilter = !(orderFilter.PaymentId == default) ? $"o.PaymentId={orderFilter.PaymentId}" : string.Empty;
-            string userIdFilter = !string.IsNullOrWhiteSpace(orderFilter.UserId) ? $"o.UserId={orderFilter.UserId}" : string.Empty;
+            string userIdFilter = !string.IsNullOrWhiteSpace(orderFilter.UserId) ? $"o.UserId='{orderFilter.UserId}'" : string.Empty;
             string removedFilter = getRemoved ? "1" : "0";
             string filterString = $"where o.IsRemoved={removedFilter}";
             if (!string.IsNullOrWhiteSpace(paidFilter) || !string.IsNullOrWhiteSpace(unpaidFilter))

@@ -7,7 +7,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Interfaces
 {
     public interface IOrderRepository
     {
-        public List<OrderEntity> Get(OrderFilterModel orderFilter = null, string field = null, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE);
+        public List<OrderEntity> Get(OrderFilterModel orderFilter = null, string field = Constants.DEFAULTORDERSORT, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE);
         public List<OrderEntity> GetAll(OrderFilterModel orderFilter = null, bool getRemoved = false);
         public OrderEntity GetById(int id);
         public void Insert(OrderEntity entity);
