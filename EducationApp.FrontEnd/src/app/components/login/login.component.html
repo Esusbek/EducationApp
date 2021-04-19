@@ -3,11 +3,13 @@
     <div class="signin-header">
         <span>Sign-In</span>
     </div>
-
+    <div class="g-signin2" data-onsuccess="onGoogleSignIn()"></div>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
         <div class="credentials" formGroupName="user">
+
             <label for="username">Login:</label>
+
             <div *ngIf="userName.errors?.required && (userName.dirty || userName.touched)" class="alert alert-danger">
                 Username is required
             </div>

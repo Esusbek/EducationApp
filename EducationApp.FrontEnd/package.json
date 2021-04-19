@@ -34,6 +34,8 @@
     "@ngxs/schematics": "0.0.1-alpha.5",
     "@ngxs/store": "^3.3.2",
     "@stripe/stripe-js": "^1.13.2",
+    "@types/gapi": "0.0.39",
+    "@types/gapi.auth2": "0.0.54",
     "bootstrap": "^4.6.0",
     "jquery": "^3.6.0",
     "jwt-decode": "^3.1.2",
