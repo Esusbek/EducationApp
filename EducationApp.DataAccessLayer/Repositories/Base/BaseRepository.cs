@@ -1,7 +1,6 @@
 ﻿using EducationApp.DataAccessLayer.AppContext;
 using EducationApp.DataAccessLayer.Entities.Base;
 using EducationApp.DataAccessLayer.Extensions;
-using EducationApp.DataAccessLayer.Repositories.Base.BaseInterface;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace EducationApp.DataAccessLayer.Repositories.Base
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
+    public class BaseRepository<T> where T : BaseEntity
     {
         private readonly ApplicationContext _dbContext;
         protected readonly DbSet<T> _dbSet;
@@ -27,7 +26,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
         {
             return _dbSet.ToList();
         }
-        public virtual List<T> Get(Expression<Func<T, bool>> filter = null,string field = null, bool ascending = true,bool getRemoved = false)
+        protected virtual IQueryable<T> Get(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
         {
             IQueryable<T> query = _dbSet;
             if (!getRemoved)
@@ -42,9 +41,9 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             {
                 query = query.OrderBy(field, ascending);
             }
-            return query.ToList();
+            return query;
         }
-        public virtual T GetOne(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
+        protected virtual T GetOne(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
         {
             IQueryable<T> query = _dbSet;
             if (!getRemoved)

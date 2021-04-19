@@ -1,4 +1,5 @@
-﻿using EducationApp.Shared.Configs;
+﻿using EducationApp.BusinessLogicLayer.Providers.Interfaces;
+using EducationApp.Shared.Configs;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EducationApp.BusinessLogicLayer.Providers
 {
-    public class EmailProvider : Interfaces.IEmailProvider
+    public class EmailProvider : IEmailProvider
     {
         private readonly MailAddress _from;
         private readonly SmtpClient _smtp;

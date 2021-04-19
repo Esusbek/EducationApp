@@ -17,7 +17,8 @@ export function handleError(error: HttpErrorResponse, modalService: NgbModal) {
     let modalRef = modalService.open(ErrorComponent);
     if (error.error instanceof ErrorEvent) {
         modalRef.componentInstance.message = error.error.message;
-    } else {
+    }
+    if (!(error.error instanceof ErrorEvent)) {
         modalRef.componentInstance.message = error.error;
     }
     return throwError(

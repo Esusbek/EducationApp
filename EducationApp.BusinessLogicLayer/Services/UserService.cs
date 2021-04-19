@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using EducationApp.BusinessLogicLayer.Models;
 using EducationApp.BusinessLogicLayer.Models.Users;
+using EducationApp.BusinessLogicLayer.Models.ViewModels;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
+using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
 using EducationApp.Shared.Configs;
 using EducationApp.Shared.Constants;
@@ -19,7 +21,7 @@ using System.Web;
 
 namespace EducationApp.BusinessLogicLayer.Services
 {
-    public class UserService : Interfaces.IUserService
+    public class UserService : IUserService
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
@@ -40,6 +42,18 @@ namespace EducationApp.BusinessLogicLayer.Services
             _validator = validationProvider;
             _urlConfig = urlConfig.Value;
             _email = emailProvider;
+        }
+        public UsersViewModel GetViewModel(UsersViewModel model)
+        {
+            return new UsersViewModel
+            {
+                Users = GetUsers(model.GetBlocked, model.GetUnblocked, model.SearchString, model.Page),
+                Page = model.Page,
+                LastPage = GetLastPage(model.GetBlocked, model.GetUnblocked, model.SearchString),
+                GetBlocked = model.GetBlocked,
+                GetUnblocked = model.GetUnblocked,
+                SearchString = string.IsNullOrWhiteSpace(model.SearchString) ? string.Empty : model.SearchString
+            };
         }
         public async Task<TokensModel> LoginAsync(UserModel user, bool rememberMe)
         {
@@ -198,8 +212,8 @@ namespace EducationApp.BusinessLogicLayer.Services
                 Path = Constants.CONFIRMEMAILPATH
             };
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query["userId"] = newUser.Id;
-            query["code"] = code;
+            query[Constants.USERIDKEY] = newUser.Id;
+            query[Constants.CODEKEY] = code;
             uriBuilder.Query = query.ToString();
             string callbackUrl = uriBuilder.ToString();
             await _email.SendEmailAsync(new System.Net.Mail.MailAddress(newUser.Email),
@@ -255,8 +269,8 @@ namespace EducationApp.BusinessLogicLayer.Services
                 Path = Constants.RESETPASSWORDPATH
             };
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query["userId"] = user.Id;
-            query["code"] = code;
+            query[Constants.USERIDKEY] = user.Id;
+            query[Constants.CODEKEY] = code;
             uriBuilder.Query = query.ToString();
             string callbackUrl = uriBuilder.ToString();
             await _email.SendEmailAsync(new System.Net.Mail.MailAddress(user.Email),

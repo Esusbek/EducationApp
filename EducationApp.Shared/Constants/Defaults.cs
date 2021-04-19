@@ -29,5 +29,9 @@
         public const string MAPPROFILEASSEMBLYNAME = "EducationApp.BusinessLogicLayer";
         public const int ORDERBYPARAMCOUNT = 2;
         public const string DEFAULTSORTORDER = "asc";
+        public const int CENTMULTIPLIER = 100;
+        public const string USERIDKEY = "userId";
+        public const string CODEKEY = "code";
+
     }
 }

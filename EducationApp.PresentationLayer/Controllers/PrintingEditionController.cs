@@ -1,5 +1,4 @@
-﻿using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
-using EducationApp.BusinessLogicLayer.Services.Interfaces;
+﻿using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.FilterModels;
 using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -29,7 +29,7 @@ namespace EducationApp.BusinessLogicLayer
         public static void AddProviders(this IServiceCollection services)
         {
             services.AddTransient<IJwtProvider, JwtProvider>();
-            services.AddTransient<ICurrencyConvertionProvider, CurrencyConvertionProvider>();
+            services.AddSingleton<ICurrencyConvertionProvider, CurrencyConvertionProvider>();
             services.AddTransient<IValidationProvider, ValidationProvider>();
             services.AddTransient<IEmailProvider, EmailProvider>();
         }

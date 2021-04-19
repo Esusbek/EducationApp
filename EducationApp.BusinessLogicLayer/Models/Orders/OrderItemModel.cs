@@ -1,9 +1,10 @@
-﻿using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+﻿using EducationApp.BusinessLogicLayer.Models.Base;
+using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
 using EducationApp.Shared.Enums;
 
 namespace EducationApp.BusinessLogicLayer.Models.Orders
 {
-    public class OrderItemModel : Base.BaseModel
+    public class OrderItemModel : BaseModel
     {
         public int Amount { get; set; }
         public int OrderId { get; set; }

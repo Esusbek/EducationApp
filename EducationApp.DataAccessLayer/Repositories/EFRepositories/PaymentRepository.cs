@@ -5,6 +5,7 @@ using EducationApp.DataAccessLayer.Repositories.Base;
 using EducationApp.DataAccessLayer.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
@@ -22,7 +23,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             {
                 filter = payment => string.IsNullOrWhiteSpace(paymentFilterModel.TransactionId) || payment.TransactionId == paymentFilterModel.TransactionId;
             }
-            return base.Get(filter);
+            return base.Get(filter).ToList();
         }
     }
 }

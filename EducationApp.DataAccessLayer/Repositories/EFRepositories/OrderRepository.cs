@@ -20,6 +20,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
         }
         public List<OrderEntity> Get(OrderFilterModel orderFilter = null, string field = null, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
         {
+            page = page < Constants.DEFAULTPAGE ? Constants.DEFAULTPAGE : page;
             Expression<Func<OrderEntity, bool>> filter = null;
             if (orderFilter is not null)
             {
@@ -42,7 +43,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId == orderFilter.UserId) &&
                 (orderFilter.PaymentId == default || order.PaymentId == orderFilter.PaymentId);
             }
-            return base.Get(filter, getRemoved: getRemoved);
+            return base.Get(filter, getRemoved: getRemoved).ToList();
         }
     }
 }

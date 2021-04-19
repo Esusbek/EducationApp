@@ -23,12 +23,12 @@
             <th class="edition-type">
                 <a href="javascript:void(0);" class="table-head">Type</a>
                 <div id="checkboxes">
-                    @Html.CheckBoxFor(model => model.GetBook)
-                    @Html.LabelFor(model => model.GetBook, Enums.PrintingEditionType.Book.ToString())
-                    @Html.CheckBoxFor(model => model.GetNewspaper)
-                    @Html.LabelFor(model => model.GetNewspaper, Enums.PrintingEditionType.Newspaper.ToString())
-                    @Html.CheckBoxFor(model => model.GetJournal)
-                    @Html.LabelFor(model => model.GetJournal, Enums.PrintingEditionType.Journal.ToString())
+                    @Html.CheckBoxFor(model => model.IsBook)
+                    @Html.LabelFor(model => model.IsBook, Enums.PrintingEditionType.Book.ToString())
+                    @Html.CheckBoxFor(model => model.IsNewspaper)
+                    @Html.LabelFor(model => model.IsNewspaper, Enums.PrintingEditionType.Newspaper.ToString())
+                    @Html.CheckBoxFor(model => model.IsJournal)
+                    @Html.LabelFor(model => model.IsJournal, Enums.PrintingEditionType.Journal.ToString())
                 </div>
             </th>
             <th class="edition-authors"><a href="javascript:void(0);" class="table-head">Authors</a></th>
@@ -70,9 +70,9 @@
         page = Model.Page - 1,
     ascending = Model.Ascending,
     sortBy = Model.SortBy,
-    getBook = Model.GetBook,
-    getNewspaper = Model.GetNewspaper,
-    getJournal = Model.GetJournal
+    isBook = Model.IsBook,
+    isNewspaper = Model.IsNewspaper,
+    isJournal = Model.IsJournal
 }, new { id = "previousPage" })
     <span>Page @Model.Page/@Model.LastPage</span>
     @Html.ActionLink("next page", "PrintingEditions", "Admin", new
@@ -80,9 +80,9 @@
         page = Model.Page + 1,
     ascending = Model.Ascending,
     sortBy = Model.SortBy,
-    getBook = Model.GetBook,
-    getNewspaper = Model.GetNewspaper,
-    getJournal = Model.GetJournal
+    isBook = Model.IsBook,
+    isNewspaper = Model.IsNewspaper,
+    isJournal = Model.IsJournal
 }, new { id = "nextPage" })
 </div>
 <div class='modal fade' name='dynamiccustommodal' id='1' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='1Label'>
@@ -315,31 +315,31 @@
                     }
                 }
             }
-            $("#GetBook").change(function () {
+            $("#IsBook").change(function () {
                 reloadWithQueryStringVars({
-                    getBook: this.checked,
-                    getJournal: '@Model.GetJournal.ToString().ToLower()',
-                    getNewspaper: '@Model.GetNewspaper.ToString().ToLower()',
+                    isBook: this.checked,
+                    isJournal: '@Model.IsJournal.ToString().ToLower()',
+                    isNewspaper: '@Model.IsNewspaper.ToString().ToLower()',
                     sortBy: '@Model.SortBy',
                     ascending: '@Model.Ascending',
                     page: '@Constants.DEFAULTPAGE'
                 });
             });
-            $("#GetNewspaper").change(function () {
+            $("#IsNewspaper").change(function () {
                 reloadWithQueryStringVars({
-                    getBook: '@Model.GetBook.ToString().ToLower()',
-                    getJournal: '@Model.GetJournal.ToString().ToLower()',
-                    getNewspaper: this.checked,
+                    isBook: '@Model.IsBook.ToString().ToLower()',
+                    isJournal: '@Model.IsJournal.ToString().ToLower()',
+                    isNewspaper: this.checked,
                     sortBy: '@Model.SortBy',
                     ascending: '@Model.Ascending',
                     page: '@Constants.DEFAULTPAGE'
                 });
             });
-            $("#GetJournal").change(function () {
+            $("#IsJournal").change(function () {
                 reloadWithQueryStringVars({
-                    getBook: '@Model.GetBook.ToString().ToLower()',
-                    getJournal: this.checked,
-                    getNewspaper: '@Model.GetNewspaper.ToString().ToLower()',
+                    isBook: '@Model.IsBook.ToString().ToLower()',
+                    isJournal: this.checked,
+                    isNewspaper: '@Model.IsNewspaper.ToString().ToLower()',
                     sortBy: '@Model.SortBy',
                     ascending: @Model.Ascending,
                     page: '@Constants.DEFAULTPAGE'
@@ -364,9 +364,9 @@
                     ascending = 'desc';
                 if ('@Model.SortBy' === text) {
                     reloadWithQueryStringVars({
-                        getBook: '@Model.GetBook.ToString().ToLower()',
-                        getJournal: '@Model.GetJournal.ToString().ToLower()',
-                        getNewspaper: '@Model.GetNewspaper.ToString().ToLower()',
+                        isBook: '@Model.IsBook.ToString().ToLower()',
+                        isJournal: '@Model.IsJournal.ToString().ToLower()',
+                        isNewspaper: '@Model.IsNewspaper.ToString().ToLower()',
                         sortBy: text,
                         ascending: ascending,
                         page: '@Constants.DEFAULTPAGE'
@@ -374,9 +374,9 @@
                 }
                 if ('@Model.SortBy' !== text) {
                     reloadWithQueryStringVars({
-                        getBook: '@Model.GetBook.ToString().ToLower()',
-                        getJournal: '@Model.GetJournal.ToString().ToLower()',
-                        getNewspaper: '@Model.GetNewspaper.ToString().ToLower()',
+                        isBook: '@Model.IsBook.ToString().ToLower()',
+                        isJournal: '@Model.IsJournal.ToString().ToLower()',
+                        isNewspaper: '@Model.IsNewspaper.ToString().ToLower()',
                         sortBy: text,
                         ascending: ascending,
                         page: '@Constants.DEFAULTPAGE'

@@ -23,10 +23,10 @@
             <th>
                 <a href="javascript:void(0);" class="table-head">Order status</a>
                 <div id="checkboxes">
-                    @Html.CheckBoxFor(model => model.GetPaid)
-                    @Html.LabelFor(model => model.GetPaid, Enums.OrderStatusType.Paid.ToString())
-                    @Html.CheckBoxFor(model => model.GetUnpaid)
-                    @Html.LabelFor(model => model.GetUnpaid, Enums.OrderStatusType.Unpaid.ToString())
+                    @Html.CheckBoxFor(model => model.IsPaid)
+                    @Html.LabelFor(model => model.IsPaid, Enums.OrderStatusType.Paid.ToString())
+                    @Html.CheckBoxFor(model => model.IsUnpaid)
+                    @Html.LabelFor(model => model.IsUnpaid, Enums.OrderStatusType.Unpaid.ToString())
                 </div>
             </th>
         </tr>
@@ -69,8 +69,8 @@
     @Html.ActionLink("previous page", "Orders", "Admin", new
 {
     page = Model.Page - 1,
-    getPaid = Model.GetPaid,
-    getUnpaid = Model.GetUnpaid,
+    getPaid = Model.IsPaid,
+    getUnpaid = Model.IsUnpaid,
     sortBy = Model.SortBy,
     ascending = Model.Ascending
 }, new { id = "previousPage" })
@@ -78,8 +78,8 @@
     @Html.ActionLink("next page", "Orders", "Admin", new
 {
     page = Model.Page + 1,
-    getPaid = Model.GetPaid,
-    getUnpaid = Model.GetUnpaid,
+    getPaid = Model.IsPaid,
+    getUnpaid = Model.IsUnpaid,
     sortBy = Model.SortBy,
     ascending = Model.Ascending
 }, new { id = "nextPage" })
@@ -138,7 +138,7 @@
             $("#GetPaid").change(function () {
                 reloadWithQueryStringVars({
                     getPaid: this.checked,
-                    getUnpaid: '@Model.GetUnpaid.ToString().ToLower()',
+                    getUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
                     sortBy: '@Model.SortBy',
                     ascending: '@Model.Ascending',
                     page: '@Constants.DEFAULTPAGE'
@@ -146,7 +146,7 @@
             });
             $("#GetUnpaid").change(function () {
                 reloadWithQueryStringVars({
-                    getPaid: '@Model.GetPaid.ToString().ToLower()',
+                    getPaid: '@Model.IsPaid.ToString().ToLower()',
                     getUnpaid: this.checked,
                     sortBy: '@Model.SortBy',
                     ascending: '@Model.Ascending',
@@ -172,8 +172,8 @@
                     ascending = 'desc';
                 if ('@Model.SortBy' === text) {
                     reloadWithQueryStringVars({
-                        getPaid: '@Model.GetPaid.ToString().ToLower()',
-                        getUnpaid: '@Model.GetUnpaid.ToString().ToLower()',
+                        getPaid: '@Model.IsPaid.ToString().ToLower()',
+                        getUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
                         sortBy: text,
                         ascending: ascending,
                         page: '@Constants.DEFAULTPAGE'
@@ -181,8 +181,8 @@
                 }
                 if ('@Model.SortBy' !== text) {
                     reloadWithQueryStringVars({
-                        getPaid: '@Model.GetPaid.ToString().ToLower()',
-                        getUnpaid: '@Model.GetUnpaid.ToString().ToLower()',
+                        getPaid: '@Model.IsPaid.ToString().ToLower()',
+                        getUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
                         sortBy: text,
                         ascending: ascending,
                         page: '@Constants.DEFAULTPAGE'

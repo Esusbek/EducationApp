@@ -1,7 +1,4 @@
-﻿using EducationApp.Shared.Enums;
-using System.Collections.Generic;
-
-namespace EducationApp.DataAccessLayer.FilterModels
+﻿namespace EducationApp.DataAccessLayer.FilterModels
 {
     public class OrderFilterModel
     {
@@ -13,7 +10,7 @@ namespace EducationApp.DataAccessLayer.FilterModels
         {
             GetPaid = true;
             GetUnpaid = true;
-            UserId = "";
+            UserId = string.Empty;
             PaymentId = default;
         }
     }

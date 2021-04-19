@@ -36,7 +36,8 @@ export class TokenInterceptor implements HttpInterceptor {
                     observer.complete();
                 });
             });
-        } else {
+        }
+        if (!this.refreshTokenInProgress) {
             this.refreshTokenInProgress = true;
             return this.auth.refreshToken().pipe(
                 tap((tokens) => {
@@ -66,8 +67,8 @@ export class TokenInterceptor implements HttpInterceptor {
                 catchError(error => {
                     if (error.status !== 401) {
                         return this.handleResponseError(error);
-                    } else {
-                        debugger;
+                    }
+                    if (error.status === 401) {
                         this.logout();
                     }
                 }));

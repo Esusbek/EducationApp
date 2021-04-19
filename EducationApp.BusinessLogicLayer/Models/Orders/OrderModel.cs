@@ -1,11 +1,12 @@
-﻿using EducationApp.BusinessLogicLayer.Models.Users;
+﻿using EducationApp.BusinessLogicLayer.Models.Base;
+using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.Shared.Enums;
 using System;
 using System.Collections.Generic;
 
 namespace EducationApp.BusinessLogicLayer.Models.Orders
 {
-    public class OrderModel : Base.BaseModel
+    public class OrderModel : BaseModel
     {
         public string Description { get; set; }
         public string UserId { get; set; }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EducationApp.BusinessLogicLayer.Models.Orders;
 using EducationApp.BusinessLogicLayer.Models.Users;
+using EducationApp.BusinessLogicLayer.Models.ViewModels;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.DataAccessLayer.Entities;
@@ -15,7 +16,6 @@ using Stripe.Checkout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -43,14 +43,27 @@ namespace EducationApp.BusinessLogicLayer.Services
             _validator = validationProvider;
         }
 
-
+        public OrdersViewModel GetViewModel(OrdersViewModel model)
+        {
+            return new OrdersViewModel
+            {
+                Orders = GetAllOrders(model.IsPaid, model.IsUnpaid, model.SortBy, model.Ascending, model.Page),
+                Page = model.Page,
+                LastPage = GetLastPage(model.IsPaid, model.IsUnpaid),
+                IsUnpaid = model.IsUnpaid,
+                IsPaid = model.IsPaid,
+                SortBy = model.SortBy,
+                Ascending = model.Ascending
+            };
+        }
         public void PayOrder(string paymentIntentId)
         {
             if (string.IsNullOrWhiteSpace(paymentIntentId))
             {
                 throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDINTENTIDERROR);
             }
-            var payment = _paymentRepository.Get(new PaymentFilterModel { TransactionId = paymentIntentId}).FirstOrDefault();
+            var paymentFilter = new PaymentFilterModel { TransactionId = paymentIntentId };
+            var payment = _paymentRepository.Get(paymentFilter).FirstOrDefault();
             var filter = new OrderFilterModel
             {
                 PaymentId = payment.Id
@@ -84,7 +97,8 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             var items = new List<SessionLineItemOptions>();
             var editionIds = order.CurrentItems.Select(item => item.PrintingEditionId).ToList();
-            var printingEditions = _printingEditionService.GetPrintingEditionsRange(new PrintingEditionFilterModel { EditionIds = editionIds});
+            var editionFilter = new PrintingEditionFilterModel { EditionIds = editionIds };
+            var printingEditions = _printingEditionService.GetPrintingEditionsRange(editionFilter);
             var dbItems = _mapper.Map<List<OrderItemEntity>>(order.CurrentItems);
             dbItems.ForEach(item => item.OrderId = dbOrder.Id);
             foreach (var item in dbItems)
@@ -94,7 +108,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        UnitAmountDecimal = printingEdition.Price * 100,
+                        UnitAmountDecimal = printingEdition.Price * Constants.CENTMULTIPLIER,
                         Currency = item.Currency.ToString(),
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
@@ -152,6 +166,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 UserId = userId
             };
+
             var dbOrders = _orderRepository.GetAll(filter).ToList();
             int lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
             return lastPage;
@@ -167,7 +182,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             int lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
             return lastPage;
         }
-        public List<OrderModel> GetAllOrders(bool getPaid = true, bool getUnpaid = true, string field = null, string ascending = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = true)
+        public List<OrderModel> GetAllOrders(bool getPaid = true, bool getUnpaid = true, string field = null, string ascending = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
         {
             var filter = new OrderFilterModel
             {
@@ -177,7 +192,8 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbOrders = _orderRepository.Get(filter, field, ascending == Constants.DEFAULTSORTORDER, getRemoved, page);
             var orders = new List<OrderModel>();
             var orderIds = dbOrders.Select(order => order.Id).ToList();
-            var allItems = _itemRepository.Get(new OrderItemFilterModel { OrderIds = orderIds});
+            var itemsFilter = new OrderItemFilterModel { OrderIds = orderIds };
+            var allItems = _itemRepository.Get(itemsFilter);
             foreach (var order in dbOrders)
             {
                 var mappedOrder = _mapper.Map<OrderModel>(order);
@@ -191,13 +207,16 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
         public OrderResponseModel GetUserOrders(UserModel user, int page = Constants.DEFAULTPAGE)
         {
-            var filter = new OrderFilterModel { 
-                UserId=user.Id
+            var filter = new OrderFilterModel
+            {
+                UserId = user.Id
             };
+
             var dbOrders = _orderRepository.Get(filter, page: page).ToList();
             var orders = new List<OrderModel>();
             var orderIds = dbOrders.Select(order => order.Id).ToList();
-            var allItems = _itemRepository.Get(new OrderItemFilterModel { OrderIds = orderIds });
+            var itemsFilter = new OrderItemFilterModel { OrderIds = orderIds };
+            var allItems = _itemRepository.Get(itemsFilter);
             foreach (var order in dbOrders)
             {
                 var mappedOrder = _mapper.Map<OrderModel>(order);
