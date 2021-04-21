@@ -34,12 +34,7 @@ namespace EducationApp.PresentationLayer.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromForm] LoginViewModel model)
         {
-            var user = new UserModel
-            {
-                Password = model.Password,
-                UserName = model.UserName
-            };
-            await _userService.LoginAsync(user, true);
+            await _userService.LoginAsync(model);
             return RedirectToAction("Profile");
         }
         public async Task<IActionResult> Logout()
@@ -49,8 +44,8 @@ namespace EducationApp.PresentationLayer.Controllers
         }
         public async Task<IActionResult> Profile()
         {
-            var user = await _userService.GetUserByUsernameAsync(User.Identity.Name);
-            return View(new ProfileViewModel { User = user });
+            var model = await _userService.GetProfileViewModelAsync(User.Identity.Name);
+            return View(model);
         }
         [HttpPost]
         public async Task<IActionResult> UpdateUser([FromForm] UserModel user)
@@ -68,7 +63,8 @@ namespace EducationApp.PresentationLayer.Controllers
         [HttpGet]
         public IActionResult Users([FromQuery] UsersViewModel model)
         {
-            return View(_userService.GetViewModel(model));
+            var newModel = _userService.GetViewModel(model);
+            return View(newModel);
         }
         public async Task<IActionResult> Ban(string userId)
         {
@@ -78,17 +74,20 @@ namespace EducationApp.PresentationLayer.Controllers
         [HttpGet]
         public IActionResult PrintingEditions([FromQuery] PrintingEditionsViewModel model)
         {
-            return View(_printingEditionService.GetViewModel(model));
+            var newModel = _printingEditionService.GetViewModel(model);
+            return View(newModel);
         }
         [HttpGet]
         public IActionResult Orders([FromQuery] OrdersViewModel model)
         {
-            return View(_orderService.GetViewModel(model));
+            var newModel = _orderService.GetViewModel(model);
+            return View(newModel);
         }
         [HttpGet]
         public IActionResult Authors([FromQuery] AuthorsViewModel model)
         {
-            return View(_authorService.GetViewModel(model));
+            var newModel = _authorService.GetViewModel(model);
+            return View(newModel);
         }
         [HttpPost]
         public IActionResult EditAuthor(AuthorModel author)

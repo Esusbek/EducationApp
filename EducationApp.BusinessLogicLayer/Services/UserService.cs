@@ -55,6 +55,21 @@ namespace EducationApp.BusinessLogicLayer.Services
                 SearchString = string.IsNullOrWhiteSpace(model.SearchString) ? string.Empty : model.SearchString
             };
         }
+        public async Task<ProfileViewModel> GetProfileViewModelAsync(string username)
+        {
+            var user = await GetUserByUsernameAsync(username);
+            return new ProfileViewModel { User = user };
+        }
+        public async Task<TokensModel> LoginAsync(LoginViewModel model, bool rememberMe=true)
+        {
+            var user = new UserModel
+            {
+                Password = model.Password,
+                UserName = model.UserName
+            };
+            var jwtResult = await LoginAsync(user, rememberMe);
+            return jwtResult;
+        }
         public async Task<TokensModel> LoginAsync(UserModel user, bool rememberMe)
         {
             if (string.IsNullOrWhiteSpace(user.Password) || string.IsNullOrWhiteSpace(user.UserName))
