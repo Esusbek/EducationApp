@@ -52,7 +52,7 @@ namespace EducationApp.PresentationLayer.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
         public async Task<IActionResult> ConvertCurrency([FromBody] CurrencyConvertRequestModel model)
         {
-            var result = await _orderService.ConvertCurrencyAsync(model.FromCurrency, model.ToCurrency, model.Amount);
+            decimal result = await _orderService.ConvertCurrencyAsync(model.FromCurrency, model.ToCurrency, model.Amount);
             return Ok(result);
         }
     }
