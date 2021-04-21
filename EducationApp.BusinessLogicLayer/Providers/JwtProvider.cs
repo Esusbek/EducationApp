@@ -38,7 +38,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
             {
                 new Claim(Constants.IDCLAIMNAME, userId)
             };
-            foreach (var role in userRoles)
+            foreach (string role in userRoles)
             {
                 claims.Add(new Claim(Constants.USERNAMECLAIMNAME, userName));
                 claims.Add(new Claim(Constants.ROLECLAIMNAME, role));
@@ -69,7 +69,6 @@ namespace EducationApp.BusinessLogicLayer.Providers
             user.RefreshToken = null;
             await _userManager.UpdateAsync(user);
         }
-
         public async Task<TokensModel> RefreshAsync(string refreshToken, string accessToken)
         {
             var (principal, jwtToken) = DecodeJwtToken(accessToken);

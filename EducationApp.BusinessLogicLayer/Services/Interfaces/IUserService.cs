@@ -12,6 +12,7 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public Task RegisterAsync(UserModel user);
         public Task<UserModel> UpdateAsync(UserModel user);
         public Task<TokensModel> LoginAsync(UserModel user, bool rememberMe);
+        public Task<TokensModel> GoogleLoginAsync(string idToken);
         public Task LogoutAsync(string userId);
         public Task LogoutByNameAsync(string userName);
         public Task<TokensModel> RefreshTokenAsync(string accessToken, string refreshToken);

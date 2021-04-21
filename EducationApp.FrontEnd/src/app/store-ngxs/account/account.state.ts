@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { map } from 'rxjs/operators';
 import { AccountService } from 'src/app/services/account.service';
-import { activateEmail, forgotPassword, login, loginSuccess, refreshTokens, register, registerSuccess, resetPassword } from './account.actions';
+import { activateEmail, forgotPassword, googleLogin, login, loginSuccess, refreshTokens, register, registerSuccess, resetPassword } from './account.actions';
 
 
 export interface AccountStateModel {
@@ -20,7 +19,7 @@ const initialState: AccountStateModel = {
 })
 @Injectable()
 export class AccountState {
-    constructor(private accountService: AccountService, private router: Router) { }
+    constructor(private accountService: AccountService, private router: Router, private ngZone: NgZone) { }
     @Selector()
     static isRegistered(state: AccountStateModel) {
         return state.isRegistered;
@@ -37,14 +36,12 @@ export class AccountState {
         if (action.payload.rememberMe) {
             localStorage.setItem('refreshToken', action.payload.tokens.refreshToken);
         }
-        this.router.navigate(['/book-list'])
+        this.ngZone.run(() => this.router.navigate(['/book-list']))
     }
     @Action(register)
     register(ctx: StateContext<AccountStateModel>, action: register) {
         this.accountService.register(action.payload)
-            .pipe(
-                map(() => ctx.dispatch(new registerSuccess()))
-            )
+            .subscribe(() => ctx.dispatch(new registerSuccess()));
     }
     @Action(registerSuccess)
     registerSuccess(ctx: StateContext<AccountStateModel>, action: registerSuccess) {
@@ -53,27 +50,25 @@ export class AccountState {
     @Action(activateEmail)
     activateEmail(ctx: StateContext<AccountStateModel>, action: activateEmail) {
         this.accountService.activateEmail(action.payload)
-            .pipe(
-                map(() => ctx.dispatch(new registerSuccess()))
-            )
+            .subscribe(() => ctx.dispatch(new registerSuccess()))
     }
     @Action(forgotPassword)
     forgotPassword(ctx: StateContext<AccountStateModel>, action: forgotPassword) {
         this.accountService.forgotPassword(action.userName)
-            .pipe(
-                map(() => ctx.dispatch(new registerSuccess()))
-            )
+            .subscribe(() => ctx.dispatch(new registerSuccess()))
     }
     @Action(resetPassword)
     resetPassword(ctx: StateContext<AccountStateModel>, action: resetPassword) {
         this.accountService.resetPassword(action.payload)
-            .pipe(
-                map(() => ctx.dispatch(new registerSuccess()))
-            )
+            .subscribe(() => ctx.dispatch(new registerSuccess()))
     }
     @Action(refreshTokens)
     refreshTokens(ctx: StateContext<AccountStateModel>, action: refreshTokens) {
         localStorage.setItem('accessToken', action.payload.accessToken);
         localStorage.setItem('refreshToken', action.payload.refreshToken);
+    }
+    @Action(googleLogin)
+    googleLogin(ctx: StateContext<AccountStateModel>, action: googleLogin) {
+        this.accountService.googleLogin(action.user).subscribe(tokens => ctx.dispatch(new loginSuccess({ tokens, rememberMe: true })))
     }
 }

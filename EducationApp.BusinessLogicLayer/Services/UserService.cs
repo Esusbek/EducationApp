@@ -18,6 +18,10 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
+using Google.Apis.Auth;
 
 namespace EducationApp.BusinessLogicLayer.Services
 {
@@ -30,10 +34,9 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly IEmailProvider _email;
         private readonly UrlConfig _urlConfig;
         private readonly IJwtProvider _jwtProvider;
+        private readonly RNGCryptoServiceProvider _rngProvider;
 
-        public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager,
-            IOptions<UrlConfig> urlConfig, IMapper mapper,
-            IJwtProvider jwtProvider, IEmailProvider emailProvider, IValidationProvider validationProvider)
+        public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager,IOptions<UrlConfig> urlConfig, IMapper mapper,IJwtProvider jwtProvider, IEmailProvider emailProvider, IValidationProvider validationProvider)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -42,6 +45,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             _validator = validationProvider;
             _urlConfig = urlConfig.Value;
             _email = emailProvider;
+            _rngProvider = new RNGCryptoServiceProvider();
         }
         public UsersViewModel GetViewModel(UsersViewModel model)
         {
@@ -77,6 +81,28 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             var userRoles = await _userManager.GetRolesAsync(dbUser);
             var jwtResult = await _jwtProvider.GenerateTokenAsync(dbUser.UserName, dbUser.Id, userRoles);
+            return jwtResult;
+        }
+
+        public async Task<TokensModel> GoogleLoginAsync(string idToken)
+        {
+            var tokenPayload = await DecodeJwtTokenAsync(idToken);
+            string email = tokenPayload.Email;
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+            {
+                var newUser = new UserModel
+                {
+                    FirstName = tokenPayload.GivenName,
+                    LastName = tokenPayload.FamilyName,
+                    Email = email,
+                    UserName = email.Split(Constants.EMAILSEPARATOR)[0]
+                };
+                await GoogleRegisterAsync(newUser);
+                user = await _userManager.FindByEmailAsync(email);
+            }
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var jwtResult = await _jwtProvider.GenerateTokenAsync(user.UserName, user.Id, userRoles);
             return jwtResult;
         }
 
@@ -138,6 +164,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var user = _mapper.Map<UserModel>(dbUser);
             return user;
         }
+
         public async Task<UserModel> GetUserByUsernameAsync(string userName)
         {
             var dbUser = await _userManager.FindByNameAsync(userName);
@@ -216,9 +243,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             query[Constants.CODEKEY] = code;
             uriBuilder.Query = query.ToString();
             string callbackUrl = uriBuilder.ToString();
-            await _email.SendEmailAsync(new System.Net.Mail.MailAddress(newUser.Email),
-                Constants.DEFAULTEMAILCONFIRMATION,
-                string.Format(Constants.DEFAULTEMAILCONFIRMATIONBODY, callbackUrl));
+            await _email.SendEmailAsync(new System.Net.Mail.MailAddress(newUser.Email),Constants.DEFAULTEMAILCONFIRMATION,string.Format(Constants.DEFAULTEMAILCONFIRMATIONBODY, callbackUrl));
         }
 
         public async Task<UserModel> UpdateAsync(UserModel user)
@@ -297,6 +322,57 @@ namespace EducationApp.BusinessLogicLayer.Services
             return;
         }
 
+        private async Task<GoogleJsonWebSignature.Payload> DecodeJwtTokenAsync(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new CustomApiException(HttpStatusCode.UnprocessableEntity, Constants.INVALIDTOKENERROR);
+            }
+            var validPayload = await GoogleJsonWebSignature.ValidateAsync(token);
+            return validPayload;
+        }
+        private async Task GoogleRegisterAsync(UserModel user)
+        {
+            var newUser = _mapper.Map<UserEntity>(user);
+            var dbUser = await _userManager.FindByNameAsync(user.UserName);
+            if (dbUser is not null)
+            {
+                throw new CustomApiException(HttpStatusCode.Conflict, Constants.USERNAMETAKENERROR);
+            }
+            dbUser = await _userManager.FindByEmailAsync(user.Email);
+            if (dbUser is not null)
+            {
+                throw new CustomApiException(HttpStatusCode.Conflict, Constants.EMAILTAKENERROR);
+            }
+            user.Password = GetRandomString(Constants.DEFAULTPASSWORDLENGTH);
+            var result = await _userManager.CreateAsync(newUser, user.Password);
+            if (!result.Succeeded)
+            {
+                throw new CustomApiException(HttpStatusCode.Conflict, Constants.FAILEDTOCREATEUSERERROR);
+            }
+            result = await _userManager.AddToRoleAsync(newUser, Enums.UserRolesType.Client.ToString());
+            if (!result.Succeeded)
+            {
+                await _userManager.DeleteAsync(newUser);
+                throw new CustomApiException(HttpStatusCode.Conflict, Constants.FAILEDTOCREATEUSERERROR);
+            }
+            string code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+            await _userManager.ConfirmEmailAsync(newUser, code);
+            await _email.SendEmailAsync(new System.Net.Mail.MailAddress(newUser.Email),Constants.DEFAULTPASSWORDGENERATED,string.Format(Constants.DEFAULTPASSWORDGENERATEDBODY, user.UserName, user.Password));
+        }
+        private string GetRandomString(int length)
+        {
+            char[] characterArray = Constants.ALPHANUMERICCHARACTERS.Distinct().ToArray();
+            byte[] bytes = new byte[length * 8];
+            _rngProvider.GetBytes(bytes);
+            char[] result = new char[length];
+            for (int i = 0; i < length; i++)
+            {
+                ulong value = BitConverter.ToUInt64(bytes, i * 8);
+                result[i] = characterArray[value % (uint)characterArray.Length];
+            }
+            return new string(result);
+        }
 
     }
 }

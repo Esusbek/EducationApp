@@ -28,10 +28,6 @@ export class HeaderComponent implements OnInit {
     this.modalService.open(CheckoutComponent);
   }
   public Logout(): void {
-    var auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-      console.log('User signed out.');
-    });
     this.accountService.logout();
   }
 }

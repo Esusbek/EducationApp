@@ -9,23 +9,23 @@ export const HttpOptions = {
 };
 
 export const Urls = {
-  LoginURL: 'Account/Login',
-  RegisterURL: 'Account/Register',
-  ActivationURL: 'Account/ConfirmEmail',
-  ForgotPasswordURL: 'Account/ForgotPassword',
-  ResetPasswordURL: 'Account/ResetPassword',
+  loginURL: 'Account/Login',
+  registerURL: 'Account/Register',
+  activationURL: 'Account/ConfirmEmail',
+  forgotPasswordURL: 'Account/ForgotPassword',
+  resetPasswordURL: 'Account/ResetPassword',
   getUserURL: 'Account/GetUserInfo',
   changePasswordURL: 'Account/ChangePassword',
   updateUserURL: 'Account/UpdateUser',
   refreshTokenURL: 'Account/RefreshToken',
   logoutURL: 'Account/Logout',
-  dummyURL: 'Account/DummyRequest',
   getBookURL: 'PrintingEdition/GetFiltered',
   getEditionInfoURL: 'PrintingEdition/GetInfo',
   getLastPageURL: 'PrintingEdition/GetPage',
   checkoutURL: 'Order/Checkout',
   getOrdersURL: 'Order/Get',
-  payOrderURL: 'Order/Success'
+  payOrderURL: 'Order/Success',
+  googleLoginURL: 'Account/GoogleLogin'
 }
 
 export const Defaults = {

@@ -3,7 +3,9 @@
     <div class="signin-header">
         <span>Sign-In</span>
     </div>
-    <div class="g-signin2" data-onsuccess="onGoogleSignIn()"></div>
+    <div>
+        <button type="button" (click)="loginWithGoogle()" class="btn btn-danger">Login with Google</button>
+    </div>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
         <div class="credentials" formGroupName="user">

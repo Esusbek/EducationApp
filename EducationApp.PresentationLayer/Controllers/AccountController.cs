@@ -97,6 +97,12 @@ namespace EducationApp.PresentationLayer.Controllers
             return Ok();
         }
 
-
+        [HttpPost("Account/GoogleLogin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequestModel model)
+        {
+            var loginResult = await _userService.GoogleLoginAsync(model.IdToken);
+            return Ok(loginResult);
+        }
     }
 }

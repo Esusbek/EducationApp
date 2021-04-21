@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngxs/store';
-import { forgotPassword, login } from 'src/app/store-ngxs/account/account.actions';
+import { GoogleLoginProvider, SocialAuthService } from 'angularx-social-login';
+import { forgotPassword, googleLogin, login } from 'src/app/store-ngxs/account/account.actions';
 
 @Component({
   selector: 'app-login',
@@ -31,15 +32,23 @@ export class LoginComponent implements OnInit {
   public get userName() { return this.loginForm.get('user').get('userName') }
   public get password() { return this.loginForm.get('user').get('password') }
   public get userNameRecovery() { return this.forgotPasswordForm.get('userName') }
-  public constructor(private store: Store) {
+  public constructor(private store: Store, private socialAuthService: SocialAuthService) {
     this.forgotPassword = false;
     this.reseted = false;
     this.showPasswords = false;
   }
 
   public ngOnInit(): void {
-  }
 
+  }
+  public loginWithGoogle(): void {
+    this.socialAuthService.authState.subscribe((user) => {
+      if (user != null) {
+        this.store.dispatch(new googleLogin(user));
+      }
+    });
+    this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
+  }
   public onSubmit() {
     this.store.dispatch(new login({ ...this.loginForm.value }))
   }
@@ -53,11 +62,5 @@ export class LoginComponent implements OnInit {
   public showPassword() {
     this.showPasswords = !this.showPasswords;
   }
-  public onGoogleSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-  }
+
 }
