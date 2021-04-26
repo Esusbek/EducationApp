@@ -26,8 +26,8 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
         {
             page = page < Constants.DEFAULTPAGE ? Constants.DEFAULTPAGE : page;
             string sortOrder = ascending ? "asc" : "desc";
-            string paidFilter = orderFilter.GetPaid ? $"o.Status={(int)Enums.OrderStatusType.Paid}" : string.Empty;
-            string unpaidFilter = orderFilter.GetUnpaid ? $"o.Status={(int)Enums.OrderStatusType.Unpaid}" : string.Empty;
+            string paidFilter = orderFilter.IsPaid ? $"o.Status={(int)Enums.OrderStatusType.Paid}" : string.Empty;
+            string unpaidFilter = orderFilter.IsUnpaid ? $"o.Status={(int)Enums.OrderStatusType.Unpaid}" : string.Empty;
             string paymentIdFilter = !(orderFilter.PaymentId == default) ? $"o.PaymentId={orderFilter.PaymentId}" : string.Empty;
             string userIdFilter = !string.IsNullOrWhiteSpace(orderFilter.UserId) ? $"o.UserId='{orderFilter.UserId}'" : string.Empty;
             string removedFilter = getRemoved ? "1" : "0";
@@ -81,8 +81,8 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
 
         public List<OrderEntity> GetAll(OrderFilterModel orderFilter = null, bool getRemoved = false)
         {
-            string paidFilter = orderFilter.GetPaid ? $"o.Status={(int)Enums.OrderStatusType.Paid}" : string.Empty;
-            string unpaidFilter = orderFilter.GetUnpaid ? $"o.Status={(int)Enums.OrderStatusType.Unpaid}" : string.Empty;
+            string paidFilter = orderFilter.IsPaid ? $"o.Status={(int)Enums.OrderStatusType.Paid}" : string.Empty;
+            string unpaidFilter = orderFilter.IsUnpaid ? $"o.Status={(int)Enums.OrderStatusType.Unpaid}" : string.Empty;
             string paymentIdFilter = !(orderFilter.PaymentId == default) ? $"o.PaymentId={orderFilter.PaymentId}" : string.Empty;
             string userIdFilter = !string.IsNullOrWhiteSpace(orderFilter.UserId) ? $"o.UserId='{orderFilter.UserId}'" : string.Empty;
             string removedFilter = getRemoved ? "1" : "0";

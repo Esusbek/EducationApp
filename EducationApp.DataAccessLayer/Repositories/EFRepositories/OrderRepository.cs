@@ -24,8 +24,8 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             Expression<Func<OrderEntity, bool>> filter = null;
             if (orderFilter is not null)
             {
-                filter = order => ((orderFilter.GetPaid && order.Status == Enums.OrderStatusType.Paid)
-                || (orderFilter.GetUnpaid && order.Status == Enums.OrderStatusType.Unpaid)) &&
+                filter = order => ((orderFilter.IsPaid && order.Status == Enums.OrderStatusType.Paid)
+                || (orderFilter.IsUnpaid && order.Status == Enums.OrderStatusType.Unpaid)) &&
                 (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId == orderFilter.UserId) &&
                 (orderFilter.PaymentId == default || order.PaymentId == orderFilter.PaymentId);
             }
@@ -38,8 +38,8 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             Expression<Func<OrderEntity, bool>> filter = null;
             if (orderFilter is not null)
             {
-                filter = order => ((orderFilter.GetPaid && order.Status == Enums.OrderStatusType.Paid)
-                || (orderFilter.GetUnpaid && order.Status == Enums.OrderStatusType.Unpaid)) &&
+                filter = order => ((orderFilter.IsPaid && order.Status == Enums.OrderStatusType.Paid)
+                || (orderFilter.IsUnpaid && order.Status == Enums.OrderStatusType.Unpaid)) &&
                 (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId == orderFilter.UserId) &&
                 (orderFilter.PaymentId == default || order.PaymentId == orderFilter.PaymentId);
             }

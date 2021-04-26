@@ -2,14 +2,15 @@
 {
     public class OrderFilterModel
     {
-        public bool GetPaid { get; set; }
-        public bool GetUnpaid { get; set; }
+       
+        public bool IsPaid { get; set; }
+        public bool IsUnpaid { get; set; }
         public string UserId { get; set; }
         public int PaymentId { get; set; }
         public OrderFilterModel()
         {
-            GetPaid = true;
-            GetUnpaid = true;
+            IsPaid = true;
+            IsUnpaid = true;
             UserId = string.Empty;
             PaymentId = default;
         }

@@ -69,8 +69,8 @@
     @Html.ActionLink("previous page", "Orders", "Admin", new
 {
     page = Model.Page - 1,
-    getPaid = Model.IsPaid,
-    getUnpaid = Model.IsUnpaid,
+    isPaid = Model.IsPaid,
+    isUnpaid = Model.IsUnpaid,
     sortBy = Model.SortBy,
     ascending = Model.Ascending
 }, new { id = "previousPage" })
@@ -78,8 +78,8 @@
     @Html.ActionLink("next page", "Orders", "Admin", new
 {
     page = Model.Page + 1,
-    getPaid = Model.IsPaid,
-    getUnpaid = Model.IsUnpaid,
+    isPaid = Model.IsPaid,
+    isUnpaid = Model.IsUnpaid,
     sortBy = Model.SortBy,
     ascending = Model.Ascending
 }, new { id = "nextPage" })
@@ -135,19 +135,19 @@
                 }
             }
 
-            $("#GetPaid").change(function () {
+            $("#IsPaid").change(function () {
                 reloadWithQueryStringVars({
-                    getPaid: this.checked,
-                    getUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
+                    isPaid: this.checked,
+                    isUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
                     sortBy: '@Model.SortBy',
                     ascending: '@Model.Ascending',
                     page: '@Constants.DEFAULTPAGE'
                 });
             });
-            $("#GetUnpaid").change(function () {
+            $("#IsUnpaid").change(function () {
                 reloadWithQueryStringVars({
-                    getPaid: '@Model.IsPaid.ToString().ToLower()',
-                    getUnpaid: this.checked,
+                    isPaid: '@Model.IsPaid.ToString().ToLower()',
+                    isUnpaid: this.checked,
                     sortBy: '@Model.SortBy',
                     ascending: '@Model.Ascending',
                     page: '@Constants.DEFAULTPAGE'
@@ -172,8 +172,8 @@
                     ascending = 'desc';
                 if ('@Model.SortBy' === text) {
                     reloadWithQueryStringVars({
-                        getPaid: '@Model.IsPaid.ToString().ToLower()',
-                        getUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
+                        isPaid: '@Model.IsPaid.ToString().ToLower()',
+                        isUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
                         sortBy: text,
                         ascending: ascending,
                         page: '@Constants.DEFAULTPAGE'
@@ -181,8 +181,8 @@
                 }
                 if ('@Model.SortBy' !== text) {
                     reloadWithQueryStringVars({
-                        getPaid: '@Model.IsPaid.ToString().ToLower()',
-                        getUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
+                        isPaid: '@Model.IsPaid.ToString().ToLower()',
+                        isUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
                         sortBy: text,
                         ascending: ascending,
                         page: '@Constants.DEFAULTPAGE'
