@@ -32,6 +32,7 @@ namespace EducationApp.BusinessLogicLayer
             services.AddSingleton<ICurrencyConvertionProvider, CurrencyConvertionProvider>();
             services.AddTransient<IValidationProvider, ValidationProvider>();
             services.AddTransient<IEmailProvider, EmailProvider>();
+            services.AddSingleton<ICloudStorageProvider, GoogleCloudStorageProvider>();
         }
 
         public static void AddMapper(this IServiceCollection services)

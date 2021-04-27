@@ -22,6 +22,8 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using Google.Apis.Auth;
+using System.IO;
+using System.Net.Mail;
 
 namespace EducationApp.BusinessLogicLayer.Services
 {
@@ -35,8 +37,9 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly UrlConfig _urlConfig;
         private readonly IJwtProvider _jwtProvider;
         private readonly RNGCryptoServiceProvider _rngProvider;
+        private readonly ICloudStorageProvider _cloudStorage;
 
-        public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager,IOptions<UrlConfig> urlConfig, IMapper mapper,IJwtProvider jwtProvider, IEmailProvider emailProvider, IValidationProvider validationProvider)
+        public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager,IOptions<UrlConfig> urlConfig, IMapper mapper,IJwtProvider jwtProvider, IEmailProvider emailProvider, IValidationProvider validationProvider, ICloudStorageProvider cloudStorage)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -46,6 +49,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             _urlConfig = urlConfig.Value;
             _email = emailProvider;
             _rngProvider = new RNGCryptoServiceProvider();
+            _cloudStorage = cloudStorage;
         }
         public UsersViewModel GetViewModel(UsersViewModel model)
         {
@@ -208,6 +212,13 @@ namespace EducationApp.BusinessLogicLayer.Services
         public async Task RegisterAsync(UserModel user)
         {
             _validator.ValidateUser(user);
+            if(user.ProfilePicture is not null)
+            {
+                string extension = Path.GetExtension(user.ProfilePicture.FileName);
+                string fileName = GetFileName(user.UserName, extension);
+                user.ProfilePictureURL = await _cloudStorage.UploadFileAsync(user.ProfilePicture, fileName);
+                user.ProfilePictureStorageName = fileName;
+            }
             var newUser = _mapper.Map<UserEntity>(user);
             var dbUser = await _userManager.FindByNameAsync(user.UserName);
             if (dbUser is not null)
@@ -243,7 +254,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             query[Constants.CODEKEY] = code;
             uriBuilder.Query = query.ToString();
             string callbackUrl = uriBuilder.ToString();
-            await _email.SendEmailAsync(new System.Net.Mail.MailAddress(newUser.Email),Constants.DEFAULTEMAILCONFIRMATION,string.Format(Constants.DEFAULTEMAILCONFIRMATIONBODY, callbackUrl));
+            await _email.SendEmailAsync(new MailAddress(newUser.Email),Constants.DEFAULTEMAILCONFIRMATION,string.Format(Constants.DEFAULTEMAILCONFIRMATIONBODY, callbackUrl));
         }
 
         public async Task<UserModel> UpdateAsync(UserModel user)
@@ -252,6 +263,13 @@ namespace EducationApp.BusinessLogicLayer.Services
             if (dbUser is null)
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+            }
+            if (user.ProfilePicture is not null)
+            {
+                string extension = Path.GetExtension(user.ProfilePicture.FileName);
+                string fileName = GetFileName(user.UserName, extension);
+                user.ProfilePictureURL = await _cloudStorage.UploadFileAsync(user.ProfilePicture, fileName);
+                user.ProfilePictureStorageName = fileName;
             }
             _mapper.Map(user, dbUser);
             await _userManager.UpdateAsync(dbUser);
@@ -298,7 +316,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             query[Constants.CODEKEY] = code;
             uriBuilder.Query = query.ToString();
             string callbackUrl = uriBuilder.ToString();
-            await _email.SendEmailAsync(new System.Net.Mail.MailAddress(user.Email),
+            await _email.SendEmailAsync(new MailAddress(user.Email),
                 Constants.DEFAULTPASSWORDRESET,
                 string.Format(Constants.DEFAULTPASSWORDRESETBODY, callbackUrl));
         }
@@ -372,6 +390,10 @@ namespace EducationApp.BusinessLogicLayer.Services
                 result[i] = characterArray[value % (uint)characterArray.Length];
             }
             return new string(result);
+        }
+        private string GetFileName(string username, string extension)
+        {
+            return $"{username}.{extension}";
         }
 
     }

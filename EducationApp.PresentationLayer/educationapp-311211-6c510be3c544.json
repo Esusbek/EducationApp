@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "educationapp-311211",
+  "private_key_id": "6c510be3c544740e113e0e5343f4ae68f18e3145",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDWbvTkk8Ej3V4e\nBbpRJiFkmQLOKWYWCWfqySoZcxdrIK47NpP4CeWYco0xtcQr8x3MoZcIA9txuZHY\nqhZSyXRaNKX3DETt1XOPrL/faTK/CX2zQZt2TnyH+CIr3A81FzJE1AvPEJY1RkwG\n9J58MGZKvp0iWxTDeXq4hiFrJuX9BO4GZsL9ZKfRWCxo5wf1ejLZO25Q/pKjcdTN\nAyXlv1aAtNRm72ceZH/geUei186ULLtl8J/iSGPqjNVicY9y8w3dFXOdNliB36ge\nuGaR8m4hF4A5kltRE9Xs8YTUCXli/VJ9MBNs3gc07hvjHWVQC1qeM8m0QhHuNABW\nx1sr5iDBAgMBAAECggEAEt71503HgAgBueOoJ28THj7G++yxwru2LPfiIBY8V92q\n56QgdoIsdfOS0G6eIn4FP9Zyq65nOAVsO+SQDV4UQsICXxDx2fpgbqL1ycwAvsYv\njUB3VXyHwhGItFJr9jCh6GO+3Eyp42tZ0nzhm61Iu0g2HOlmFOPSdH29YCguskr9\nB+nslm0hlFAgGeRNjYBH2Ehn42bwVotGEnxmqMs15ySG1iCz1xMkNmmb8rVJZH9F\nJVMa1LQ26i8Pl4JPz0nhBNX3ZZ/XfD9/930gTY3vBMYXs8lx4hSIvoqz4+JTqaKz\nLmPj8WrEuUSs6hFMaFXpx0IxvQDzjVW7f5vHwItQPwKBgQDstOfUZCJBO5kZqjUT\nCxQI+y2iScx48IuWmfl7brUyEaJObabmR4/pwStQapkORPchh+HH/vyzISIO6f5h\ntvPxe3A9vnCQzLeQ5XIRB01peGMA6aHz4IL9j74KKXUmvmDc0Qb+WHgp/w1l0p8k\n4+38/fLeEgOexYrFhaBlR2+p1wKBgQDn6UzXdSnPbb6zIqLNFllowq2ri6ziqP8H\nGqBUdQxJTbJcT16QmzhPeoE9DEq7K49HJhBvMDGKpBbIk2WauKi+NKNQTGWiPceE\nnXk14sk2VzTMSLg/VdOWmhRpWge53ad0F8AjNAOV99/FXfXrThKp2jlJPIYFVWPi\nDP7GS6inJwKBgQCybTdnkUeE9qDUiMnTHgGvN29RquF3tJL0JgK6OVxabpJzHhK1\n+PGRWawFxSS0beX/n4bhE+N2P56FsXqwO5Gs0MhtsnT1oWspzNrr3R5MR5QRZwtO\nY0k6SzUMQe3uE4m+Sc5EwXlq5rg5rceKrkmB8Ac3wEp8TxnpBG5AidWxJwKBgQCx\n4UTLTlbPf8Hx7PMqk6XosMo89lmZUT6r2ER6A311DF9uZoKGMEi0zaYriS4Y+oRf\nclbQsgqN6OaA2m3oixMDMaTChpa+JtzOX2sFZfon8CPTPUP1cINm1LArTp72dYln\nhoAdgFvvv7ynyjZCUhQGrBeckQvLM3/1dzpEJuwpqQKBgCoUOM8l808/wbnhF6M/\nZ90juhD3QtmfFOKiTdAkU0b6f1KlaXLLDAWf9Tm87lkBUpL9VSFUUtKfnCupInBE\nOqh2EP8eQ4P1Js/VTtpAXlOI8fX1aOn9xVLvM/Jf5CGdWWQ3zALRRhkuJcaAdza+\nIRulY4oReEWzQHWaDZyC7bsK\n-----END PRIVATE KEY-----\n",
+  "client_email": "image-storage-admin@educationapp-311211.iam.gserviceaccount.com",
+  "client_id": "111581388752321356547",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/image-storage-admin%40educationapp-311211.iam.gserviceaccount.com"
+}

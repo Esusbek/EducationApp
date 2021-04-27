@@ -10,5 +10,7 @@ namespace EducationApp.DataAccessLayer.Entities
         public string LastName { get; set; }
         public bool IsRemoved { get; set; }
         public string RefreshToken { get; set; }
+        public string ProfilePictureURL { get; set; }
+        public string ProfilePictureStorageName { get; set; }
     }
 }

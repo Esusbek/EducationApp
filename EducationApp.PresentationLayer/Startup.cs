@@ -43,6 +43,7 @@ namespace EducationApp.PresentationLayer
             services.Configure<UrlConfig>(options => Configuration.GetSection("url").Bind(options));
             services.Configure<JwtConfig>(options => Configuration.GetSection("jwt").Bind(options));
             services.Configure<CurrencyConvertConfig>(options => Configuration.GetSection("currencyconvert").Bind(options));
+            services.Configure<GoogleStorageConfig>(options => Configuration.GetSection("googlestorage").Bind(options));
 
             StripeConfiguration.ApiKey = Configuration["stripe:secretkey"];
 
