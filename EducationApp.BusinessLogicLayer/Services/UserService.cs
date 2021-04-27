@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -231,7 +232,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             query[Constants.CODEKEY] = code;
             uriBuilder.Query = query.ToString();
             string callbackUrl = uriBuilder.ToString();
-            await _email.SendEmailAsync(new System.Net.Mail.MailAddress(newUser.Email),
+            await _email.SendEmailAsync(new MailAddress(newUser.Email),
                 Constants.DEFAULTEMAILCONFIRMATION,
                 string.Format(Constants.DEFAULTEMAILCONFIRMATIONBODY, callbackUrl));
         }
@@ -288,7 +289,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             query[Constants.CODEKEY] = code;
             uriBuilder.Query = query.ToString();
             string callbackUrl = uriBuilder.ToString();
-            await _email.SendEmailAsync(new System.Net.Mail.MailAddress(user.Email),
+            await _email.SendEmailAsync(new MailAddress(user.Email),
                 Constants.DEFAULTPASSWORDRESET,
                 string.Format(Constants.DEFAULTPASSWORDRESETBODY, callbackUrl));
         }
