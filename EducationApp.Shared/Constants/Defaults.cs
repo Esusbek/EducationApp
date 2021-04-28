@@ -36,9 +36,9 @@
         public const string LASTNAMECLAINNAME = "family_name";
         public const string EMAILCLAINNAME = "email";
         public const string EMAILSEPARATOR = "@";
-        public const string ALPHANUMERICCHARACTERS ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        public const string ALPHANUMERICCHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         public const int DEFAULTPASSWORDLENGTH = 8;
-        public const string DEFAULTPASSWORDGENERATED= "Thank you for signing up";
+        public const string DEFAULTPASSWORDGENERATED = "Thank you for signing up";
         public const string DEFAULTPASSWORDGENERATEDBODY = "<p>Thank you for signing up on Book Publishing Company site. Below are your credentials you can use to login without google account if you wish</p><p>Username: {0}</p><p>Password: {1}</p>";
     }
 }

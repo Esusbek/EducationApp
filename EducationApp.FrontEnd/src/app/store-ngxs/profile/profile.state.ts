@@ -15,6 +15,7 @@ const initialState: ProfileStateModel = {
         firstName: "",
         lastName: "",
         email: "",
+        profilePictureURL: "",
     }
 }
 getInfo

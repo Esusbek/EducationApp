@@ -9,21 +9,19 @@ using EducationApp.Shared.Configs;
 using EducationApp.Shared.Constants;
 using EducationApp.Shared.Enums;
 using EducationApp.Shared.Exceptions;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.Mail;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
-using Google.Apis.Auth;
-using System.IO;
-using System.Net.Mail;
 
 namespace EducationApp.BusinessLogicLayer.Services
 {
@@ -39,7 +37,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         private readonly RNGCryptoServiceProvider _rngProvider;
         private readonly ICloudStorageProvider _cloudStorage;
 
-        public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager,IOptions<UrlConfig> urlConfig, IMapper mapper,IJwtProvider jwtProvider, IEmailProvider emailProvider, IValidationProvider validationProvider, ICloudStorageProvider cloudStorage)
+        public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, IOptions<UrlConfig> urlConfig, IMapper mapper, IJwtProvider jwtProvider, IEmailProvider emailProvider, IValidationProvider validationProvider, ICloudStorageProvider cloudStorage)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -100,7 +98,8 @@ namespace EducationApp.BusinessLogicLayer.Services
                     FirstName = tokenPayload.GivenName,
                     LastName = tokenPayload.FamilyName,
                     Email = email,
-                    UserName = email.Split(Constants.EMAILSEPARATOR)[0]
+                    UserName = email.Split(Constants.EMAILSEPARATOR)[0],
+                    ProfilePictureURL = tokenPayload.Picture
                 };
                 await GoogleRegisterAsync(newUser);
                 user = await _userManager.FindByEmailAsync(email);
@@ -212,7 +211,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         public async Task RegisterAsync(UserModel user)
         {
             _validator.ValidateUser(user);
-            if(user.ProfilePicture is not null)
+            if (user.ProfilePicture is not null)
             {
                 string extension = Path.GetExtension(user.ProfilePicture.FileName);
                 string fileName = GetFileName(user.UserName, extension);
@@ -254,7 +253,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             query[Constants.CODEKEY] = code;
             uriBuilder.Query = query.ToString();
             string callbackUrl = uriBuilder.ToString();
-            await _email.SendEmailAsync(new MailAddress(newUser.Email),Constants.DEFAULTEMAILCONFIRMATION,string.Format(Constants.DEFAULTEMAILCONFIRMATIONBODY, callbackUrl));
+            await _email.SendEmailAsync(new MailAddress(newUser.Email), Constants.DEFAULTEMAILCONFIRMATION, string.Format(Constants.DEFAULTEMAILCONFIRMATIONBODY, callbackUrl));
         }
 
         public async Task<UserModel> UpdateAsync(UserModel user)
@@ -268,6 +267,10 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 string extension = Path.GetExtension(user.ProfilePicture.FileName);
                 string fileName = GetFileName(user.UserName, extension);
+                if (user.ProfilePictureStorageName is not null)
+                {
+                    await _cloudStorage.DeleteFileAsync(user.ProfilePictureStorageName);
+                }
                 user.ProfilePictureURL = await _cloudStorage.UploadFileAsync(user.ProfilePicture, fileName);
                 user.ProfilePictureStorageName = fileName;
             }
@@ -376,7 +379,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             string code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
             await _userManager.ConfirmEmailAsync(newUser, code);
-            await _email.SendEmailAsync(new System.Net.Mail.MailAddress(newUser.Email),Constants.DEFAULTPASSWORDGENERATED,string.Format(Constants.DEFAULTPASSWORDGENERATEDBODY, user.UserName, user.Password));
+            await _email.SendEmailAsync(new MailAddress(newUser.Email), Constants.DEFAULTPASSWORDGENERATED, string.Format(Constants.DEFAULTPASSWORDGENERATEDBODY, user.UserName, user.Password));
         }
         private string GetRandomString(int length)
         {

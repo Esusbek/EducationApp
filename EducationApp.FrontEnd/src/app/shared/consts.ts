@@ -7,7 +7,13 @@ export const HttpOptions = {
     'Access-Control-Allow-Headers': 'Content-Type'
   })
 };
-
+export const HttpFormOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Accept': 'application/json',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  })
+};
 export const Urls = {
   loginURL: 'Account/Login',
   registerURL: 'Account/Register',

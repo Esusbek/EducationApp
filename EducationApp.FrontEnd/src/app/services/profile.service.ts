@@ -4,7 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ChangePasswordModel, UserModel } from 'src/app/models/profile.models';
-import { HttpOptions, Urls } from 'src/app/shared/consts';
+import { HttpFormOptions, HttpOptions, Urls } from 'src/app/shared/consts';
 import { getUserId, handleError } from 'src/app/shared/methods';
 import { environment } from 'src/environments/environment';
 
@@ -33,7 +33,9 @@ export class ProfileService {
       )
   }
   public updateUser(model: UserModel): Observable<UserModel> {
-    return this.http.post<UserModel>(`${environment.apiURL}${Urls.updateUserURL}`, model, HttpOptions)
+    var formData = new FormData();
+    formData.append('user', JSON.stringify(model));
+    return this.http.post<UserModel>(`${environment.apiURL}${Urls.updateUserURL}`, formData, HttpFormOptions)
       .pipe(
         catchError(error => handleError(error, this.modalService))
       )

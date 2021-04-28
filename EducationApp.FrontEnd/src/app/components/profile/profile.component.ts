@@ -18,6 +18,7 @@ export class ProfileComponent implements OnInit {
   public profile: UserModel;
   public isChangingPassword: boolean;
   public showPasswords: boolean;
+  public profilePictureURL: string;
   public profileForm = new FormGroup({
     userName: new FormControl('', [
       Validators.required
@@ -45,6 +46,7 @@ export class ProfileComponent implements OnInit {
     ])
   }, { validators: passwordMatchValidator })
   public constructor(private store: Store, private auth: AccountService) {
+    this.store.select(ProfileState.user).subscribe(value => this.profilePictureURL = value.profilePictureURL);
     this.store.select(ProfileState.user).subscribe(value => this.profileForm.controls['userName'].setValue(value.userName));
     this.store.select(ProfileState.user).subscribe(value => this.profileForm.controls['firstName'].setValue(value.firstName));
     this.store.select(ProfileState.user).subscribe(value => this.profileForm.controls['lastName'].setValue(value.lastName));
@@ -63,6 +65,7 @@ export class ProfileComponent implements OnInit {
 
   }
   public editStart() {
+    console.log(this.profilePictureURL);
     this.isEditing = true;
     this.profileForm.controls['firstName'].enable();
     this.profileForm.controls['lastName'].enable();

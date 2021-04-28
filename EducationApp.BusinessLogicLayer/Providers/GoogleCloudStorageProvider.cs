@@ -3,14 +3,13 @@ using EducationApp.Shared.Configs;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace EducationApp.BusinessLogicLayer.Providers
 {
-    public class GoogleCloudStorageProvider: ICloudStorageProvider
+    public class GoogleCloudStorageProvider : ICloudStorageProvider
     {
         private readonly GoogleCredential _googleCredential;
         private readonly StorageClient _storageClient;

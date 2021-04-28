@@ -5,6 +5,7 @@ using EducationApp.BusinessLogicLayer.Services.Interfaces;
 using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace EducationApp.PresentationLayer.Controllers
 
         [HttpPost("Account/Register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] UserModel user)
+        public async Task<IActionResult> Register([FromForm] UserModel user)
         {
             await _userService.RegisterAsync(user);
             return Ok(Constants.DEFAULTEMAILCONFIRMATIONRESPONSE);
@@ -84,9 +85,15 @@ namespace EducationApp.PresentationLayer.Controllers
         }
         [HttpPost("Account/UpdateUser")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin,client")]
-        public async Task<IActionResult> UpdateUser([FromBody] UserModel user)
+        public async Task<IActionResult> UpdateUser(/*[FromForm] UserModel user*/ )
         {
-            var newUser = await _userService.UpdateAsync(user);
+            var test = Request.Form;
+            if(test.TryGetValue("user", out var data))
+            {
+                var test2 = data;
+            }
+            var test3 = test["user"];
+            var newUser = await _userService.UpdateAsync(null);
             return Ok(newUser);
         }
         [HttpPost("Account/ChangePassword")]

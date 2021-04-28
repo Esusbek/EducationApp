@@ -4,6 +4,7 @@ export class UserModel {
     firstName: string;
     lastName: string;
     email: string;
+    profilePictureURL: string;
 }
 
 export class ChangePasswordModel {
