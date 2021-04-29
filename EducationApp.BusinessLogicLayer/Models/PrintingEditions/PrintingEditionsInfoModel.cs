@@ -4,6 +4,6 @@
     {
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
-        public int LastPage { get; set; }
+        public int PageCount { get; set; }
     }
 }

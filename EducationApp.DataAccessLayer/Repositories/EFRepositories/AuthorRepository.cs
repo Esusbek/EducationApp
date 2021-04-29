@@ -41,6 +41,16 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
             }
             return base.Get(filter, getRemoved: getRemoved).ToList();
         }
+        public int GetCount(AuthorFilterModel authorFilter = null, bool getRemoved = false)
+        {
+            Expression<Func<AuthorEntity, bool>> filter = null;
+            if (authorFilter is not null)
+            {
+                filter = author => (string.IsNullOrWhiteSpace(authorFilter.Name) || author.Name.Contains(authorFilter.Name)) &&
+                (!authorFilter.EditionAuthors.Any() || authorFilter.EditionAuthors.Contains(author.Name));
+            }
+            return base.Get(filter, getRemoved: getRemoved).Count();
+        }
 
         public void Update(AuthorEntity author, PrintingEditionEntity printingEdition = null)
         {

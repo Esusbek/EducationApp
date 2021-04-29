@@ -49,7 +49,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 Orders = GetAllOrders(model.IsPaid, model.IsUnpaid, model.SortBy, model.Ascending, model.Page),
                 Page = model.Page,
-                LastPage = GetLastPage(model.IsPaid, model.IsUnpaid),
+                PageCount = GetPageCount(isPaid: model.IsPaid, isUnpaid: model.IsUnpaid),
                 IsUnpaid = model.IsUnpaid,
                 IsPaid = model.IsPaid,
                 SortBy = model.SortBy,
@@ -76,7 +76,7 @@ namespace EducationApp.BusinessLogicLayer.Services
         public SessionModel CreateCheckoutSession(OrderModel order)
         {
             _validator.ValidateOrder(order);
-            bool isExisting = order.Id != default;
+            bool isExisting = order.Id is not null;
             PaymentEntity payment = isExisting ? new PaymentEntity { Id = order.PaymentId } : null;
             if (!isExisting)
             {
@@ -84,7 +84,7 @@ namespace EducationApp.BusinessLogicLayer.Services
                 order.Date = DateTime.UtcNow;
                 payment = new PaymentEntity
                 {
-                    TransactionId = default
+                    TransactionId = string.Empty
                 };
                 _paymentRepository.Insert(payment);
             }
@@ -160,27 +160,17 @@ namespace EducationApp.BusinessLogicLayer.Services
                 PaymentIntentId = session.PaymentIntentId
             };
         }
-        public int GetLastPageUser(string userId)
+        public int GetPageCount(string usedId = null, bool isPaid = true, bool isUnpaid = true)
         {
             var filter = new OrderFilterModel
             {
-                UserId = userId
-            };
-
-            var dbOrders = _orderRepository.GetAll(filter).ToList();
-            int lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
-            return lastPage;
-        }
-        public int GetLastPage(bool isPaid = true, bool isUnpaid = true)
-        {
-            var filter = new OrderFilterModel
-            {
+                UserId = usedId,
                 IsPaid = isPaid,
                 IsUnpaid = isUnpaid
             };
-            var dbOrders = _orderRepository.GetAll(filter).ToList();
-            int lastPage = (int)Math.Ceiling(dbOrders.Count / (double)Constants.ORDERPAGESIZE);
-            return lastPage;
+            int dbOrdersCount = _orderRepository.GetCount(filter);
+            int pageCount = (int)Math.Ceiling(dbOrdersCount / (double)Constants.ORDERPAGESIZE);
+            return pageCount;
         }
         public List<OrderModel> GetAllOrders(bool isPaid = true, bool isUnpaid = true, string field = null, string ascending = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = false)
         {
@@ -228,7 +218,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             return new OrderResponseModel
             {
                 Orders = orders,
-                LastPage = GetLastPageUser(user.Id)
+                PageCount = GetPageCount(user.Id)
             };
 
         }

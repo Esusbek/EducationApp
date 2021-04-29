@@ -450,6 +450,9 @@ input:checked + .slider:before {
     width: 90%;
     margin: 0 auto;
 }
+.warning{
+    color: red;
+}
 @media (max-width:520px) {
     .header {
         flex-direction: column;

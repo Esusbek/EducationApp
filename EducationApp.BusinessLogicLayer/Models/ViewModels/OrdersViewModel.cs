@@ -8,7 +8,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
     {
         public List<OrderModel> Orders { get; set; }
         public int Page { get; set; }
-        public int LastPage { get; set; }
+        public int PageCount { get; set; }
         public bool IsPaid { get; set; }
         public bool IsUnpaid { get; set; }
         public string SortBy { get; set; }

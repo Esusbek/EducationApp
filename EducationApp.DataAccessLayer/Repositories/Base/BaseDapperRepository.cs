@@ -19,7 +19,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
         {
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
-        public virtual T GetById(int id)
+        public virtual T GetById(int? id)
         {
             using SqlConnection connection = new(_connectionString);
             var result = connection.Get<T>(id);
@@ -30,44 +30,6 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             using SqlConnection connection = new(_connectionString);
             var result = connection.GetAll<T>();
             return result.ToList();
-        }
-        protected virtual List<T> Get(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
-        {
-            using SqlConnection connection = new(_connectionString);
-            var query = connection.GetAll<T>().AsQueryable();
-            if (!getRemoved)
-            {
-                query = query.Where(entity => entity.IsRemoved == false);
-            }
-            if (filter is not null)
-            {
-                query = query.Where(filter);
-            }
-
-            if (field is not null)
-            {
-                query = query.OrderBy(field, ascending);
-            }
-            return query.ToList();
-        }
-        protected virtual T GetOne(Expression<Func<T, bool>> filter = null, string field = null, bool ascending = true, bool getRemoved = false)
-        {
-            using SqlConnection connection = new(_connectionString);
-            var query = connection.GetAll<T>().AsQueryable();
-            if (!getRemoved)
-            {
-                query = query.Where(entity => entity.IsRemoved == false);
-            }
-            if (filter is not null)
-            {
-                query = query.Where(filter);
-            }
-
-            if (field is not null)
-            {
-                query = query.OrderBy(field, ascending);
-            }
-            return query.FirstOrDefault();
         }
         public virtual void Insert(T entity)
         {

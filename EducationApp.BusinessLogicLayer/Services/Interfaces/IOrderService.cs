@@ -14,7 +14,6 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public SessionModel CreateCheckoutSession(OrderModel order);
         public List<OrderModel> GetAllOrders(bool isPaid = true, bool isUnpaid = true, string field = null, string ascending = Constants.DEFAULTSORTORDER, int page = Constants.DEFAULTPAGE, bool getRemoved = false);
         public OrderResponseModel GetUserOrders(UserModel user, int page = Constants.DEFAULTPAGE);
-        public int GetLastPage(bool isPaid = true, bool isUnpaid = true);
         public Task<decimal> ConvertCurrencyAsync(string fromCurrency, string toCurrency, decimal amount);
     }
 }

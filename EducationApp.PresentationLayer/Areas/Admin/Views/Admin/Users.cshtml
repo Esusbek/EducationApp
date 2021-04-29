@@ -1,6 +1,7 @@
 ﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
 @using EducationApp.BusinessLogicLayer.Models.Users
 @using EducationApp.Shared.Constants
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model UsersViewModel
 @{
     ViewData["Title"] = "Users list";
@@ -15,16 +16,16 @@
             <th><a href="javascript:void(0);" class="table-head">Email</a></th>
             <th>
                 <a href="javascript:void(0);" class="table-head sort-by descending-sort">Name</a>
-                @Html.TextBoxFor(model=>model.SearchString)
+                @Html.TextBoxFor(model => model.SearchString)
 
             </th>
             <th>
                 <a href="javascript:void(0);" class="table-head">Status</a>
                 <div id="checkboxes">
-                    @Html.CheckBoxFor(model => model.GetBlocked)
-                    @Html.LabelFor(model => model.GetBlocked, "Blocked")
-                    @Html.CheckBoxFor(model => model.GetUnblocked)
-                    @Html.LabelFor(model => model.GetUnblocked, "Unblocked")
+                    <input type="checkbox" asp-for="IsBlocked" id="IsBlocked"/>
+                    <label asp-for="IsBlocked">Blocked</label>
+                    <input type="checkbox" asp-for="IsUnblocked" id="IsUnblocked" />
+                    <label asp-for="IsUnblocked">Unblocked</label>
                 </div>
             </th>
             <th></th>
@@ -86,20 +87,20 @@
 {
     page = Model.Page - Constants.DEFAULTPREVIOUSPAGEOFFSET,
     searchString = HtmlEncoder.Encode(Model.SearchString),
-    getBlocked = Model.GetBlocked.ToString().ToLower(),
-    getUnblocked = Model.GetUnblocked.ToString().ToLower()
+    isBlocked = Model.IsBlocked.ToString().ToLower(),
+    isUnblocked = Model.IsUnblocked.ToString().ToLower()
 
 }, new
 {
     id = "previousPage"
 })
-    <span>Page @Model.Page/ @Model.LastPage</span>
+    <span>Page @Model.Page/ @Model.PageCount</span>
     @Html.ActionLink("next page", "Users", "Admin", new
 {
     page = Model.Page + Constants.DEFAULTPREVIOUSPAGEOFFSET,
     searchString = HtmlEncoder.Encode(Model.SearchString),
-    getBlocked = Model.GetBlocked.ToString().ToLower(),
-    getUnblocked = Model.GetUnblocked.ToString().ToLower()
+    isBlocked = Model.IsBlocked.ToString().ToLower(),
+    isUnblocked = Model.IsUnblocked.ToString().ToLower()
 }, new
 {
     id = "nextPage"
@@ -127,7 +128,9 @@
 </div>
 
 @section scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script>
+        var valid = true;
         var model = @Html.Raw(Json.Serialize(Model));
         var BstrapModal = function (title, body, buttons) {
 
@@ -166,16 +169,16 @@
             var title = `Editing ${user.firstName} ${user.lastName}`;
             var body = `<form action="UpdateOtherUser" method="post" id="userEdit">\
     <input type="hidden" value="${user.id}" name="id"/>
-    <label for="userName">Username</label>\
+    <label for="userName">Username*</label>\
     <input id="userName" value="${user.userName}" type="text" name="userName" />\
     <br />\
-    <label for="firstName">First name</label>\
+    <label for="firstName">First name*</label>\
     <input id="firstName" value="${user.firstName}" type="text" name="firstName"/>\
     <br />\
-    <label for="lastName">Last name</label>\
+    <label for="lastName">Last name*</label>\
     <input id="lastName" value="${user.lastName}" type="text" name="lastName"/>\
     <br />\
-    <label for="userEmail">Email</label>\
+    <label for="userEmail">Email*</label>\
     <input id="userEmail" value="${user.email}" type="text" name="email"/>\
     <br />\
 </form>`;
@@ -191,10 +194,21 @@
                     Value: "Update",
                     Css: "btn-primary",
                     Callback: function () {
-                        $("#userEdit").submit()
+                        if (valid) {
+                            $("#userEdit").submit()
+                        }
                     }
                 }];
             new BstrapModal(title, body, buttons).Show();
+            $('#userEdit input').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if (!$(this).val()) {
+                    valid = false;
+                    $('<p class="warning">Field must not be empty</p>').insertAfter(this)
+                    console.log("test");
+                }
+            });
         }
         $(document).ready(function () {
             function reloadWithQueryStringVars(queryStringVars) {
@@ -228,33 +242,33 @@
             if (@Model.Page< 2) {
                 $('#previousPage').addClass('disabled')
             }
-            
 
-            if (@Model.Page>=@Model.LastPage) {
+
+            if (@Model.Page>=@Model.PageCount) {
                 $('#nextPage').addClass('disabled')
             }
 
 
-            $("#GetUnblocked").change(function () {
+            $("#IsUnblocked").change(function () {
                 reloadWithQueryStringVars({
-                    getUnblocked: this.checked,
-                    getBlocked: '@Model.GetBlocked.ToString().ToLower()',
+                    isUnblocked: this.checked,
+                    isBlocked: '@Model.IsBlocked.ToString().ToLower()',
                     searchString: '@HtmlEncoder.Encode(Model.SearchString)',
                     page: '@Constants.DEFAULTPAGE'
                 });
             });
-            $("#GetBlocked").change(function () {
+            $("#IsBlocked").change(function () {
                 reloadWithQueryStringVars({
-                    getUnblocked: '@Model.GetUnblocked.ToString().ToLower()',
-                    getBlocked: this.checked,
+                    isUnblocked: '@Model.IsUnblocked.ToString().ToLower()',
+                    isBlocked: this.checked,
                     searchString: '@HtmlEncoder.Encode(Model.SearchString)',
                     page: '@Constants.DEFAULTPAGE'
                 });
             });
             $("#searchString").change(function () {
                 reloadWithQueryStringVars({
-                    getUnblocked: '@Model.GetUnblocked.ToString().ToLower()',
-                    getBlocked: '@Model.GetBlocked.ToString().ToLower()',
+                    isUnblocked: '@Model.IsUnblocked.ToString().ToLower()',
+                    isBlocked: '@Model.IsBlocked.ToString().ToLower()',
                     searchString: encodeURIComponent($("#searchString").val()),
                     page: '@Constants.DEFAULTPAGE'
                 });

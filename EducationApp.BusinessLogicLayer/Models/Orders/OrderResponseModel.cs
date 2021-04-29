@@ -5,6 +5,6 @@ namespace EducationApp.BusinessLogicLayer.Models.Orders
     public class OrderResponseModel
     {
         public List<OrderModel> Orders { get; set; }
-        public int LastPage { get; set; }
+        public int PageCount { get; set; }
     }
 }

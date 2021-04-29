@@ -17,10 +17,10 @@ namespace EducationApp.BusinessLogicLayer.Services.Interfaces
         public Task LogoutAsync(string userId);
         public Task LogoutByNameAsync(string userName);
         public Task<TokensModel> RefreshTokenAsync(string accessToken, string refreshToken);
-        public Task BanAsync(string userId);
+        public Task RemoveAsync(string userId);
         public Task ChangePasswordAsync(UserModel user, string currentPassword, string newPassword);
-        public List<UserModel> GetUsers(bool getBlocked, bool getUnblocked, string searchString, int page);
-        public int GetLastPage(bool getBlocked, bool getUnblocked, string searchString);
+        public List<UserModel> GetUsers(bool isBlocked, bool isUnblocked, string searchString, int page);
+        public int GetPageCount(bool isBlocked, bool isUnblocked, string searchString);
         public Task<UserModel> GetUserByIdAsync(string id);
         public Task<UserModel> GetUserByUsernameAsync(string userName);
         public Task ConfirmEmailAsync(string id, string code);

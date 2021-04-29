@@ -48,11 +48,11 @@ namespace EducationApp.BusinessLogicLayer.Services
         {
             return new UsersViewModel
             {
-                Users = GetUsers(model.GetBlocked, model.GetUnblocked, model.SearchString, model.Page),
+                Users = GetUsers(model.IsBlocked, model.IsUnblocked, model.SearchString, model.Page),
                 Page = model.Page,
-                LastPage = GetLastPage(model.GetBlocked, model.GetUnblocked, model.SearchString),
-                GetBlocked = model.GetBlocked,
-                GetUnblocked = model.GetUnblocked,
+                PageCount = GetPageCount(model.IsBlocked, model.IsUnblocked, model.SearchString),
+                IsBlocked = model.IsBlocked,
+                IsUnblocked = model.IsUnblocked,
                 SearchString = string.IsNullOrWhiteSpace(model.SearchString) ? string.Empty : model.SearchString
             };
         }
@@ -80,7 +80,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbUser = await _userManager.FindByNameAsync(user.UserName);
             if (dbUser is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.USERNOTFOUNDERROR);
             }
             if (dbUser.IsRemoved)
             {
@@ -126,7 +126,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             return jwtResult;
         }
 
-        public async Task BanAsync(string userId)
+        public async Task RemoveAsync(string userId)
         {
             var dbUser = await _userManager.FindByIdAsync(userId);
             dbUser.IsRemoved = !dbUser.IsRemoved;
@@ -149,7 +149,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbUser = await _userManager.FindByIdAsync(id);
             if (dbUser is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.USERNOTFOUNDERROR);
             }
             var user = _mapper.Map<UserModel>(dbUser);
             return user;
@@ -159,17 +159,17 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbUser = await _userManager.FindByNameAsync(userName);
             if (dbUser is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.USERNOTFOUNDERROR);
             }
             var user = _mapper.Map<UserModel>(dbUser);
             return user;
         }
 
-        public List<UserModel> GetUsers(bool getBlocked, bool getUnblocked, string searchString, int page)
+        public List<UserModel> GetUsers(bool isBlocked, bool isUnblocked, string searchString, int page)
         {
 
-            Expression<Func<UserEntity, bool>> filter = user => (getBlocked && user.IsRemoved == true)
-            || (getUnblocked && user.IsRemoved == false);
+            Expression<Func<UserEntity, bool>> filter = user => (isBlocked && user.IsRemoved)
+            || (isUnblocked && !user.IsRemoved);
             var dbUsers = _userManager.Users.Where(filter).ToList();
             if (!string.IsNullOrWhiteSpace(searchString))
             {
@@ -181,17 +181,17 @@ namespace EducationApp.BusinessLogicLayer.Services
         }
 
 
-        public int GetLastPage(bool getBlocked, bool getUnblocked, string searchString)
+        public int GetPageCount(bool isBlocked, bool isUnblocked, string searchString)
         {
-            Expression<Func<UserEntity, bool>> filter = user => (getBlocked && user.IsRemoved == true)
-            || (getUnblocked && user.IsRemoved == false);
-            var dbUsers = _userManager.Users.Where(filter).ToList();
+            Expression<Func<UserEntity, bool>> filter = user => (isBlocked && user.IsRemoved == true)
+            || (isUnblocked && user.IsRemoved == false);
+            var dbUsers = _userManager.Users.Where(filter);
             if (!string.IsNullOrWhiteSpace(searchString))
             {
-                dbUsers = dbUsers.Where(user => $"{user.FirstName} {user.LastName}".ToLower().Contains(searchString.ToLower())).ToList();
+                dbUsers = dbUsers.Where(user => $"{user.FirstName} {user.LastName}".ToLower().Contains(searchString.ToLower()));
             }
-            int lastPage = (int)Math.Ceiling(dbUsers.Count / (double)Constants.ORDERPAGESIZE);
-            return lastPage;
+            int pageCount = (int)Math.Ceiling(dbUsers.Count() / (double)Constants.ORDERPAGESIZE);
+            return pageCount;
         }
 
         public async Task RegisterAsync(UserModel user)
@@ -242,7 +242,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbUser = await _userManager.FindByIdAsync(user.Id);
             if (dbUser is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.USERNOTFOUNDERROR);
             }
             _mapper.Map(user, dbUser);
             await _userManager.UpdateAsync(dbUser);
@@ -259,7 +259,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var user = await _userManager.FindByIdAsync(id);
             if (user is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.USERNOTFOUNDERROR);
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
             if (!result.Succeeded)
@@ -274,7 +274,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var user = await _userManager.FindByNameAsync(userName);
             if (user is null || !(await _userManager.IsEmailConfirmedAsync(user)))
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.USERNOTFOUNDERROR);
             }
             string code = await _userManager.GeneratePasswordResetTokenAsync(user);
             var uriBuilder = new UriBuilder
@@ -303,7 +303,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.USERNOTFOUNDERROR);
             }
             var result = await _userManager.ResetPasswordAsync(user, code, password);
             if (!result.Succeeded)

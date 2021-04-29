@@ -6,8 +6,8 @@ namespace EducationApp.DataAccessLayer.FilterModels
     public class PrintingEditionFilterModel
     {
         public string Title { get; set; }
-        public decimal LowPrice { get; set; }
-        public decimal HighPrice { get; set; }
+        public decimal? LowPrice { get; set; }
+        public decimal? HighPrice { get; set; }
         public List<Enums.PrintingEditionType> Type { get; set; }
         public bool IsBook { get; set; }
         public bool IsNewspaper { get; set; }
@@ -16,8 +16,6 @@ namespace EducationApp.DataAccessLayer.FilterModels
         public PrintingEditionFilterModel()
         {
             Title = string.Empty;
-            LowPrice = default;
-            HighPrice = default;
             Type = new List<Enums.PrintingEditionType>();
             IsBook = true;
             IsNewspaper = true;

@@ -28,8 +28,8 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 || (printingEditionFilter.IsNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
                 || (printingEditionFilter.IsJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
                 (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
-                (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
-                (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
+                (printingEditionFilter.LowPrice != null || edition.Price >= printingEditionFilter.LowPrice) &&
+                (printingEditionFilter.HighPrice != null || edition.Price <= printingEditionFilter.HighPrice) &&
                 (!printingEditionFilter.Type.Any() || printingEditionFilter.Type.Contains(edition.Type)) &&
                 (!printingEditionFilter.EditionIds.Any() || printingEditionFilter.EditionIds.Contains(edition.Id));
             }
@@ -46,8 +46,8 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 || (printingEditionFilter.IsNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
                 || (printingEditionFilter.IsJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
                 (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
-                (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
-                (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
+                (printingEditionFilter.LowPrice != null || edition.Price >= printingEditionFilter.LowPrice) &&
+                (printingEditionFilter.HighPrice != null || edition.Price <= printingEditionFilter.HighPrice) &&
                 (!printingEditionFilter.Type.Any() || printingEditionFilter.Type.Contains(edition.Type)) &&
                 (!printingEditionFilter.EditionIds.Any() || printingEditionFilter.EditionIds.Contains(edition.Id));
             }
@@ -62,12 +62,28 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 || (printingEditionFilter.IsNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
                 || (printingEditionFilter.IsJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
                 (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
-                (printingEditionFilter.LowPrice == default || edition.Price >= printingEditionFilter.LowPrice) &&
-                (printingEditionFilter.HighPrice == default || edition.Price <= printingEditionFilter.HighPrice) &&
+                (printingEditionFilter.LowPrice != null || edition.Price >= printingEditionFilter.LowPrice) &&
+                (printingEditionFilter.HighPrice != null || edition.Price <= printingEditionFilter.HighPrice) &&
                 (!printingEditionFilter.Type.Any() || printingEditionFilter.Type.Contains(edition.Type)) &&
                 (!printingEditionFilter.EditionIds.Any() || printingEditionFilter.EditionIds.Contains(edition.Id));
             }
             return base.Get(filter, getRemoved: getRemoved).ToList();
+        }
+        public int GetCount(PrintingEditionFilterModel printingEditionFilter = null, bool getRemoved = false)
+        {
+            Expression<Func<PrintingEditionEntity, bool>> filter = null;
+            if (printingEditionFilter is not null)
+            {
+                filter = edition => ((printingEditionFilter.IsBook && edition.Type == Enums.PrintingEditionType.Book)
+                || (printingEditionFilter.IsNewspaper && edition.Type == Enums.PrintingEditionType.Newspaper)
+                || (printingEditionFilter.IsJournal && edition.Type == Enums.PrintingEditionType.Journal)) &&
+                (string.IsNullOrWhiteSpace(printingEditionFilter.Title) || edition.Title.Contains(printingEditionFilter.Title)) &&
+                (printingEditionFilter.LowPrice != null || edition.Price >= printingEditionFilter.LowPrice) &&
+                (printingEditionFilter.HighPrice != null || edition.Price <= printingEditionFilter.HighPrice) &&
+                (!printingEditionFilter.Type.Any() || printingEditionFilter.Type.Contains(edition.Type)) &&
+                (!printingEditionFilter.EditionIds.Any() || printingEditionFilter.EditionIds.Contains(edition.Id));
+            }
+            return base.Get(filter, getRemoved: getRemoved).Count();
         }
         public void Update(PrintingEditionEntity printingEdition, AuthorEntity author = null)
         {

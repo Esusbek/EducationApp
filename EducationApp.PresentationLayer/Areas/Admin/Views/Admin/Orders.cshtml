@@ -2,6 +2,7 @@
 @using EducationApp.BusinessLogicLayer.Models.Orders
 @using EducationApp.Shared.Constants
 @using EducationApp.Shared.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model OrdersViewModel
 @{
     ViewData["Title"] = "Orders list";
@@ -23,10 +24,10 @@
             <th>
                 <a href="javascript:void(0);" class="table-head">Order status</a>
                 <div id="checkboxes">
-                    @Html.CheckBoxFor(model => model.IsPaid)
-                    @Html.LabelFor(model => model.IsPaid, Enums.OrderStatusType.Paid.ToString())
-                    @Html.CheckBoxFor(model => model.IsUnpaid)
-                    @Html.LabelFor(model => model.IsUnpaid, Enums.OrderStatusType.Unpaid.ToString())
+                    <input type="checkbox" asp-for="IsPaid" id="IsPaid" />
+                    <label asp-for="IsPaid">@Enums.OrderStatusType.Paid.ToString()</label>
+                    <input type="checkbox" asp-for="IsUnpaid" id="IsUnpaid" />
+                    <label asp-for="IsUnpaid">@Enums.OrderStatusType.Unpaid.ToString()</label>
                 </div>
             </th>
         </tr>
@@ -74,7 +75,7 @@
     sortBy = Model.SortBy,
     ascending = Model.Ascending
 }, new { id = "previousPage" })
-    <span>Page @Model.Page/ @Model.LastPage</span>
+    <span>Page @Model.Page/ @Model.PageCount</span>
     @Html.ActionLink("next page", "Orders", "Admin", new
 {
     page = Model.Page + 1,
@@ -120,7 +121,7 @@
                 $('#previousPage').addClass('disabled')
             }
 
-            if (@Model.Page>=@Model.LastPage) {
+            if (@Model.Page>=@Model.PageCount) {
                 $('#nextPage').addClass('disabled')
             }
             var links = document.getElementsByClassName('sort-by');

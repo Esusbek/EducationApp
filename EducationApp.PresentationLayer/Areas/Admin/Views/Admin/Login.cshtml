@@ -1,4 +1,5 @@
 ﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model LoginViewModel
 @{
     ViewData["Title"] = "Login";
@@ -11,16 +12,15 @@
     </div>
 
     <div id="loginForm">
-        @using (Html.BeginForm("Login", "Admin", FormMethod.Post))
-        {
-            @Html.LabelFor(model => model.UserName)
-            @Html.TextBoxFor(model => model.UserName)
-            @Html.LabelFor(model => model.Password)
-            @Html.PasswordFor(model => model.Password)
+        <form asp-action="Login" asp-controller="Admin" method="post">
+            <label asp-for="UserName"></label>
+            <input type="text" asp-for="UserName" id="UserName" />
+            <label asp-for="Password"></label>
+            <input type="text" asp-for="Password" id="Password" />
             <div class="button" id="loginButton">
                 <button type="submit">Login</button>
             </div>
-        }
+        </form>
     </div>
 </div>
 

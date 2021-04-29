@@ -50,7 +50,7 @@
     sortBy = Model.SortBy,
     ascending = Model.Ascending
 }, new { id = "previousPage" })
-    <span>Page @Model.Page/ @Model.LastPage</span>
+    <span>Page @Model.Page/ @Model.PageCount</span>
     @Html.ActionLink("next page", "Authors", "Admin", new { 
     page = Model.Page + 1,
     sortBy = Model.SortBy,
@@ -79,6 +79,7 @@
 
 @section scripts{
     <script>
+        var valid = true;
         var model = @Html.Raw(Json.Serialize(Model));
         var BstrapModal = function (title, body, buttons) {
 
@@ -114,7 +115,7 @@
             var title = `Editing ${author.name}`;
             var body = `<form action="EditAuthor" method="post" id="authorEdit">\
     <input type="hidden" value="${author.id}" name="id"/>
-    <label for="name">Name</label>\
+    <label for="name">Name*</label>\
     <input id="name" value="${author.name}" type="text" name="name" />\
 </form>`;
             var buttons = [
@@ -129,15 +130,26 @@
                     Value: "Update",
                     Css: "btn-primary",
                     Callback: function () {
-                        $("#authorEdit").submit()
+                        if (valid) {
+                            $("#authorEdit").submit()
+                        }
                     }
                 }];
             new BstrapModal(title, body, buttons).Show();
+            $('#authorEdit input').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if (!$(this).val()) {
+                    valid = false;
+                    $('<p class="warning">Field must not be empty</p>').insertAfter(this)
+                    console.log("test");
+                }
+            });
         }
         function addAuthorModal() {
             var title = `Add new author`;
             var body = `<form action="AddAuthor" method="post" id="authorAdd">\
-    <label for="name">Name</label>\
+    <label for="name">Name*</label>\
     <input id="name" value="" type="text" name="name" />\
 </form>`;
             var buttons = [
@@ -152,10 +164,24 @@
                     Value: "Add",
                     Css: "btn-primary",
                     Callback: function () {
-                        $("#authorAdd").submit()
+                        if (valid && $("#name").val()) {
+                            $("#authorAdd").submit()
+                        }
+                        if (!valid || !$("#name").val()) {
+                            $('<p class="warning">Fill in all fields of form</p>').insertAfter("#authorAdd")
+                        }
                     }
                 }];
             new BstrapModal(title, body, buttons).Show();
+            $('#authorAdd input').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if (!$(this).val()) {
+                    valid = false;
+                    $('<p class="warning">Field must not be empty</p>').insertAfter(this)
+                    console.log("test");
+                }
+            });
         }
         function deleteAuthorModal(id) {
             var author = model.authors.find(author => author.id === +id);
@@ -213,7 +239,7 @@
             if (@Model.Page< 2) {
                 $('#previousPage').addClass('disabled')
             }
-            if (@Model.Page>=@Model.LastPage) {
+            if (@Model.Page>=@Model.PageCount) {
                 $('#nextPage').addClass('disabled')
             }
             var links = document.getElementsByClassName('sort-by');

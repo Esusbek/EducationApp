@@ -37,7 +37,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 PrintingEditions = GetPrintingEditionsAdmin(model.IsBook, model.IsNewspaper, model.IsJournal, model.SortBy, model.Ascending),
                 Page = model.Page,
-                LastPage = GetLastPage(model.IsBook, model.IsNewspaper, model.IsJournal),
+                PageCount = GetPageCount(model.IsBook, model.IsNewspaper, model.IsJournal),
                 Ascending = model.Ascending,
                 Authors = GetAllAuthors(),
                 IsBook = model.IsBook,
@@ -62,7 +62,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbPrintingEdition = _printingEditionRepository.GetById(printingEdition.Id);
             if (dbPrintingEdition is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.PRINTINGEDITIONNOTFOUNDERROR);
             }
             _mapper.Map(printingEdition, dbPrintingEdition);
             var authorFilter = new AuthorFilterModel { EditionAuthors = printingEdition.Authors };
@@ -79,7 +79,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbPrintingEdition = _printingEditionRepository.GetById(printingEdition.Id);
             if (dbPrintingEdition is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.PRINTINGEDITIONNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.PRINTINGEDITIONNOTFOUNDERROR);
             }
             _printingEditionRepository.Delete(dbPrintingEdition);
 
@@ -123,14 +123,14 @@ namespace EducationApp.BusinessLogicLayer.Services
         private PrintingEditionsInfoModel GetInfo(PrintingEditionFilterModel printingEditionFilter = null, int pageSize = Constants.PRINTINGEDITIONPAGESIZE)
         {
 
-            var dbPrintingEditions = _printingEditionRepository.GetAll(printingEditionFilter).ToList();
-            int lastPage = (int)Math.Ceiling(dbPrintingEditions.Count / (double)pageSize);
+            int dbPrintingEditionsCount = _printingEditionRepository.GetCount(printingEditionFilter);
+            int pageCount = (int)Math.Ceiling(dbPrintingEditionsCount / (double)pageSize);
             var filter = new PrintingEditionFilterModel
             {
                 Title = printingEditionFilter.Title,
                 Type = printingEditionFilter.Type
             };
-            dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
+            var dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
 
             decimal min = default;
             decimal max = default;
@@ -143,10 +143,10 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 MaxPrice = max,
                 MinPrice = min,
-                LastPage = lastPage
+                PageCount = pageCount
             };
         }
-        public int GetLastPage(bool isBook = true, bool isNewspaper = true, bool isJournal = true)
+        public int GetPageCount(bool isBook = true, bool isNewspaper = true, bool isJournal = true)
         {
             var filter = new PrintingEditionFilterModel
             {
@@ -154,10 +154,10 @@ namespace EducationApp.BusinessLogicLayer.Services
                 IsJournal = isJournal,
                 IsNewspaper = isNewspaper
             };
-            var dbPrintingEditions = _printingEditionRepository.GetAll(filter).ToList();
-            int lastPage = (int)Math.Ceiling(dbPrintingEditions.Count / (double)Constants.ADMINPRINTINGEDITIONPAGESIZE);
+            int dbPrintingEditionsCount = _printingEditionRepository.GetCount(filter);
+            int pageCount = (int)Math.Ceiling(dbPrintingEditionsCount / (double)Constants.ADMINPRINTINGEDITIONPAGESIZE);
 
-            return lastPage;
+            return pageCount;
         }
         public PrintingEditionResponseModel GetPrintingEditions(int page = Constants.DEFAULTPAGE)
         {

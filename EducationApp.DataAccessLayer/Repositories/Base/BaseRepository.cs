@@ -18,7 +18,7 @@ namespace EducationApp.DataAccessLayer.Repositories.Base
             _dbContext = dbContext;
             _dbSet = dbContext.Set<T>();
         }
-        public virtual T GetById(int id)
+        public virtual T GetById(int? id)
         {
             return _dbSet.Find(id);
         }

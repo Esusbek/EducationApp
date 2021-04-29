@@ -1,5 +1,6 @@
 ﻿using EducationApp.BusinessLogicLayer.Models.Authors;
 using EducationApp.BusinessLogicLayer.Models.PrintingEditions;
+using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.BusinessLogicLayer.Models.ViewModels;
 using EducationApp.BusinessLogicLayer.Services.Interfaces;
@@ -54,6 +55,12 @@ namespace EducationApp.PresentationLayer.Controllers
             return RedirectToAction("Profile");
         }
         [HttpPost]
+        public async Task<IActionResult> ChangePassword([FromForm] ChangeAdminPasswordRequestModel model)
+        {
+            await _userService.ChangePasswordAsync(new UserModel { Id=model.Id }, model.CurrentPassword, model.NewPassword);
+            return Ok();
+        }
+        [HttpPost]
         public async Task<IActionResult> UpdateOtherUser([FromForm] UserModel user)
         {
             await _userService.UpdateAsync(user);
@@ -68,7 +75,7 @@ namespace EducationApp.PresentationLayer.Controllers
         }
         public async Task<IActionResult> Ban(string userId)
         {
-            await _userService.BanAsync(userId);
+            await _userService.RemoveAsync(userId);
             return Ok();
         }
         [HttpGet]
@@ -92,30 +99,30 @@ namespace EducationApp.PresentationLayer.Controllers
         [HttpPost]
         public IActionResult EditAuthor(AuthorModel author)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _authorService.UpdateAuthor(author);
-                return RedirectToAction("Authors");
+                return View("Error", Constants.VALIDATIONERROR);
             }
-            return View("Error", Constants.VALIDATIONERROR);
+            _authorService.UpdateAuthor(author);
+            return RedirectToAction("Authors");
         }
         public IActionResult AddAuthor(AuthorModel author)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _authorService.AddAuthor(author);
-                return RedirectToAction("Authors");
+                return View("Error", Constants.VALIDATIONERROR);
             }
-            return View("Error", Constants.VALIDATIONERROR);
+            _authorService.AddAuthor(author);
+            return RedirectToAction("Authors");
         }
         public IActionResult DeleteAuthor(AuthorModel author)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _authorService.DeleteAuthor(author);
-                return RedirectToAction("Authors");
+                return View("Error", Constants.VALIDATIONERROR);
             }
-            return View("Error", Constants.VALIDATIONERROR);
+            _authorService.DeleteAuthor(author);
+            return RedirectToAction("Authors");
         }
         [HttpPost]
         public IActionResult EditEdition([FromForm] PrintingEditionModel printingEdition)
@@ -129,21 +136,21 @@ namespace EducationApp.PresentationLayer.Controllers
         }
         public IActionResult AddEdition([FromForm] PrintingEditionModel printingEdition)
         {
-            if (!ModelState.IsValid)
+            if (!!ModelState.IsValid)
             {
-                _printingEditionService.AddPrintingEdition(printingEdition);
-                return RedirectToAction("PrintingEditions");
+                return View("Error", Constants.VALIDATIONERROR);
             }
-            return View("Error", Constants.VALIDATIONERROR);
+            _printingEditionService.AddPrintingEdition(printingEdition);
+            return RedirectToAction("PrintingEditions");
         }
         public IActionResult DeleteEdition([FromForm] PrintingEditionModel printingEdition)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _printingEditionService.DeletePrintingEdition(printingEdition);
-                return RedirectToAction("PrintingEditions");
+                return View("Error", Constants.VALIDATIONERROR);
             }
-            return View("Error", Constants.VALIDATIONERROR);
+            _printingEditionService.DeletePrintingEdition(printingEdition);
+            return RedirectToAction("PrintingEditions");
         }
     }
 }

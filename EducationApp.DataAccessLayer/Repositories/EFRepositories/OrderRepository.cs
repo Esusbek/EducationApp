@@ -27,7 +27,7 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 filter = order => ((orderFilter.IsPaid && order.Status == Enums.OrderStatusType.Paid)
                 || (orderFilter.IsUnpaid && order.Status == Enums.OrderStatusType.Unpaid)) &&
                 (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId == orderFilter.UserId) &&
-                (orderFilter.PaymentId == default || order.PaymentId == orderFilter.PaymentId);
+                (orderFilter.PaymentId != null || order.PaymentId == orderFilter.PaymentId);
             }
             return base.Get(filter, field, ascending, getRemoved)
                 .Skip((page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE)
@@ -41,9 +41,21 @@ namespace EducationApp.DataAccessLayer.Repositories.EFRepositories
                 filter = order => ((orderFilter.IsPaid && order.Status == Enums.OrderStatusType.Paid)
                 || (orderFilter.IsUnpaid && order.Status == Enums.OrderStatusType.Unpaid)) &&
                 (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId == orderFilter.UserId) &&
-                (orderFilter.PaymentId == default || order.PaymentId == orderFilter.PaymentId);
+                (orderFilter.PaymentId != null || order.PaymentId == orderFilter.PaymentId);
             }
             return base.Get(filter, getRemoved: getRemoved).ToList();
+        }
+        public int GetCount(OrderFilterModel orderFilter, bool getRemoved = false)
+        {
+            Expression<Func<OrderEntity, bool>> filter = null;
+            if (orderFilter is not null)
+            {
+                filter = order => ((orderFilter.IsPaid && order.Status == Enums.OrderStatusType.Paid)
+                || (orderFilter.IsUnpaid && order.Status == Enums.OrderStatusType.Unpaid)) &&
+                (string.IsNullOrWhiteSpace(orderFilter.UserId) || order.UserId == orderFilter.UserId) &&
+                (orderFilter.PaymentId != null || order.PaymentId == orderFilter.PaymentId);
+            }
+            return base.Get(filter, getRemoved: getRemoved).Count();
         }
     }
 }

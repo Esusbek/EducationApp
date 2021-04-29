@@ -9,7 +9,7 @@ namespace EducationApp.BusinessLogicLayer.Models.ViewModels
     {
         public List<PrintingEditionModel> PrintingEditions { get; set; }
         public int Page { get; set; }
-        public int LastPage { get; set; }
+        public int PageCount { get; set; }
         public bool IsBook { get; set; }
         public bool IsNewspaper { get; set; }
         public bool IsJournal { get; set; }

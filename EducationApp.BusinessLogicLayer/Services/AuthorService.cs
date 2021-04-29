@@ -32,7 +32,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 Authors = GetAuthorsFiltered(null, model.SortBy, model.Ascending, page: model.Page),
                 Page = model.Page,
-                LastPage = GetLastPage(),
+                PageCount = GetPageCount(),
                 SortBy = model.SortBy,
                 Ascending = model.Ascending
             };
@@ -56,7 +56,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbAuthor = _authorRepository.GetById(author.Id);
             if (dbAuthor is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.AUTHORNOTFOUNDERROR);
             }
             _mapper.Map(author, dbAuthor);
             _authorRepository.Update(dbAuthor);
@@ -67,7 +67,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbAuthor = _authorRepository.GetById(author.Id);
             if (dbAuthor is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.AUTHORNOTFOUNDERROR);
             }
             dbAuthor.PrintingEditions.Clear();
             _authorRepository.Delete(dbAuthor);
@@ -91,18 +91,18 @@ namespace EducationApp.BusinessLogicLayer.Services
             var authors = _mapper.Map<List<AuthorModel>>(dbAuthors);
             return authors;
         }
-        public int GetLastPage(AuthorFilterModel authorFilter = null, bool getRemoved = false)
+        public int GetPageCount(AuthorFilterModel authorFilter = null, bool getRemoved = false)
         {
-            var authors = _authorRepository.GetAll(authorFilter, getRemoved);
-            int lastPage = (int)Math.Ceiling(authors.Count / (double)Constants.AUTHORPAGESIZE);
-            return lastPage;
+            int authorsCount = _authorRepository.GetCount(authorFilter, getRemoved);
+            int pageCount = (int)Math.Ceiling(authorsCount / (double)Constants.AUTHORPAGESIZE);
+            return pageCount;
         }
         public AuthorModel GetAuthor(int id)
         {
             var dbAuthor = _authorRepository.GetById(id);
             if (dbAuthor is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.AUTHORNOTFOUNDERROR);
             }
             var author = _mapper.Map<AuthorModel>(dbAuthor);
             return author;
@@ -113,7 +113,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var dbAuthor = _authorRepository.Get(authorFilter).FirstOrDefault();
             if (dbAuthor is null)
             {
-                throw new CustomApiException(HttpStatusCode.NotFound, Constants.AUTHORNOTFOUNDERROR);
+                throw new CustomApiException(HttpStatusCode.BadRequest, Constants.AUTHORNOTFOUNDERROR);
             }
             var author = _mapper.Map<AuthorModel>(dbAuthor);
             return author;

@@ -21,53 +21,11 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
 
-        public List<OrderEntity> Get(OrderFilterModel orderFilter = null,
-            string field = Constants.DEFAULTORDERSORT, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
+        public List<OrderEntity> Get(OrderFilterModel orderFilter = null,string field = Constants.DEFAULTORDERSORT, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
         {
             page = page < Constants.DEFAULTPAGE ? Constants.DEFAULTPAGE : page;
             string sortOrder = ascending ? "asc" : "desc";
-            string paidFilter = orderFilter.IsPaid ? $"o.Status={(int)Enums.OrderStatusType.Paid}" : string.Empty;
-            string unpaidFilter = orderFilter.IsUnpaid ? $"o.Status={(int)Enums.OrderStatusType.Unpaid}" : string.Empty;
-            string paymentIdFilter = !(orderFilter.PaymentId == default) ? $"o.PaymentId={orderFilter.PaymentId}" : string.Empty;
-            string userIdFilter = !string.IsNullOrWhiteSpace(orderFilter.UserId) ? $"o.UserId='{orderFilter.UserId}'" : string.Empty;
-            string removedFilter = getRemoved ? "1" : "0";
-            string filterString = $"where o.IsRemoved={removedFilter}";
-            if (!string.IsNullOrWhiteSpace(paidFilter) || !string.IsNullOrWhiteSpace(unpaidFilter))
-            {
-                filterString += " and (";
-            }
-            if (!string.IsNullOrWhiteSpace(paidFilter))
-            {
-                filterString += $" {paidFilter} ";
-            }
-            if (!string.IsNullOrWhiteSpace(paidFilter) && !string.IsNullOrWhiteSpace(unpaidFilter))
-            {
-                filterString += " or ";
-            }
-            if (!string.IsNullOrWhiteSpace(unpaidFilter))
-            {
-                filterString += $" {unpaidFilter} ";
-            }
-            if (!string.IsNullOrWhiteSpace(paidFilter) || !string.IsNullOrWhiteSpace(unpaidFilter))
-            {
-                filterString += ")";
-            }
-            if (!string.IsNullOrWhiteSpace(userIdFilter) || !string.IsNullOrWhiteSpace(paymentIdFilter))
-            {
-                filterString += " and ";
-            }
-            if (!string.IsNullOrWhiteSpace(userIdFilter))
-            {
-                filterString += $"{userIdFilter}";
-            }
-            if (!string.IsNullOrWhiteSpace(paymentIdFilter))
-            {
-                filterString += " and ";
-            }
-            if (!string.IsNullOrWhiteSpace(paymentIdFilter))
-            {
-                filterString += $"{paymentIdFilter}";
-            }
+            string filterString = BuildFilter(orderFilter, getRemoved);
             string sql = $"select o.*, u.* from Orders o inner join AspNetUsers u on o.UserId=u.Id {filterString} order by {field} {sortOrder} offset {(page - Constants.DEFAULTPREVIOUSPAGEOFFSET) * Constants.ORDERPAGESIZE} rows fetch next {Constants.ORDERPAGESIZE} rows only";
             using SqlConnection connection = new(_connectionString);
             var orders = connection.Query<OrderEntity, UserEntity, OrderEntity>(sql, (OrderEntity, UserEntity) =>
@@ -81,9 +39,33 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
 
         public List<OrderEntity> GetAll(OrderFilterModel orderFilter = null, bool getRemoved = false)
         {
+            string filterString = BuildFilter(orderFilter, getRemoved);   
+            string sql = $"select o.*, u.* from Orders o inner join AspNetUsers u on o.UserId=u.Id {filterString}";
+            using SqlConnection connection = new(_connectionString);
+            var orders = connection.Query<OrderEntity, UserEntity, OrderEntity>(sql, (OrderEntity, UserEntity) =>
+            {
+                OrderEntity.User = UserEntity;
+                return OrderEntity;
+            });
+            return orders.ToList();
+        }
+        public int GetCount(OrderFilterModel orderFilter = null, bool getRemoved = false)
+        {
+            string filterString = BuildFilter(orderFilter, getRemoved);
+            string sql = $"select o.*, u.* from Orders o inner join AspNetUsers u on o.UserId=u.Id {filterString}";
+            using SqlConnection connection = new(_connectionString);
+            var orders = connection.Query<OrderEntity, UserEntity, OrderEntity>(sql, (OrderEntity, UserEntity) =>
+            {
+                OrderEntity.User = UserEntity;
+                return OrderEntity;
+            });
+            return orders.Count();
+        }
+        private string BuildFilter(OrderFilterModel orderFilter = null, bool getRemoved = false)
+        {
             string paidFilter = orderFilter.IsPaid ? $"o.Status={(int)Enums.OrderStatusType.Paid}" : string.Empty;
             string unpaidFilter = orderFilter.IsUnpaid ? $"o.Status={(int)Enums.OrderStatusType.Unpaid}" : string.Empty;
-            string paymentIdFilter = !(orderFilter.PaymentId == default) ? $"o.PaymentId={orderFilter.PaymentId}" : string.Empty;
+            string paymentIdFilter = (orderFilter.PaymentId is not null) ? $"o.PaymentId={orderFilter.PaymentId}" : string.Empty;
             string userIdFilter = !string.IsNullOrWhiteSpace(orderFilter.UserId) ? $"o.UserId='{orderFilter.UserId}'" : string.Empty;
             string removedFilter = getRemoved ? "1" : "0";
             string filterString = $"where o.IsRemoved={removedFilter}";
@@ -123,14 +105,9 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
             {
                 filterString += $"{paymentIdFilter}";
             }
-            string sql = $"select o.*, u.* from Orders o inner join AspNetUsers u on o.UserId=u.Id {filterString}";
-            using SqlConnection connection = new(_connectionString);
-            var orders = connection.Query<OrderEntity, UserEntity, OrderEntity>(sql, (OrderEntity, UserEntity) =>
-            {
-                OrderEntity.User = UserEntity;
-                return OrderEntity;
-            });
-            return orders.ToList();
+            return filterString;
         }
+        public void SaveChanges()
+        {}
     }
 }

@@ -2,7 +2,7 @@
 {
     public class BaseModel : BaseErrorsModel
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
     }
 }
