@@ -69,7 +69,7 @@
     <div class="filler"></div>
     @Html.ActionLink("previous page", "Orders", "Admin", new
 {
-    page = Model.Page - 1,
+    page = Model.Page - Constants.DEFAULTPREVIOUSPAGEOFFSET,
     isPaid = Model.IsPaid,
     isUnpaid = Model.IsUnpaid,
     sortBy = Model.SortBy,
@@ -78,7 +78,7 @@
     <span>Page @Model.Page/ @Model.PageCount</span>
     @Html.ActionLink("next page", "Orders", "Admin", new
 {
-    page = Model.Page + 1,
+    page = Model.Page + Constants.DEFAULTPREVIOUSPAGEOFFSET,
     isPaid = Model.IsPaid,
     isUnpaid = Model.IsUnpaid,
     sortBy = Model.SortBy,

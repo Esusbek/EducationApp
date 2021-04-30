@@ -183,8 +183,8 @@ namespace EducationApp.BusinessLogicLayer.Services
 
         public int GetPageCount(bool isBlocked, bool isUnblocked, string searchString)
         {
-            Expression<Func<UserEntity, bool>> filter = user => (isBlocked && user.IsRemoved == true)
-            || (isUnblocked && user.IsRemoved == false);
+            Expression<Func<UserEntity, bool>> filter = user => (isBlocked && user.IsRemoved)
+            || (isUnblocked && !user.IsRemoved);
             var dbUsers = _userManager.Users.Where(filter);
             if (!string.IsNullOrWhiteSpace(searchString))
             {

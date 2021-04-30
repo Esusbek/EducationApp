@@ -68,7 +68,7 @@
     <div class="filler"></div>
     @Html.ActionLink("previous page", "PrintingEditions", "Admin", new
     {
-        page = Model.Page - 1,
+        page = Model.Page - Constants.DEFAULTPREVIOUSPAGEOFFSET,
     ascending = Model.Ascending,
     sortBy = Model.SortBy,
     isBook = Model.IsBook,
@@ -78,7 +78,7 @@
     <span>Page @Model.Page/@Model.PageCount</span>
     @Html.ActionLink("next page", "PrintingEditions", "Admin", new
     {
-        page = Model.Page + 1,
+        page = Model.Page + Constants.DEFAULTPREVIOUSPAGEOFFSET,
     ascending = Model.Ascending,
     sortBy = Model.SortBy,
     isBook = Model.IsBook,
