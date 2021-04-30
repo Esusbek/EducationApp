@@ -39,20 +39,10 @@
                 <td>@user.Email</td>
                 <td>@user.FirstName @user.LastName</td>
                 <td>
-                    @if (user.UserName != User.Identity.Name)
-                    {
-                            <label class="switch">
-                                <input class="ban-switch" type="checkbox" @(!user.IsRemoved?"checked":"") id=@user.Id>
-                                <span class="slider round"></span>
-                            </label>
-                    }
-                    @if (user.UserName == User.Identity.Name)
-                    {
-                        <label class="switch">
-                            <input class="ban-switch-admin" type="checkbox" checked id=@user.Id>
-                            <span class="slider round"></span>
-                        </label>
-                    }
+                    <label class="switch">
+                        <input class="ban-switch@(user.UserName == User.Identity.Name?"-admin":"")" type="checkbox" @(!user.IsRemoved?"checked":"") id=@user.Id>
+                        <span class="slider round"></span>
+                    </label>
                 </td>
                 <td>
                     @if (user.UserName != User.Identity.Name)
