@@ -2,7 +2,7 @@
 {
     public class OrderFilterModel
     {
-       
+
         public bool IsPaid { get; set; }
         public bool IsUnpaid { get; set; }
         public string UserId { get; set; }

@@ -1,14 +1,10 @@
 ﻿using Dapper.Contrib.Extensions;
 using EducationApp.DataAccessLayer.Entities.Base;
-using EducationApp.DataAccessLayer.Extensions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace EducationApp.DataAccessLayer.Repositories.Base
 {

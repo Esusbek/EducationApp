@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace EducationApp.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IOrderRepository: IBaseRepository<OrderEntity>
+    public interface IOrderRepository : IBaseRepository<OrderEntity>
     {
         public List<OrderEntity> Get(OrderFilterModel orderFilter = null, string field = Constants.DEFAULTORDERSORT, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE);
         public List<OrderEntity> GetAll(OrderFilterModel orderFilter = null, bool getRemoved = false);

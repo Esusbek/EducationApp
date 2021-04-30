@@ -61,7 +61,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             var user = await GetUserByUsernameAsync(username);
             return new ProfileViewModel { User = user };
         }
-        public async Task<TokensModel> LoginAsync(LoginViewModel model, bool rememberMe=true)
+        public async Task<TokensModel> LoginAsync(LoginViewModel model, bool rememberMe = true)
         {
             var user = new UserModel
             {

@@ -21,7 +21,7 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
 
-        public List<OrderEntity> Get(OrderFilterModel orderFilter = null,string field = Constants.DEFAULTORDERSORT, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
+        public List<OrderEntity> Get(OrderFilterModel orderFilter = null, string field = Constants.DEFAULTORDERSORT, bool ascending = true, bool getRemoved = false, int page = Constants.DEFAULTPAGE)
         {
             page = page < Constants.DEFAULTPAGE ? Constants.DEFAULTPAGE : page;
             string sortOrder = ascending ? "asc" : "desc";
@@ -39,7 +39,7 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
 
         public List<OrderEntity> GetAll(OrderFilterModel orderFilter = null, bool getRemoved = false)
         {
-            string filterString = BuildFilter(orderFilter, getRemoved);   
+            string filterString = BuildFilter(orderFilter, getRemoved);
             string sql = $"select o.*, u.* from Orders o inner join AspNetUsers u on o.UserId=u.Id {filterString}";
             using SqlConnection connection = new(_connectionString);
             var orders = connection.Query<OrderEntity, UserEntity, OrderEntity>(sql, (OrderEntity, UserEntity) =>
@@ -108,6 +108,6 @@ namespace EducationApp.DataAccessLayer.Repositories.DapperRepositories
             return filterString;
         }
         public void SaveChanges()
-        {}
+        { }
     }
 }

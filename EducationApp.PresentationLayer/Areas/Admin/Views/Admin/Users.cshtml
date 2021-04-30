@@ -41,20 +41,10 @@
                 <td>
                     @if (user.UserName != User.Identity.Name)
                     {
-                        @if (user.IsRemoved)
-                        {
                             <label class="switch">
-                                <input class="ban-switch" type="checkbox" id=@user.Id>
+                                <input class="ban-switch" type="checkbox" @(!user.IsRemoved?"checked":"") id=@user.Id>
                                 <span class="slider round"></span>
                             </label>
-                        }
-                        @if (!user.IsRemoved)
-                        {
-                            <label class="switch">
-                                <input class="ban-switch" type="checkbox" checked id=@user.Id>
-                                <span class="slider round"></span>
-                            </label>
-                        }
                     }
                     @if (user.UserName == User.Identity.Name)
                     {

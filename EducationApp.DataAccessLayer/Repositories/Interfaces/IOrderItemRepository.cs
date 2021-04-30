@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace EducationApp.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IOrderItemRepository: IBaseRepository<OrderItemEntity>
+    public interface IOrderItemRepository : IBaseRepository<OrderItemEntity>
     {
         public List<OrderItemEntity> Get(OrderItemFilterModel orderItemFilterModel = null);
         public List<OrderItemEntity> GetAll();

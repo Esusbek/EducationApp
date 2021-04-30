@@ -18,7 +18,7 @@ namespace EducationApp.BusinessLogicLayer.Providers
             _smtp = new SmtpClient(config.Value.Server, config.Value.Port)
             {
                 Credentials = new NetworkCredential(config.Value.Login, config.Value.Password),
-                EnableSsl = true
+                EnableSsl = config.Value.EnableSSL
             };
         }
 

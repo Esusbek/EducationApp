@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace EducationApp.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IPaymentRepository: IBaseRepository<PaymentEntity>
+    public interface IPaymentRepository : IBaseRepository<PaymentEntity>
     {
         public List<PaymentEntity> Get(PaymentFilterModel paymentFilterModel = null);
     }

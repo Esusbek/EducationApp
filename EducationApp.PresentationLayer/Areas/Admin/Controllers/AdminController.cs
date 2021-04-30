@@ -57,7 +57,7 @@ namespace EducationApp.PresentationLayer.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangePassword([FromForm] ChangeAdminPasswordRequestModel model)
         {
-            await _userService.ChangePasswordAsync(new UserModel { Id=model.Id }, model.CurrentPassword, model.NewPassword);
+            await _userService.ChangePasswordAsync(new UserModel { Id = model.Id }, model.CurrentPassword, model.NewPassword);
             return Ok();
         }
         [HttpPost]
