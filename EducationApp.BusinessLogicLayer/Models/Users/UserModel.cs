@@ -14,8 +14,7 @@ namespace EducationApp.BusinessLogicLayer.Models.Users
         public bool IsRemoved { get; set; }
         public string Password { get; set; }
         public string PasswordConfirm { get; set; }
-        [NotMapped]
-        public virtual IFormFile ProfilePicture { get; set; }
+        public string ProfilePicture { get; set; }
         public string ProfilePictureStorageName { get; set; }
         public string ProfilePictureURL { get; set; }
     }

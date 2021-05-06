@@ -16,14 +16,10 @@ const initialState: ProfileStateModel = {
         lastName: "",
         email: "",
         profilePictureURL: "",
+        profilePicture: "",
+        profilePictureStorageName: ""
     }
 }
-getInfo
-getInfoSuccess
-editProfile
-editProfileSuccess
-changePassword
-changePasswordSuccess
 @State<ProfileStateModel>({
     name: 'profile',
     defaults: initialState
@@ -47,6 +43,8 @@ export class ProfileState {
     }
     @Action(editProfile)
     editProfile(ctx: StateContext<ProfileStateModel>, action: editProfile) {
+        console.log(action.payload);
+
         this.profileService.updateUser(action.payload)
             .subscribe(data => ctx.dispatch(new editProfileSuccess(data)))
     }

@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace EducationApp.BusinessLogicLayer.Providers.Interfaces
 {
     public interface ICloudStorageProvider
     {
-        Task<string> UploadFileAsync(IFormFile imageFile, string fileNameForStorage);
+        public Task<string> UploadFileAsync(string imageString, string fileNameForStorage);
         Task DeleteFileAsync(string fileNameForStorage);
     }
 }

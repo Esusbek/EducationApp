@@ -9,7 +9,7 @@ export const HttpOptions = {
 };
 export const HttpFormOptions = {
   headers: new HttpHeaders({
-    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Type': 'multipart/form-data',
     'Accept': 'application/json',
     'Access-Control-Allow-Headers': 'Content-Type'
   })
@@ -38,5 +38,8 @@ export const Defaults = {
   pageOffset: 1,
   defaultPage: 1,
   maxQuantity: 10,
-  startQuantity: 1
+  startQuantity: 1,
+  filePattern: /image-*/,
+  max_height: 128,
+  max_width: 128
 }

@@ -5,6 +5,8 @@ export class UserModel {
     lastName: string;
     email: string;
     profilePictureURL: string;
+    profilePicture: string;
+    profilePictureStorageName: string;
 }
 
 export class ChangePasswordModel {

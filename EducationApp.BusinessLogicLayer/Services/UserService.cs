@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EducationApp.BusinessLogicLayer.Models;
+using EducationApp.BusinessLogicLayer.Models.Requests;
 using EducationApp.BusinessLogicLayer.Models.Users;
 using EducationApp.BusinessLogicLayer.Models.ViewModels;
 using EducationApp.BusinessLogicLayer.Providers.Interfaces;
@@ -10,10 +11,12 @@ using EducationApp.Shared.Constants;
 using EducationApp.Shared.Enums;
 using EducationApp.Shared.Exceptions;
 using Google.Apis.Auth;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -211,9 +214,10 @@ namespace EducationApp.BusinessLogicLayer.Services
         public async Task RegisterAsync(UserModel user)
         {
             _validator.ValidateUser(user);
-            if (user.ProfilePicture is not null)
+            
+            if (!string.IsNullOrWhiteSpace(user.ProfilePicture))
             {
-                string extension = Path.GetExtension(user.ProfilePicture.FileName);
+                string extension = user.ProfilePicture.Split(new char[] { '/', ';' })[1];
                 string fileName = GetFileName(user.UserName, extension);
                 user.ProfilePictureURL = await _cloudStorage.UploadFileAsync(user.ProfilePicture, fileName);
                 user.ProfilePictureStorageName = fileName;
@@ -263,14 +267,15 @@ namespace EducationApp.BusinessLogicLayer.Services
             {
                 throw new CustomApiException(HttpStatusCode.NotFound, Constants.USERNOTFOUNDERROR);
             }
-            if (user.ProfilePicture is not null)
+
+            if (!string.IsNullOrWhiteSpace(user.ProfilePicture))
             {
-                string extension = Path.GetExtension(user.ProfilePicture.FileName);
-                string fileName = GetFileName(user.UserName, extension);
-                if (user.ProfilePictureStorageName is not null)
+                if(!string.IsNullOrWhiteSpace(user.ProfilePictureStorageName))
                 {
                     await _cloudStorage.DeleteFileAsync(user.ProfilePictureStorageName);
                 }
+                string extension = user.ProfilePicture.Split(new char[] { '/', ';' })[1];
+                string fileName = GetFileName(user.UserName, extension);
                 user.ProfilePictureURL = await _cloudStorage.UploadFileAsync(user.ProfilePicture, fileName);
                 user.ProfilePictureStorageName = fileName;
             }
@@ -342,7 +347,7 @@ namespace EducationApp.BusinessLogicLayer.Services
             }
             return;
         }
-
+        
         private async Task<GoogleJsonWebSignature.Payload> DecodeJwtTokenAsync(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
@@ -399,5 +404,6 @@ namespace EducationApp.BusinessLogicLayer.Services
             return $"{username}.{extension}";
         }
 
+        
     }
 }

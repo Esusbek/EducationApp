@@ -4,6 +4,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -22,14 +23,13 @@ namespace EducationApp.BusinessLogicLayer.Providers
             _bucketName = config.Value.CloudStorageBucketName;
         }
 
-        public async Task<string> UploadFileAsync(IFormFile imageFile, string fileNameForStorage)
+        public async Task<string> UploadFileAsync(string imageString, string fileNameForStorage)
         {
-            using (var memoryStream = new MemoryStream())
-            {
-                await imageFile.CopyToAsync(memoryStream);
-                var dataObject = await _storageClient.UploadObjectAsync(_bucketName, fileNameForStorage, null, memoryStream);
-                return dataObject.MediaLink;
-            }
+            string base64Image = imageString.Split(',')[1];
+            byte[] bytes = Convert.FromBase64String(base64Image);
+            using MemoryStream fileStream = new(bytes);
+            var dataObject = await _storageClient.UploadObjectAsync(_bucketName, fileNameForStorage, null, fileStream);
+            return dataObject.MediaLink;
         }
 
         public async Task DeleteFileAsync(string fileNameForStorage)

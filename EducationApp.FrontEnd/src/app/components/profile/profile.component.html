@@ -2,7 +2,10 @@
     <h2>My profile</h2>
 
     <div class="profile-images">
-        <div class="image"><img src="assets/img/person-icon.png" alt="icon" /></div>
+        <div class="image">
+            <img src="assets/img/person-icon.png" alt="icon" *ngIf="!profilePictureURL" />
+            <img src={{profilePictureURL}} alt="icon" *ngIf="profilePictureURL" />
+        </div>
         <div class="filler"></div>
         <div class="image edit" *ngIf="!isEditing && !isChangingPassword"><img src="assets/img/pencil.png" alt="edit"
                 (click)="editStart()"></div>
@@ -19,6 +22,9 @@
         <input type="text" id="firstName" formControlName="firstName">
         <label for="lastName">Your Last Name</label>
         <input type="text" id="lastName" formControlName="lastName">
+        <label for="profilePicture" *ngIf="isEditing">Change profile picture</label>
+        <input #profilePictureInput type="file" id="profilePicture" (change)="onProfilePictureChange($event)"
+            accept=".png, .jpg, .jpeg" *ngIf="isEditing">
         <div class="button" *ngIf="isEditing">
             <button type="submit">Save changes</button>
         </div>
