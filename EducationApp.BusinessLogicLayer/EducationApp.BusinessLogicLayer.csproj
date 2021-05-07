@@ -1,18 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Interfaces\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Models\Authors\" />
-    <Folder Include="Models\Base\" />
-    <Folder Include="Models\Enums\" />
-    <Folder Include="Models\Orders\" />
-    <Folder Include="Models\Payments\" />
-    <Folder Include="Models\PrintingEditions\" />
+    <PackageReference Include="Api.Forex.Currency.Converter" Version="1.0.5" />
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Profanity.Detector" Version="0.1.8" />
+    <PackageReference Include="Stripe.net" Version="39.35.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EducationApp.DataAccessLayer\EducationApp.DataAccessLayer.csproj" />
   </ItemGroup>
 
 </Project>

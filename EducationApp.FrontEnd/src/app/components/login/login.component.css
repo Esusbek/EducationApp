@@ -1,0 +1,84 @@
+.image{
+  width:50px;
+  height:50px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+.image>img{
+  max-width:100%;
+  max-height:100%;
+}
+.signin-header{
+  text-align: left;
+  font-weight: bold;
+  padding: 10px 0;
+}
+form{
+  display: flex;
+  flex-direction: column;
+}
+input[type=text],input[type=password]{
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+label {
+  padding: 2px;
+  display: inline-block;
+}
+.signin{
+  padding:5px 0;
+}
+.credentials>a{
+  float: right;
+}
+input[type=checkbox]{
+  margin-right: 5px;
+}
+button[type=submit] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 6px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+button[type=submit]:disabled{
+  background-color: gray;
+}
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;  
+  width: 55%;
+  max-width: 340px;
+  margin:0 auto;
+}
+a.btn {
+  background-color: #EEEEEE;
+  color: #333333;
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+  width: 80%;
+  margin: 0 auto;
+}
+.content{
+  margin: 0 auto;
+}
+
+.content>form {
+  display: flex;
+  flex-direction: column;
+}
+.content>form>input {
+  margin: 10px 0;
+}
+@media (max-width:630px){
+  .container {
+    width: 90%;
+  }
+}

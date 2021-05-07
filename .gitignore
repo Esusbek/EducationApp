@@ -1,0 +1,8 @@
+/.vs
+EducationApp.BusinessLogicLayer/obj/Debug/net5.0/EducationApp.BusinessLogicLayer.csprojAssemblyReference.cache
+EducationApp.DataAccessLayer/obj/Debug/net5.0/EducationApp.DataAccessLayer.csprojAssemblyReference.cache
+EducationApp.PresentationLayer/obj/Debug/net5.0/EducationApp.PresentationLayer.csprojAssemblyReference.cache
+EducationApp.Shared/obj/Debug/net5.0/EducationApp.Shared.csprojAssemblyReference.cache
+.vscode/launch.json
+EducationApp.PresentationLayer/log.txt
+EducationApp.PresentationLayer/logDB.txt

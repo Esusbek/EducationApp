@@ -1,0 +1,195 @@
+﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@using EducationApp.BusinessLogicLayer.Models.Orders
+@using EducationApp.Shared.Constants
+@using EducationApp.Shared.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model OrdersViewModel
+@{
+    ViewData["Title"] = "Orders list";
+}
+<div class="tables-header">
+    <div><h4>Orders Page</h4></div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th><a href="javascript:void(0);" class="table-head sort-by">Id</a></th>
+            <th><a href="javascript:void(0);" class="table-head sort-by">Date</a></th>
+            <th><a href="javascript:void(0);" class="table-head">User name</a></th>
+            <th><a href="javascript:void(0);" class="table-head">User email</a></th>
+            <th><a href="javascript:void(0);" class="table-head">Item types</a></th>
+            <th><a href="javascript:void(0);" class="table-head">Item titles</a></th>
+            <th><a href="javascript:void(0);" class="table-head">Item quantities</a></th>
+            <th><a href="javascript:void(0);" class="table-head sort-by">Total</a></th>
+            <th>
+                <a href="javascript:void(0);" class="table-head">Order status</a>
+                <div id="checkboxes">
+                    <input type="checkbox" asp-for="IsPaid" id="IsPaid" />
+                    <label asp-for="IsPaid">@Enums.OrderStatusType.Paid.ToString()</label>
+                    <input type="checkbox" asp-for="IsUnpaid" id="IsUnpaid" />
+                    <label asp-for="IsUnpaid">@Enums.OrderStatusType.Unpaid.ToString()</label>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (OrderModel order in Model.Orders)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.Date</td>
+                <td>@order.User.FirstName @order.User.LastName</td>
+                <td>@order.User.Email</td>
+                <td>
+                    @foreach (OrderItemModel item in order.CurrentItems)
+                    {
+                        <p>@item.PrintingEdition.Type.ToString()</p>
+                    }
+                </td>
+                <td>
+                    @foreach (OrderItemModel item in order.CurrentItems)
+                    {
+                        <p>@item.PrintingEdition.Title</p>
+                    }
+                </td>
+                <td>
+                    @foreach (OrderItemModel item in order.CurrentItems)
+                    {
+                        <p>@item.Amount</p>
+                    }
+                </td>
+                <td>@order.Total</td>
+                <td>@order.Status.ToString()</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pages">
+    <div class="filler"></div>
+    @Html.ActionLink("previous page", "Orders", "Admin", new
+{
+    page = Model.Page - Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    isPaid = Model.IsPaid,
+    isUnpaid = Model.IsUnpaid,
+    sortBy = Model.SortBy,
+    ascending = Model.Ascending
+}, new { id = "previousPage" })
+    <span>Page @Model.Page/ @Model.PageCount</span>
+    @Html.ActionLink("next page", "Orders", "Admin", new
+{
+    page = Model.Page + Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    isPaid = Model.IsPaid,
+    isUnpaid = Model.IsUnpaid,
+    sortBy = Model.SortBy,
+    ascending = Model.Ascending
+}, new { id = "nextPage" })
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            function reloadWithQueryStringVars(queryStringVars) {
+                var existingQueryVars = location.search ? location.search.substring(1).split("&") : [],
+                    currentUrl = location.search ? location.href.replace(location.search, "") : location.href,
+                    newQueryVars = {},
+                    newUrl = currentUrl + "?";
+                if (existingQueryVars.length > 0) {
+                    for (var i = 0; i < existingQueryVars.length; i++) {
+                        var pair = existingQueryVars[i].split("=");
+                        newQueryVars[pair[0]] = pair[1];
+                    }
+                }
+                if (queryStringVars) {
+                    for (var queryStringVar in queryStringVars) {
+                        newQueryVars[queryStringVar] = queryStringVars[queryStringVar];
+                    }
+                }
+                if (newQueryVars) {
+                    for (var newQueryVar in newQueryVars) {
+                        newUrl += newQueryVar + "=" + newQueryVars[newQueryVar] + "&";
+                    }
+                    newUrl = newUrl.substring(0, newUrl.length - 1);
+                    window.location.href = newUrl;
+                }
+                if (!newQueryVars) {
+                    window.location.href = location.href;
+                }
+            }
+
+            if (@Model.Page< 2) {
+                $('#previousPage').addClass('disabled')
+            }
+
+            if (@Model.Page>=@Model.PageCount) {
+                $('#nextPage').addClass('disabled')
+            }
+            var links = document.getElementsByClassName('sort-by');
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].innerHTML === '@Model.SortBy') {
+                    if ('@Model.Ascending' === 'asc') {
+                        links[i].classList.add('ascending-sort');
+                    }
+                    if ('@Model.Ascending' === 'desc') {
+                        links[i].classList.add('descending-sort');
+                    }
+                }
+            }
+
+            $("#IsPaid").change(function () {
+                reloadWithQueryStringVars({
+                    isPaid: this.checked,
+                    isUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
+                    sortBy: '@Model.SortBy',
+                    ascending: '@Model.Ascending',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $("#IsUnpaid").change(function () {
+                reloadWithQueryStringVars({
+                    isPaid: '@Model.IsPaid.ToString().ToLower()',
+                    isUnpaid: this.checked,
+                    sortBy: '@Model.SortBy',
+                    ascending: '@Model.Ascending',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $('#previousPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                window.location.href = $(this).attr('href');
+            });
+            $('#nextPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                window.location.href = $(this).attr('href');
+            });
+            $('.sort-by').click(function (link) {
+                var text = $(link.target).text();
+                var ascending = 'asc';
+                if ('@Model.Ascending' === '@Constants.DEFAULTSORTORDER')
+                    ascending = 'desc';
+                if ('@Model.SortBy' === text) {
+                    reloadWithQueryStringVars({
+                        isPaid: '@Model.IsPaid.ToString().ToLower()',
+                        isUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
+                        sortBy: text,
+                        ascending: ascending,
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+                if ('@Model.SortBy' !== text) {
+                    reloadWithQueryStringVars({
+                        isPaid: '@Model.IsPaid.ToString().ToLower()',
+                        isUnpaid: '@Model.IsUnpaid.ToString().ToLower()',
+                        sortBy: text,
+                        ascending: ascending,
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+            });
+        });
+    </script>
+}

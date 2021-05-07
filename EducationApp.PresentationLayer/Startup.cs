@@ -1,10 +1,17 @@
+using EducationApp.BusinessLogicLayer;
+using EducationApp.DataAccessLayer;
+using EducationApp.DataAccessLayer.Initialization;
+using EducationApp.Shared.Configs;
+using EducationApp.Shared.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Stripe;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace EducationApp.PresentationLayer
 {
@@ -17,58 +24,98 @@ namespace EducationApp.PresentationLayer
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-            // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
+            services.AddServices();
+            services.AddProviders();
+            services.AddMapper();
+            services.AddIdentity();
+
+            services.AddDBContext(Configuration.GetConnectionString("DefaultConnection"));
+
+            services.AddRepositories();
+
+            var jwtConfig = Configuration.GetSection("jwt").Get<JwtConfig>();
+            services.AddJwt(jwtConfig);
+
+
+            services.Configure<SmtpConfig>(options => Configuration.GetSection("smtp").Bind(options));
+            services.Configure<UrlConfig>(options => Configuration.GetSection("url").Bind(options));
+            services.Configure<JwtConfig>(options => Configuration.GetSection("jwt").Bind(options));
+            services.Configure<CurrencyConvertConfig>(options => Configuration.GetSection("currencyconvert").Bind(options));
+
+            StripeConfiguration.ApiKey = Configuration["stripe:secretkey"];
+
+            services.AddCors(options =>
             {
-                configuration.RootPath = "ClientApp/dist";
+                options.AddPolicy(Constants.ALLOWSPECIFICORIGINS,
+                builder =>
+                {
+                    builder.WithOrigins(Constants.DEFAULTFRONTENDORIGIN)
+                                        .AllowAnyHeader()
+                                        .AllowAnyMethod();
+                });
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Events.OnRedirectToAccessDenied =
+                    options.Events.OnRedirectToLogin = context =>
+                    {
+                        if (context.Request.Method != "GET")
+                        {
+                            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            return Task.FromResult<object>(null);
+                        }
+                        context.Response.Redirect(context.RedirectUri);
+                        return Task.FromResult<object>(null);
+                    };
+            });
+            services.AddControllersWithViews();
+
+            services.AddSwaggerGen(options =>
+            {
+                options.CustomSchemaIds(type => type.ToString());
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.Seed();
             }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+
+            app.UseMiddleware<Middlewares.LogMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            if (!env.IsDevelopment())
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                app.UseSpaStaticFiles();
-            }
+                c.SwaggerEndpoint(Configuration.GetSection("swagger")["path"], Configuration.GetSection("swagger")["apiname"]);
+            });
 
             app.UseRouting();
+            app.UseCors(Constants.ALLOWSPECIFICORIGINS);
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
-            });
+                endpoints.MapAreaControllerRoute(
+                    name: "AdminArea",
+                    areaName: "Admin",
+                    pattern: "Admin/{controller=Admin}/{action=Login}");
+                endpoints.MapAreaControllerRoute(
+                   name: "default",
+                   areaName: "Admin",
+                   pattern: "{controller=Admin}/{action=Login}");
+                endpoints.MapControllers();
 
-            app.UseSpa(spa =>
-            {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
-
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
             });
         }
     }

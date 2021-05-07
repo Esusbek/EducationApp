@@ -1,0 +1,25 @@
+<div class="container">
+    <div class="book-details">
+        <div class="main-info">
+            <div class="image">
+                <img src={{getImage(currentBook.type)}} alt="icon" />
+            </div>
+            <div class="book-details-info">
+                <h2>{{currentBook.title}}</h2>
+                <p>By {{currentBook.authors}}</p>
+            </div>
+            <div class="order">
+                <div class="order-info">
+                    <select [(ngModel)]=selectedQuantity>
+                        <option *ngFor="let number of quantity">{{number}}</option>
+                    </select>
+                    <div class="total">
+                        <p>{{currentBook.price*selectedQuantity | currency: currency[currentBook.currency]}}</p>
+                    </div>
+                </div>
+                <button (click)="addToCart()">Add to cart</button>
+            </div>
+        </div>
+        <p>{{currentBook.description}}</p>
+    </div>
+</div>

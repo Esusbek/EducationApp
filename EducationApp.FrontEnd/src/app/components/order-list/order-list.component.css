@@ -1,0 +1,39 @@
+table {
+    background: #FFF;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,
+th {
+    padding: 4px;
+    border: 1px solid #CCC;
+    overflow: hidden;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background-color: #DDD;
+    font-weight: 400;
+}
+.pages {
+    display: flex;
+    flex-direction: row;
+    height: 30px;
+}
+.filler{
+    flex: 1;
+}
+.previous, .next {
+    background-image: url(src/assets/img/previous.png);
+    width:20px;
+    height:20px;
+    border: none;
+}
+.previous:disabled, .next:disabled{
+    opacity: 0.5;
+}
+.next {
+    background-image: url(src/assets/img/next.png);
+}

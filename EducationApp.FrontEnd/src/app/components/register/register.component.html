@@ -1,0 +1,65 @@
+<div class="container" *ngIf="!isRegistered">
+    <div class="image"><img src="assets/img/person-icon.png" alt="icon" /></div>
+    <div class="signup-header">
+        <span>Create account</span>
+    </div>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <label for="username">Your Username:</label>
+        <div *ngIf="userName.errors?.required && (userName.dirty || userName.touched)" class="alert alert-danger">
+            Username is required.
+        </div>
+        <input id="username" type="text" placeholder="Username" formControlName="userName">
+        <label for="firstname">Your First Name:</label>
+        <div *ngIf="firstName.errors?.required && (firstName.dirty || firstName.touched)" class="alert alert-danger">
+            First name is required.
+        </div>
+        <input id="firstname" type="text" placeholder="FirstName" formControlName="firstName">
+        <label for="lastname">Your Last Name:</label>
+        <div *ngIf="lastName.errors?.required && (lastName.dirty || lastName.touched)" class="alert alert-danger">
+            Last name is required.
+        </div>
+        <input id="lastname" type="text" placeholder="LastName" formControlName="lastName">
+        <label for="email">Your Email:</label>
+        <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
+
+            <div *ngIf="email.errors.required">
+                Email is required.
+            </div>
+            <div *ngIf="email.errors.email">
+                Email must be valid.
+            </div>
+        </div>
+        <input id="email" type="email" placeholder="Email" formControlName="email">
+        <label for="password">Password:</label>
+        <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-danger">
+
+            <div *ngIf="password.errors.required">
+                Password is required.
+            </div>
+            <div *ngIf="password.errors.minlength">
+                Password must be at least 6 characters long.
+            </div>
+        </div>
+        <input id="password" type="password" placeholder="Password" formControlName="password">
+        <label for="passwordconfirm">Repeat password:</label>
+        <div *ngIf="registerForm.errors?.passwordsDontMatch && (passwordConfirm.dirty || passwordConfirm.touched)"
+            class="alert alert-danger">
+            Passwords must match.
+        </div>
+        <input id="passwordconfirm" type="password" placeholder="Repeat password" formControlName="passwordConfirm">
+        <div class="button">
+            <button type="submit" [disabled]="!registerForm.valid">Sign Up</button>
+        </div>
+    </form>
+    <div class="redirect">
+        <p>Already have an account? </p>
+        <span>Click here to </span><a [routerLink]="['/login']" routerLinkActive="router-link-active">Log in</a>
+    </div>
+</div>
+<div class="container-finished" *ngIf="isRegistered">
+    <h2>Confirm your email address</h2>
+    <p>We have sent an email with a confirmation link to your email address. In order to complete the sign-up process,
+        please click the confirmation link.</p>
+    <p>If you did not receive a confirmation email, please check your spam folder. Also, please verify that you entered
+        a valid email address in our sign-up form</p>
+</div>

@@ -1,0 +1,452 @@
+﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@using EducationApp.BusinessLogicLayer.Models.PrintingEditions
+@using EducationApp.Shared.Constants
+@using EducationApp.Shared.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model PrintingEditionsViewModel
+@{
+    ViewData["Title"] = "Printing Editions list";
+}
+<div class="tables-header">
+    <div><h4>Products Page</h4></div>
+    <div class="filler"></div>
+    <div class="editionTooltip">
+        <button class="addEdition" onclick="addEditionModal()"></button>
+        <span class="editionTooltiptext">Add new product</span>
+    </div>
+</div>
+<table class="table editions">
+    <thead>
+        <tr>
+            <th class="edition-id"><a href="javascript:void(0);" class="table-head sort-by">Id</a></th>
+            <th class="edition-title"><a href="javascript:void(0);" class="table-head">Title</a></th>
+            <th class="edition-description"><a href="javascript:void(0);" class="table-head">Description</a></th>
+            <th class="edition-type">
+                <a href="javascript:void(0);" class="table-head">Type</a>
+                <div id="checkboxes">
+                    <input type="checkbox" asp-for="IsBook" id="IsBook" />
+                    <label asp-for="IsBook">@Enums.PrintingEditionType.Book.ToString()</label>
+                    <input type="checkbox" asp-for="IsNewspaper" id="IsNewspaper" />
+                    <label asp-for="IsNewspaper">@Enums.PrintingEditionType.Newspaper.ToString()</label>
+                    <input type="checkbox" asp-for="IsJournal" id="IsJournal" />
+                    <label asp-for="IsJournal">@Enums.PrintingEditionType.Journal.ToString()</label>
+                </div>
+            </th>
+            <th class="edition-authors"><a href="javascript:void(0);" class="table-head">Authors</a></th>
+            <th class="edition-price"><a href="javascript:void(0);" class="table-head sort-by">Price</a></th>
+            <th class="edition-controls"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (PrintingEditionModel edition in Model.PrintingEditions)
+        {
+            <tr>
+                <td>@edition.Id</td>
+                <td>@edition.Title</td>
+                <td>
+                    <div class="description-text">@edition.Description</div>
+                </td>
+                <td>@edition.Type.ToString()</td>
+                <td>
+                    @foreach (string authorName in edition.Authors)
+                    {
+                        <p>@authorName</p>
+                    }
+                </td>
+                <td>@edition.Price</td>
+                <td>
+                    <button class="edit-open" onclick="editionModal('@edition.Id')"></button>
+                    <button class="remove" onclick="deleteEditionModal('@edition.Id')"></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<div class="pages">
+    <div class="filler"></div>
+    @Html.ActionLink("previous page", "PrintingEditions", "Admin", new
+    {
+        page = Model.Page - Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    ascending = Model.Ascending,
+    sortBy = Model.SortBy,
+    isBook = Model.IsBook,
+    isNewspaper = Model.IsNewspaper,
+    isJournal = Model.IsJournal
+}, new { id = "previousPage" })
+    <span>Page @Model.Page/@Model.PageCount</span>
+    @Html.ActionLink("next page", "PrintingEditions", "Admin", new
+    {
+        page = Model.Page + Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    ascending = Model.Ascending,
+    sortBy = Model.SortBy,
+    isBook = Model.IsBook,
+    isNewspaper = Model.IsNewspaper,
+    isJournal = Model.IsJournal
+}, new { id = "nextPage" })
+</div>
+<div class='modal fade' name='dynamiccustommodal' id='1' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='1Label'>
+    <div class='modal-dialog' style="max-width:700px">
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h4 class='modal-title' id="modal-title"></h4>
+            </div>
+            <div class='modal-body'>
+                <div class='row'>
+                    <div class='col-xs-12 col-md-12 col-sm-12 col-lg-12' id='modal-body'>
+                    </div>
+                </div>
+            </div>
+            <div class='modal-footer bg-default'>
+                <div class='col-xs-12 col-sm-12 col-lg-12 modal-buttons' id='modal-buttons'>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        var valid = true;
+        var model = @Html.Raw(Json.Serialize(Model));
+        var BstrapModal = function (title, body, buttons) {
+
+            BstrapModal.Delete = function () {
+                $("#modal-title").empty();
+                $("#modal-body").empty();
+                $("#modal-buttons").empty();
+            };
+            BstrapModal.Close = function () {
+                $(document.getElementById(BstrapModal.Id)).modal('hide');
+                BstrapModal.Delete();
+            };
+            this.Show = function () {
+                BstrapModal.Delete();
+                BstrapModal.Id = 1;
+                $("#modal-title").append(title);
+                $("#modal-body").append(body);
+                var buttonshtml = `<button type='button' class='btn ${buttons[0].Css}' name='btn1'>${buttons[0].Value}</button>`;
+                for (var i = 1; i < buttons.length; i++) {
+                    buttonshtml += `<div class="filler"></div><button type='button' class='btn ${buttons[i].Css}' name='btn1'>${buttons[i].Value}</button>`;
+                }
+                $("#modal-buttons").append(buttonshtml);
+
+                var btns = document.querySelectorAll(`button[name='btn${BstrapModal.Id}']`);
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].addEventListener("click", buttons[i].Callback || BstrapModal.Close);
+                }
+                $(document.getElementById(BstrapModal.Id)).modal('show');
+            };
+        };
+        function editionModal(id) {
+            var edition = model.printingEditions.find(edition => edition.id === +id);
+            var title = `Editing ${edition.title}`;
+            var body = `<form action="EditEdition" method="post" id="editionEdit">\
+    <input type="hidden" value="${edition.id}" name="id"/>
+    <div class="editionForm">\
+    <label for="name">Title*</label>\
+    <input id="name" value="${edition.title}" type="text" name="title" />\
+    <label for="description">Description*</label>\
+    <textarea rows="5" maxlength="1000" cols="50" id="description" type="text" name="description">${edition.description}</textarea>\
+    </div>\
+    <div class="editionForm">\
+    <label for="category">Category</label>\
+    <select size="1" id="category" name="type">\
+        <option ${edition.type === @((int)Enums.PrintingEditionType.Book) ? "selected" : ""} value="@((int)Enums.PrintingEditionType.Book)">Book</option>\
+        <option ${edition.type === @((int)Enums.PrintingEditionType.Journal) ? "selected" : ""} value="@((int)Enums.PrintingEditionType.Journal)">Journal</option>\
+        <option ${edition.type === @((int)Enums.PrintingEditionType.Newspaper) ? "selected" : ""} value="@((int)Enums.PrintingEditionType.Newspaper)">Newspaper</option>\
+    </select>\
+    <label for="authors">Authors*</label>\
+    <select size="3" multiple required id="authors" name="authors">`;
+
+            for (var i = 0; i < model.authors.length; i++) {
+                body += `\
+<option value="${model.authors[i].name}"`
+                if (edition.authors.includes(model.authors[i].name)) {
+                    body += ` selected `;
+                }
+                body += `>${model.authors[i].name}</option>`
+            }
+
+            body += `\
+    </select>\
+    <label for="price">Price*</label>\
+    <input type="text" value="${edition.price}" name="price" id="price" pattern="^\d+(,\d{1,2})?$"/>\
+    <label for="currency">Currency</label>\
+    <select id="currency" name="currency">
+        <option selected value="1">USD</option>
+    </select>
+    </div>
+</form>`;
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Update",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        if (valid) {
+                            $("#editionEdit").submit()
+                        }
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
+            $('#editionEdit input, #editionEdit textarea').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if (!$(this).val()) {
+                    valid = false;
+                    $('<p class="warning">Field must not be empty</p>').insertAfter(this)
+                    console.log("test");
+                }
+            });
+            $('#price').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if (!$(this).val() || (+$(this).val())<0) {
+                    valid = false;
+                    $('<p class="warning">Price must be a positive number</p>').insertAfter(this)
+                }
+            });
+            $('#authors').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if ($(this).val().length===0) {
+                    valid = false;
+                    $('<p class="warning">Choose atleast 1 author</p>').insertAfter(this)
+                    console.log("test");
+                }
+            });
+        }
+        function addEditionModal() {
+            var title = `Add new edition`;
+            var body = `<form action="AddEdition" method="post" id="editionAdd">\
+    <div class="editionForm">\
+    <label for="name">Title*</label>\
+    <input id="name" value="" type="text" name="title" />\
+    <label for="description">Description*</label>\
+    <textarea rows="5" maxlength="1000" cols="50" id="description" type="text" name="description"></textarea>\
+    </div>\
+    <div class="editionForm">\
+    <label for="category">Category</label>\
+    <select size="1" id="category" name="type">\
+        <option selected value="@((int)Enums.PrintingEditionType.Book)">Book</option>\
+        <option value="@((int)Enums.PrintingEditionType.Journal)">Journal</option>\
+        <option value="@((int)Enums.PrintingEditionType.Newspaper)">Newspaper</option>\
+    </select>\
+    <label for="authors">Authors*</label>\
+    <select size="3" multiple required id="authors" name="authors">`;
+
+            for (var i = 0; i < model.authors.length; i++) {
+                body += `\
+<option value="${model.authors[i].name}">${model.authors[i].name}</option>`
+            }
+
+            body += `\
+    </select>\
+    <label for="price">Price*</label>\
+    <input type="text" placeholder="0.00" name="price" id="price" pattern="^\d+(,\d{1,2})?$"/>\
+    <label for="currency">Currency</label>\
+    <select id="currency" name="currency">
+        <option selected value="1">USD</option>
+    </select>
+    </div>
+</form>`;
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Add",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        $("#editionAdd").next().remove(".warning");
+                        if (valid && $("#name").val() && $("#description").val() && $("#authors").val().length>0 && $("#price").val()) {
+                            $("#editionAdd").submit()
+                        }
+                        if (!valid || !$("#name").val() || !$("#description").val() || $("#authors").val().length===0 || !$("#price").val()) {
+                            $('<p class="warning">Fill in all fields of form</p>').insertAfter("#editionAdd")
+                        }
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
+            $('#editionAdd input, #editionAdd textarea').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if (!$(this).val()) {
+                    valid = false;
+                    $('<p class="warning">Field must not be empty</p>').insertAfter(this)
+                    console.log("test");
+                }
+            });
+            $('#price').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if (!$(this).val() || (+$(this).val()) <= 0) {
+                    valid = false;
+                    $('<p class="warning">Price must be a positive number</p>').insertAfter(this)
+                }
+            });
+            $('#authors').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if ($(this).val().length === 0) {
+                    valid = false;
+                    $('<p class="warning">Choose atleast 1 author</p>').insertAfter(this)
+                    console.log("test");
+                }
+            });
+        }
+        function deleteEditionModal(id) {
+            var edition = model.printingEditions.find(edition => edition.id === +id);
+            var title = `Delete ${edition.title}`;
+            var body = `<h3>Are you sure you want to delete ${edition.title}?</h3>
+<form action="DeleteEdition" method="post" id="editionDelete">\
+    <input type="hidden" value="${edition.id}" name="id"/>
+</form>`;
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Delete",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        $("#editionDelete").submit()
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
+        }
+        $(document).ready(function () {
+            function reloadWithQueryStringVars(queryStringVars) {
+                var existingQueryVars = location.search ? location.search.substring(1).split("&") : [],
+                    currentUrl = location.search ? location.href.replace(location.search, "") : location.href,
+                    newQueryVars = {},
+                    newUrl = currentUrl + "?";
+                if (existingQueryVars.length > 0) {
+                    for (var i = 0; i < existingQueryVars.length; i++) {
+                        var pair = existingQueryVars[i].split("=");
+                        newQueryVars[pair[0]] = pair[1];
+                    }
+                }
+                if (queryStringVars) {
+                    for (var queryStringVar in queryStringVars) {
+                        newQueryVars[queryStringVar] = queryStringVars[queryStringVar];
+                    }
+                }
+                if (newQueryVars) {
+                    for (var newQueryVar in newQueryVars) {
+                        newUrl += newQueryVar + "=" + newQueryVars[newQueryVar] + "&";
+                    }
+                    newUrl = newUrl.substring(0, newUrl.length - 1);
+                    window.location.href = newUrl;
+                }
+                if (!newQueryVars) {
+                    window.location.href = location.href;
+                }
+            }
+
+            if (@Model.Page< 2) {
+                $('#previousPage').addClass('disabled')
+            }
+            if (@Model.Page>=@Model.PageCount) {
+                $('#nextPage').addClass('disabled')
+            }
+            var links = document.getElementsByClassName('sort-by');
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].innerHTML === '@Model.SortBy') {
+                    if ('@Model.Ascending' === 'asc') {
+                        links[i].classList.add('ascending-sort');
+                    }
+                    if ('@Model.Ascending' === 'desc') {
+                        links[i].classList.add('descending-sort');
+                    }
+                }
+            }
+            $("#IsBook").change(function () {
+                reloadWithQueryStringVars({
+                    isBook: this.checked,
+                    isJournal: '@Model.IsJournal.ToString().ToLower()',
+                    isNewspaper: '@Model.IsNewspaper.ToString().ToLower()',
+                    sortBy: '@Model.SortBy',
+                    ascending: '@Model.Ascending',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $("#IsNewspaper").change(function () {
+                reloadWithQueryStringVars({
+                    isBook: '@Model.IsBook.ToString().ToLower()',
+                    isJournal: '@Model.IsJournal.ToString().ToLower()',
+                    isNewspaper: this.checked,
+                    sortBy: '@Model.SortBy',
+                    ascending: '@Model.Ascending',
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $("#IsJournal").change(function () {
+                reloadWithQueryStringVars({
+                    isBook: '@Model.IsBook.ToString().ToLower()',
+                    isJournal: this.checked,
+                    isNewspaper: '@Model.IsNewspaper.ToString().ToLower()',
+                    sortBy: '@Model.SortBy',
+                    ascending: @Model.Ascending,
+                    page: '@Constants.DEFAULTPAGE'
+                });
+            });
+            $('#previousPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                window.location.href = $(this).attr('href');
+            });
+            $('#nextPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                window.location.href = $(this).attr('href');
+            });
+            $('.sort-by').click(function (link) {
+                var text = $(link.target).text();
+                var ascending = 'asc';
+                if ('@Model.Ascending' === '@Constants.DEFAULTSORTORDER')
+                    ascending = 'desc';
+                if ('@Model.SortBy' === text) {
+                    reloadWithQueryStringVars({
+                        isBook: '@Model.IsBook.ToString().ToLower()',
+                        isJournal: '@Model.IsJournal.ToString().ToLower()',
+                        isNewspaper: '@Model.IsNewspaper.ToString().ToLower()',
+                        sortBy: text,
+                        ascending: ascending,
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+                if ('@Model.SortBy' !== text) {
+                    reloadWithQueryStringVars({
+                        isBook: '@Model.IsBook.ToString().ToLower()',
+                        isJournal: '@Model.IsJournal.ToString().ToLower()',
+                        isNewspaper: '@Model.IsNewspaper.ToString().ToLower()',
+                        sortBy: text,
+                        ascending: ascending,
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+            });
+
+        });
+    </script>
+}

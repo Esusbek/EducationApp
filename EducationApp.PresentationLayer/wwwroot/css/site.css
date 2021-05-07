@@ -1,0 +1,460 @@
+﻿body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f2f2f2;
+    min-width: 321px;
+}
+
+.body-content {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 100vw;
+}
+
+header {
+    background: #70FBFD;
+    padding: 30px;
+    flex-shrink: 0;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    flex: 1 0 100%;
+}
+
+.title, .image, .links {
+    margin: auto 0;
+}
+
+    .title > a, .catalog > a {
+        text-decoration: none;
+        color: black;
+    }
+
+        .title > a:visited.catalog > a {
+            color: black;
+        }
+
+.catalog {
+    margin: auto 20px;
+}
+
+.filler {
+    flex-grow: 2;
+}
+
+.image {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+    .image > img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+.menu {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+
+.header-parent {
+    width: 50px;
+    height: 50px;
+    display: block;
+    line-height: 30px;
+    z-index: 1;
+    position: relative;
+}
+
+    .header-parent > img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+.menu:hover .content-header {
+    height: 250px;
+    z-index: 2;
+}
+
+.content-header:hover ~ .header-parent {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    z-index: 0;
+}
+
+.content-header {
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    display: block;
+    z-index: 1;
+    height: 0;
+    width: 180px;
+    padding-top: 30px;
+    transition-delay: 0s;
+}
+
+    .content-header ul {
+        background: #fff;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
+        .content-header ul a {
+            text-decoration: none;
+        }
+
+    .content-header li:hover {
+        background: #eee;
+        color: #333;
+    }
+
+    .content-header li {
+        list-style: none;
+        text-align: left;
+        color: #888;
+        font-size: 14px;
+        line-height: 30px;
+        height: 30px;
+        padding-left: 10px;
+        border-top: 1px solid #ccc;
+    }
+table {
+    flex-grow: 1;
+}
+.profile-container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 30px;
+    width: 40%;
+    max-width: 450px;
+    margin: 0;
+    min-width: 350px;
+}
+
+.profile-images, .modal-buttons, .tables-header {
+    display: flex;
+    flex-direction: row;
+}
+
+    .profile-images > .filler {
+        flex-grow: 1;
+    }
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type=text], input[type=email], input[type=password] {
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+label {
+    padding: 2px;
+    display: inline-block;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 6px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+    button:disabled {
+        background-color: gray;
+    }
+
+.button {
+    margin: 20px 0;
+}
+.pages {
+    display: flex;
+    flex-direction: row;
+    height: 30px;
+}
+
+#previousPage {
+    background-image: url(/img/previous.png);
+    display: block;
+    text-indent: -9999px;
+    width: 20px;
+    height: 20px;
+}
+#nextPage {
+    background-image: url(/img/next.png);
+    display: block;
+    text-indent: -9999px;
+    width: 20px;
+    height: 20px;
+}
+.disabled {
+    opacity: 0.5;
+}
+.table-head:link,
+.table-head:visited,
+.table-head:hover,
+.table-head:active {
+    color: #000;
+    text-decoration: none;
+}
+
+table {
+    background: #FFF;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,
+th {
+    padding: 4px;
+    border: 1px solid #CCC;
+    overflow: hidden;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background-color: #DDD;
+    font-weight: 400;
+}
+
+    th a,
+    td a {
+        display: block;
+        width: 100%;
+    }
+
+        th a.sort-by {
+            padding-right: 18px;
+            position: relative;
+        }
+
+a.sort-by:before,
+a.sort-by:after {
+    border: 4px solid transparent;
+    content: "";
+    display: block;
+    height: 0;
+    right: 5px;
+    top: 50%;
+    position: absolute;
+    width: 0;
+}
+
+a.sort-by:before {
+    border-bottom-color: #666;
+    margin-top: -9px;
+}
+
+a.sort-by:after {
+    border-top-color: #666;
+    margin-top: 1px;
+}
+a.descending-sort::before {
+    border:none;
+}
+a.ascending-sort::after {
+    border: none;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+.edit-open {
+    width: 50px;
+    height: 50px;
+    background-image: url(/img/pencil.png) ;
+    background-size: cover;
+    background-color: white;
+}
+.remove {
+    width: 50px;
+    height: 50px;
+    background-image: url(/img/remove.png);
+    background-size: cover;
+    background-color: white;
+}
+.authors, .editions {
+    table-layout: fixed;
+}
+.authors-id, .edition-id {
+    width: 5%;
+}
+.authors-name {
+    width: 30%;
+}
+.authors-works {
+    width: 50%;
+}
+.authors-controls{
+    width: 15%;
+}
+.edition-title {
+    width: 15%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.edition-description {
+    width: 25%;
+}
+.description-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+
+}
+.edition-type {
+    width: 15%;
+}
+.edition-authors {
+    width: 15%;
+}
+.edition-price {
+    width: 15%;
+}
+.edition-controls {
+    width: 10%;
+}
+.tables-header {
+    padding: 20px;
+}
+.addAuthor, .addEdition {
+    width: 50px;
+    height: 50px;
+    background-image: url(/img/add.png);
+    background-size: cover;
+    background-color: #f2f2f2;
+}
+.authorTooltip, .editionTooltip {
+    position: relative;
+    display: inline-block;
+}
+
+    .authorTooltip .authorTooltiptext, .editionTooltip .editionTooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+        .authorTooltip .authorTooltiptext::after, .editionTooltip .editionTooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+    .authorTooltip:hover .authorTooltiptext, .editionTooltip:hover .editionTooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+#editionEdit, #editionAdd {
+    display: flex;
+    flex-direction: row;
+}
+.editionForm {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding: 10px;
+}
+.editionForm input, .editionForm textarea, .editionForm select {
+    width: 90%;
+    margin: 0 auto;
+}
+.warning{
+    color: red;
+}
+@media (max-width:520px) {
+    .header {
+        flex-direction: column;
+    }
+}

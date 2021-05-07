@@ -1,0 +1,55 @@
+<div class="container" *ngIf="!forgotPassword">
+    <div class="image"><img src="assets/img/person-icon.png" alt="icon" /></div>
+    <div class="signin-header">
+        <span>Sign-In</span>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <div class="credentials" formGroupName="user">
+            <label for="username">Login:</label>
+            <div *ngIf="userName.errors?.required && (userName.dirty || userName.touched)" class="alert alert-danger">
+                Username is required
+            </div>
+            <input id="username" type="text" formControlName="userName">
+            <label for="password">Password:</label>
+            <a href="javascript:void(0);" (click)="onForgotPassword()">Forgot password?</a>
+            <div *ngIf="password.errors?.required && (password.dirty || password.touched)" class="alert alert-danger">
+                Password is required
+            </div>
+            <a href="javascript:void(0);" (click)="showPassword()">Show password</a>
+            <input id="password" [type]="showPasswords ? 'text': 'password'" formControlName="password">
+        </div>
+        <div class="signin">
+            <input id="rememberMe" type="checkbox" formControlName="rememberMe">
+            <label for="rememberMe">RememberMe:</label>
+            <button type="submit" [disabled]="!loginForm.valid">Login</button>
+        </div>
+    </form>
+    <div class="signup">
+        <p>New to Book Publishing Company?</p>
+        <a [routerLink]="['/register']" routerLinkActive="router-link-active" class="btn">Sign up</a>
+    </div>
+</div>
+<div class="container" *ngIf="forgotPassword">
+    <div class="image"><img src="assets/img/person-icon.png" alt="icon" /></div>
+    <div class="content">
+        <h2>Password assistance</h2>
+        <p *ngIf="!this.reseted">Enter the username you registered with</p>
+        <div *ngIf="this.reseted">
+            <p>You will receive email with link to reset your password onto email associated with your account.</p>
+            <p>If you didnt receive email please contact administrator.</p>
+        </div>
+        <form [formGroup]="forgotPasswordForm" *ngIf="!this.reseted" (ngSubmit)="onRecoverySubmit()">
+            <label for="username">Username</label>
+            <div *ngIf="userNameRecovery.errors?.required && (userNameRecovery.dirty || userNameRecovery.touched)"
+                class="alert alert-danger">
+                Username is required
+            </div>
+            <input type="text" id="username" formControlName="userName" placeholder="username" />
+            <button type="submit" [disabled]="!forgotPasswordForm.valid">Continue</button>
+        </form>
+        <button (click)="onForgotPassword()">Back to login page</button>
+    </div>
+
+</div>

@@ -1,0 +1,53 @@
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 30px;
+    max-width: 40%;
+    margin: 0;
+  } 
+  .profile-images{
+    display: flex;
+    flex-direction: row;
+  }
+  .profile-images>.filler{
+    flex-grow: 1;
+  }
+  .image{
+    width:50px;
+    height:50px;
+    border-radius: 50%;
+    margin-left: 20px;
+  }
+  .image>img{
+    max-width:100%;
+    max-height:100%;
+  }
+  form{
+    display: flex;
+    flex-direction: column;
+  }
+  input[type=text],input[type=email],input[type=password]{
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }
+  label {
+    padding: 2px;
+    display: inline-block;
+  }
+  button{
+    background-color: #4CAF50;
+    color: white;
+    padding: 6px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:disabled{
+    background-color: gray;
+  }
+  .button {
+    margin: 20px 0;
+  } 

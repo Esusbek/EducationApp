@@ -1,0 +1,84 @@
+﻿@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "Profile";
+}
+<div class="profile-container">
+    <h2>My profile</h2>
+
+    <div class="profile-images">
+        <div class="image"><img src="/img/person-icon.png" alt="icon" /></div>
+        <div class="filler"></div>
+        <div class="image edit" id="editStart" style="display:block">
+            <img src="/img/pencil.png" alt="edit" id="edit">
+        </div>
+        <div class="image" id="back" style="display:none">
+            <img src="/img/back.png" alt="edit">
+        </div>
+    </div>
+    <div id="userInfo">
+        <form asp-action="UpdateUser" asp-controller="Admin" method="post">
+            <input type="hidden" asp-for="User.Id" />
+            <label asp-for="User.UserName"></label>
+            <input type="text" asp-for="User.UserName" disabled />
+            <label asp-for="User.Email"></label>
+            <input type="text" asp-for="User.Email" disabled />
+            <label asp-for="User.FirstName"></label>
+            <input id="FirstName" type="text" asp-for="User.FirstName" disabled />
+            <label asp-for="User.LastName"></label>
+            <input id="LastName" type="text" asp-for="User.LastName" disabled />
+            <div class="button" id="saveChanges" style="display:none">
+                <button type="submit">Save changes</button>
+            </div>
+        </form>
+    </div>
+    <div class="button">
+        <button id="changePasswordStart" style="display:block">Change password</button>
+    </div>
+    <div id="changePasswordForm" style="display:none">
+        <form asp-action="ChangePassword" asp-controller="Admin" method="post">
+            <input type="hidden" asp-for="User.Id" />
+            <label asp-for="OldPassword"></label>
+            <input type="password" asp-for="OldPassword" />
+            <label asp-for="NewPassword"></label>
+            <input type="password" asp-for="NewPassword" />
+            <label asp-for="ConfirmPassword"></label>
+            <input type="password" asp-for="ConfirmPassword" />
+            <div class="button" id="changePasswordBtn">
+                <button type="submit">Change password</button>
+            </div>
+        </form>    
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#editStart").click(function () {
+                document.getElementById("editStart").style.display = "none";
+                document.getElementById("back").style.display = "block";
+                document.getElementById("changePasswordStart").style.display = "none";
+                document.getElementById("saveChanges").style.display = "block";
+                document.getElementById("FirstName").disabled = false;
+                document.getElementById("LastName").disabled = false;
+            });
+            $("#back").click(function () {
+                document.getElementById("back").style.display = "none";
+                document.getElementById("editStart").style.display = "block";
+                document.getElementById("changePasswordStart").style.display = "block";
+                document.getElementById("saveChanges").style.display = "none";
+                document.getElementById("changePasswordForm").style.display = "none";
+                document.getElementById("userInfo").style.display = "block";
+                document.getElementById("FirstName").disabled = true;
+                document.getElementById("LastName").disabled = true;
+            });
+            $("#changePasswordStart").click(function () {
+                document.getElementById("editStart").style.display = "none";
+                document.getElementById("back").style.display = "block";
+                document.getElementById("changePasswordForm").style.display = "block";
+                document.getElementById("changePasswordStart").style.display = "none";
+                document.getElementById("userInfo").style.display = "none";
+            });
+        });
+    </script>
+}

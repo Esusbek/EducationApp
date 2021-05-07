@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/multiple-select.css">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/js/multiple-select.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header">
+            <div class="image"><img src="/img/book-icon.png" alt="icon" /></div>
+            <div class="title">
+                <a href="javascript:void(0);">Book Publishing Company</a>
+            </div>
+            <div class="filler"></div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="menu">
+                    <div class="header-parent"><img src="/img/person-icon.png" alt="icon" /></div>
+                    <div class="content-header">
+                        <ul>
+                            <li>
+                                <a href="@Url.Action("Profile", "Admin")">My profile</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Orders", "Admin")">Orders management</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Users", "Admin")">Users management</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("PrintingEditions", "Admin")">Product management</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Authors", "Admin")">Authors management</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("LogOut", "Admin")">Log out</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            }
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <div class="links">
+                    <a href="@Url.Action("Login", "Admin")">Login</a>
+                </div>
+            }
+        </div>
+    </header>
+    <div class="container body-content" id="body-content">
+        @RenderBody()
+    </div>
+    
+    <footer>
+        <p>footer</p>
+    </footer>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

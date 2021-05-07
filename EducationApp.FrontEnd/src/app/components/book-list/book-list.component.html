@@ -1,0 +1,58 @@
+<div class="container">
+    <div class="main-content">
+        <div class="sidebar">
+            <form [formGroup]="filterForm" (ngSubmit)="filter()">
+                <div *ngFor="let checkbox of checkboxes; let i = index" formArrayName="checkboxes">
+                    <input type="checkbox" [formControlName]="i" />{{checkbox.name}}
+                </div>
+                <label for="search">Search: </label>
+                <input id="search" type="text" placeholder="Title" formControlName="searchControl">
+                <div class="price">
+                    <input id="lowPrice" type="text" (input)="updateSliderLow($event)"
+                        [(ngModel)]=filterForm.value.sliderControl[0] formControlName="lowPrice">
+                    <input id="highPrice" type="text" (input)="updateSliderHigh($event)"
+                        [(ngModel)]=filterForm.value.sliderControl[1] formControlName="highPrice">
+                </div>
+                <ngx-slider [value]="minValue" [highValue]="maxValue" [options]="options"
+                    formControlName="sliderControl">
+                </ngx-slider>
+                <div class="button">
+                    <button type="submit">Filter</button>
+                </div>
+            </form>
+            <div class="button">
+                <button (click)="resetFilter()">Reset filter</button>
+            </div>
+            <div class="order">
+                <form [formGroup]="orderForm">
+                    <label>
+                        <input type="radio" name="order" value="true" (change)="filter()" formControlName="order">
+                        <span>Order from low to high price</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="order" value="false" (change)="filter()" formControlName="order">
+                        <span>Order from high to low price</span>
+                    </label>
+                </form>
+            </div>
+        </div>
+        <div class="book-list">
+            <div class="book" *ngFor="let book of books">
+                <div class="image">
+                    <img src={{getImage(book.type)}} alt="icon" (click)="show(book.id)" />
+                </div>
+                <div class="book-info">
+                    <h2>{{book.title}}</h2>
+                    <p>{{book.authors}}</p>
+                    <p class="price">{{book.price | currency: currency[book.currency]}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pages">
+        <div class="filler"></div>
+        <button class="previous" [disabled]="!hasPreviousPage()" (click)="previousPage()"></button>
+        <span>Page {{page}}/{{info.lastPage}}</span>
+        <button class="next" [disabled]="!hasNextPage()" (click)="nextPage()"></button>
+    </div>
+</div>

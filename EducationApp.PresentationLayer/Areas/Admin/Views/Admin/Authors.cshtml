@@ -1,0 +1,291 @@
+﻿@using EducationApp.BusinessLogicLayer.Models.PrintingEditions
+@using EducationApp.BusinessLogicLayer.Models.Authors
+@using EducationApp.BusinessLogicLayer.Models.ViewModels
+@using EducationApp.Shared.Constants
+@model AuthorsViewModel
+@{
+    ViewData["Title"] = "Authors list";
+}
+<div class="tables-header">
+    <div><h4>Authors Page</h4></div>
+    <div class="filler"></div>
+    <div class="authorTooltip">
+        <button class="addAuthor" onclick="addAuthorModal()"></button>
+        <span class="authorTooltiptext">Add new author</span>
+    </div>
+</div>
+<table class="table authors">
+    <thead>
+        <tr>
+            <th class="authors-id"><a href="javascript:void(0);" class="table-head sort-by">Id</a></th>
+            <th class="authors-name"><a href="javascript:void(0);" class="table-head">Name</a></th>
+            <th class="authors-works"><a href="javascript:void(0);" class="table-head">Works</a></th>
+            <th class="authors-controls"></th>
+        </tr>
+    </thead>
+    <tbody>
+       @foreach (AuthorModel author in Model.Authors)
+        {
+        <tr>
+            <td class="authors-id">@author.Id</td>
+            <td>@author.Name</td>
+            <td>
+                @foreach (PrintingEditionModel edition in author.PrintingEditions)
+                {
+                    <p>@edition.Title</p>
+                }
+            </td>
+            <td class="authors-controls">
+                <button class="edit-open" onclick="authorModal('@author.Id')"></button>
+                <button class="remove" onclick="deleteAuthorModal('@author.Id')"></button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+<div class="pages">
+    <div class="filler"></div>
+    @Html.ActionLink("previous page", "Authors", "Admin", new { 
+    page = Model.Page - Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    sortBy = Model.SortBy,
+    ascending = Model.Ascending
+}, new { id = "previousPage" })
+    <span>Page @Model.Page/ @Model.PageCount</span>
+    @Html.ActionLink("next page", "Authors", "Admin", new { 
+    page = Model.Page + Constants.DEFAULTPREVIOUSPAGEOFFSET,
+    sortBy = Model.SortBy,
+    ascending = Model.Ascending
+}, new { id = "nextPage" })
+</div>
+<div class='modal fade' name='dynamiccustommodal' id='1' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false' aria-labelledby='1Label'>
+    <div class='modal-dialog' style="max-width:700px">
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h4 class='modal-title' id="modal-title"></h4>
+            </div>
+            <div class='modal-body'>
+                <div class='row'>
+                    <div class='col-xs-12 col-md-12 col-sm-12 col-lg-12' id='modal-body'>
+                    </div>
+                </div>
+            </div>
+            <div class='modal-footer bg-default'>
+                <div class='col-xs-12 col-sm-12 col-lg-12 modal-buttons' id='modal-buttons'>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var valid = true;
+        var model = @Html.Raw(Json.Serialize(Model));
+        var BstrapModal = function (title, body, buttons) {
+
+            BstrapModal.Delete = function () {
+                $("#modal-title").empty();
+                $("#modal-body").empty();
+                $("#modal-buttons").empty();
+            };
+            BstrapModal.Close = function () {
+                $(document.getElementById(BstrapModal.Id)).modal('hide');
+                BstrapModal.Delete();
+            };
+            this.Show = function () {
+                BstrapModal.Delete();
+                BstrapModal.Id = 1;
+                $("#modal-title").append(title);
+                $("#modal-body").append(body);
+                var buttonshtml = `<button type='button' class='btn ${buttons[0].Css}' name='btn1'>${buttons[0].Value}</button>`;
+                for (var i = 1; i < buttons.length; i++) {
+                    buttonshtml += `<div class="filler"></div><button type='button' class='btn ${buttons[i].Css}' name='btn1'>${buttons[i].Value}</button>`;
+                }
+                $("#modal-buttons").append(buttonshtml);
+
+                var btns = document.querySelectorAll(`button[name='btn${BstrapModal.Id}']`);
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].addEventListener("click", buttons[i].Callback || BstrapModal.Close);
+                }
+                $(document.getElementById(BstrapModal.Id)).modal('show');
+            };
+        };
+        function authorModal(id) {
+            var author = model.authors.find(author => author.id === +id);
+            var title = `Editing ${author.name}`;
+            var body = `<form action="EditAuthor" method="post" id="authorEdit">\
+    <input type="hidden" value="${author.id}" name="id"/>
+    <label for="name">Name*</label>\
+    <input id="name" value="${author.name}" type="text" name="name" />\
+</form>`;
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Update",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        if (valid) {
+                            $("#authorEdit").submit()
+                        }
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
+            $('#authorEdit input').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if (!$(this).val()) {
+                    valid = false;
+                    $('<p class="warning">Field must not be empty</p>').insertAfter(this)
+                    console.log("test");
+                }
+            });
+        }
+        function addAuthorModal() {
+            var title = `Add new author`;
+            var body = `<form action="AddAuthor" method="post" id="authorAdd">\
+    <label for="name">Name*</label>\
+    <input id="name" value="" type="text" name="name" />\
+</form>`;
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Add",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        if (valid && $("#name").val()) {
+                            $("#authorAdd").submit()
+                        }
+                        if (!valid || !$("#name").val()) {
+                            $('<p class="warning">Fill in all fields of form</p>').insertAfter("#authorAdd")
+                        }
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
+            $('#authorAdd input').blur(function () {
+                valid = true;
+                $(this).next().remove(".warning");
+                if (!$(this).val()) {
+                    valid = false;
+                    $('<p class="warning">Field must not be empty</p>').insertAfter(this)
+                    console.log("test");
+                }
+            });
+        }
+        function deleteAuthorModal(id) {
+            var author = model.authors.find(author => author.id === +id);
+            var title = `Delete ${author.name}`;
+            var body = `<h3>Are you sure you want to delete ${author.name}?</h3>
+<form action="DeleteAuthor" method="post" id="authorDelete">\
+    <input type="hidden" value="${author.id}" name="id"/>
+</form>`;
+            var buttons = [
+                {
+                    Value: "Cancel",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        BstrapModal.Close();
+                    }
+                },
+                {
+                    Value: "Delete",
+                    Css: "btn-primary",
+                    Callback: function () {
+                        $("#authorDelete").submit()
+                    }
+                }];
+            new BstrapModal(title, body, buttons).Show();
+        }
+        $(document).ready(function () {
+            function reloadWithQueryStringVars(queryStringVars) {
+                var existingQueryVars = location.search ? location.search.substring(1).split("&") : [],
+                    currentUrl = location.search ? location.href.replace(location.search, "") : location.href,
+                    newQueryVars = {},
+                    newUrl = currentUrl + "?";
+                if (existingQueryVars.length > 0) {
+                    for (var i = 0; i < existingQueryVars.length; i++) {
+                        var pair = existingQueryVars[i].split("=");
+                        newQueryVars[pair[0]] = pair[1];
+                    }
+                }
+                if (queryStringVars) {
+                    for (var queryStringVar in queryStringVars) {
+                        newQueryVars[queryStringVar] = queryStringVars[queryStringVar];
+                    }
+                }
+                if (newQueryVars) {
+                    for (var newQueryVar in newQueryVars) {
+                        newUrl += newQueryVar + "=" + newQueryVars[newQueryVar] + "&";
+                    }
+                    newUrl = newUrl.substring(0, newUrl.length - 1);
+                    window.location.href = newUrl;
+                }
+                if (!newQueryVars) {
+                    window.location.href = location.href;
+                }
+            }
+
+            if (@Model.Page< 2) {
+                $('#previousPage').addClass('disabled')
+            }
+            if (@Model.Page>=@Model.PageCount) {
+                $('#nextPage').addClass('disabled')
+            }
+            var links = document.getElementsByClassName('sort-by');
+            for (var i = 0; i < links.length; i++) {
+                if (links[i].innerHTML === '@Model.SortBy') {
+                    if ('@Model.Ascending' === 'asc') {
+                        links[i].classList.add('ascending-sort');
+                    }
+                    if ('@Model.Ascending' === 'desc') {
+                        links[i].classList.add('descending-sort');
+                    }
+                }
+            }
+            $('#previousPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                window.location.href = $(this).attr('href');
+            });
+            $('#nextPage').click(function (link) {
+                link.preventDefault();
+                if ($(this).hasClass('disabled'))
+                    return false;
+                window.location.href = $(this).attr('href');
+            });
+            $('.sort-by').click(function (link) {
+                var text = $(link.target).text();
+                var ascending = 'asc';
+                if ('@Model.Ascending' === '@Constants.DEFAULTSORTORDER')
+                    ascending = 'desc';
+                if ('@Model.SortBy' === text) {
+                    reloadWithQueryStringVars({
+                        sortBy: text,
+                        ascending: ascending,
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+                if ('@Model.SortBy' !== text) {
+                    reloadWithQueryStringVars({
+                        sortBy: text,
+                        ascending: ascending,
+                        page: '@Constants.DEFAULTPAGE'
+                    });
+                }
+            });
+
+        });
+    </script>
+}
